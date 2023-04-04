@@ -1,4 +1,4 @@
-#SampleID	BarcodeSequence	LinkerPrimerSequence	PCR.Sample.Plate	Sample.Plate.Well	Primer.Plate.Used	Primer.Plate.Well	PrimerName	Sequencing_Run	Description	MouseID	Sex	Litter	Genotype	Site	Site_General	code	SampleType	Sex_Genotype	Subset	ASV_Sample_Order
+SampleID	BarcodeSequence	LinkerPrimerSequence	PCR.Sample.Plate	Sample.Plate.Well	Primer.Plate.Used	Primer.Plate.Well	PrimerName	Sequencing_Run	Description	MouseID	Sex	Litter	Genotype	Site	Site_General	code	SampleType	Sex_Genotype	Subset	ASV_Sample_Order
 SLCDTT142	CTTCGACTTTCC	TTTTTTTT	Plate19	D1	5	D1	806rcbc420	SLCMicrobiome	SLCDTT142	814	Male	seven	MUT	Ileum	SI	S142	Mucosal	Male_MUT	Mucosal_SI	0
 SLCDTT143	GTCATAAGAACC	TTTTTTTT	Plate19	D2	5	D2	806rcbc421	SLCMicrobiome	SLCDTT143	814	Male	seven	MUT	Jejunum	SI	S143	Mucosal	Male_MUT	Mucosal_SI	1
 SLCDTT144	GTCCGCAAGTTA	TTTTTTTT	Plate19	D3	5	D3	806rcbc422	SLCMicrobiome	SLCDTT144	814	Male	seven	MUT	Duodenum	SI	S144	Mucosal	Male_MUT	Mucosal_SI	2

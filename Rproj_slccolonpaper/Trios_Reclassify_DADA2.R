@@ -26,6 +26,6 @@ head(taxa.print)
 taxa[is.na(taxa)] <- ""
 taxonomy<-paste("k__",taxa[,1],"; ","p__",taxa[,2],"; ","c__",taxa[,3],"; ","o__",taxa[,4],"; ","f__",taxa[,5],"; ","g__",taxa[,6],"; ","s__",taxa[,7],sep="")
 output<-cbind(t(seqtab.nochim), taxonomy)
-uniquesToFasta(seqtab.nochim, fout='C:/Users/Jacobs Laboratory/Documents/JCYang/slccolonpaper/slccolon/Trios/rep-seqs.fna', ids=colnames(seqtab.nochim))
+###uniquesToFasta(seqtab.nochim, fout='C:/Users/Jacobs Laboratory/Documents/JCYang/slccolonpaper/slccolon/Trios/rep-seqs.fna', ids=colnames(seqtab.nochim))
 write.table(output, "C:/Users/Jacobs Laboratory/Documents/JCYang/slccolonpaper/slccolon/Trios/Trios_ASV_table_Silva_v138_1.tsv", sep="\t", col.names=NA)
 

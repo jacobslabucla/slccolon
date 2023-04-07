@@ -1,9 +1,10 @@
 library(Maaslin2)
 library(funrar)
+library(plyr)
 library(dplyr)
 library(ggplot2)
 library(cowplot)
-library(plyr)
+
 setwd("C:/Users/Jacobs Laboratory/Documents/JCYang/SLC_GitHub/slcproject/SLC_Microbiome_Baseline/differential_taxa/")
 
 ### Note: First remove "#Constructed from biom file row"
@@ -44,19 +45,19 @@ fit_data = Maaslin2(input_data=df_input_data,
                     input_metadata=df_input_metadata, 
                     output = paste0("ASV-level_",subset_string,"_Maaslin2_Sex_Genotype"), 
                     fixed_effects = c("Line", "Sex","Genotype"),normalization="TSS", 
-                    min_prevalence = 0.14,
+                    min_prevalence = 0.15,
                     transform ="log",plot_heatmap = FALSE,plot_scatter = FALSE)
 }
 
 
-## Sex and Genotype
+## Line Sex and Genotype
 
 # Baseline
-run_Maaslin2("export_s20_min10000_Baseline_ASV_table_Silva_v138_1/feature-table.tsv",
-             "../starting_files/Baseline_Metadata - Baseline_Metadata.tsv","SLC_Baseline")
+run_Maaslin2("Baseline/differential_taxa/export_s20_min10000_Baseline_ASV_table_Silva_v138_1/feature-table.tsv",
+             "Baseline/starting_files/Baseline_Metadata.tsv","SLC_Baseline")
 
 
-### Make a Dotplot: Sex and Diet  ---
+### Graphical table of results  ---
 
 phyla_colors <- c("#F8766D", "#A3A500", "#00BF7D", "#00B0F6", "#E76BF3")
 names(phyla_colors)<-unique(data$Phylum)

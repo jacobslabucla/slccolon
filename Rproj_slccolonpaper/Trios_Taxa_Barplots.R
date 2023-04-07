@@ -2,58 +2,98 @@
 ### Date : 4/4/23
 library(here) #v 1.0.1
 library(dplyr) #v 1.0.7
-library(Maaslin2) #v 1.2.0
 library(funrar)
+library(ggplot2)
+library(cowplot)
+library(paletteer)
+library(rlang)
+library(tidyverse)
 
 setwd("C:/Users/Jacobs Laboratory/Documents/JCYang/slccolonpaper/slccolon/") # CHANGE to the directory containing the fastq files
-here::i_am("Rproj_slccolonpaper/Trios_ASV_level_Maaslin2.R")
+setwd("../") # CHANGE to the directory containing the fastq files
+
+here::i_am("Rproj_slccolonpaper/Trios_Taxa_Barplots.R")
 
 metadata <- read.table("Trios/SLC_TOTAL_OCT2020_FULL_Metadata.tsv", header=TRUE)
-counts <- read.table("Trios/Trios_ASV_table_Silva_v138_1.tsv", header = TRUE, row.names=1)
+lumcol_counts <- read.csv("Trios/LumCol_level-6_trios.csv", header = TRUE, row.names=1)
 
-## Store taxonomy in an annotation file --
-annotation <- tibble::rownames_to_column(counts, "feature") %>% select(c("feature", "taxonomy"))
-counts <- counts %>% select(-c("taxonomy"))
+muccol_counts <- read.csv("Trios/MucCol_level-6.csv", header = TRUE, row.names=1)
 
-## Apply minimum sequencing depth threshold --
-counts <- counts[colSums(counts) >= 10000]
+## Replace genera names with legible ones --
+wrangle_genera_names("Trios/LumCol_level-6_trios.csv", "Trios/","LuminalColon_level-6.RDS")
+wrangle_genera_names("Trios/MucCol_level-6.csv", "Trios/","MucosalColon_level-6.RDS")
 
-## Split counts into colon subsets -- 
+## Plot the barplots --
+trios_lc_barplot <- generate_L6_taxa_plots("Trios/LuminalColon_level-6.RDS","Luminal Colon", ".*g__",global_genera_cols) +
+  theme(legend.position = "none")
 
-# Luminal Colon 
-lumcol_meta <- metadata %>% filter(Subset=="Luminal_Colon", SampleID %in% names(counts))
-row.names(lumcol_meta) <- lumcol_meta$SampleID
-lumcol <- lumcol_meta$SampleID
-lumcol_counts <- counts %>% select(all_of(lumcol))
+trios_mc_barplot <- generate_L6_taxa_plots("Trios/MucosalColon_level-6.RDS","Mucosal Colon", ".*g__",global_genera_cols) +
+  theme(legend.position = "none")
 
-# Mucosal Colon
-muccol_meta <- metadata %>% filter(Subset=="Mucosal_Colon", SampleID %in% names(counts))
-row.names(muccol_meta) <- muccol_meta$SampleID
-muccol <- muccol_meta$SampleID
-muccol_counts <- counts %>% select(all_of(muccol))
+## Draw the legend --
+L6_legend <- generate_L6_taxa_plots("Trios/MucosalColon_level-6.RDS","Mucosal Colon", ".*g__",global_genera_cols) +
+  theme(legend.position = "right") +
+  guides(fill=guide_legend(nrow=22, byrow=TRUE))+
+  theme(legend.spacing.y = unit(0.1, 'cm')) +
+  theme(legend.background = element_rect(fill="lightblue", size=1, linetype="solid"), legend.margin = margin(0, 11, 0, 1)) 
+legend <- cowplot::get_legend(L6_legend)
+grid::grid.newpage()
+grid::grid.draw(legend)
 
-## Convert counts into relative abundances --
+## Final Figures --
+plot_grid(trios_lc_barplot,trios_mc_barplot)
+## Extract taxa >0.001 for use in legend ---
+L2_lum<-read.csv("Trios/LumCol_level-6_trios.csv",header=TRUE,row.names=1)
+L2_lum<- as.matrix(L2_lum)
+L2_lum<-funrar::make_relative(L2_lum)
+L2_lum<-as.data.frame(t(L2_lum))
+toptaxa<- rowMeans(L2_lum)
+L2_lum$averageRA <-toptaxa
+L2_lum <- L2_lum %>% mutate(keeptaxa = ifelse(averageRA >0.001, row.names(L2_lum), "Other"))
+L2_lum <-select(L2_lum,-averageRA)
 
-#Taxa are columns, samples are rows
-lumcol_counts<- as.matrix(t(lumcol_counts))
-lumcol_counts<-funrar::make_relative(lumcol_counts)
-sum(lumcol_counts[1,])
-
-#Samples are columns, taxa are rows. Calculate average abundance of each taxa across all samples
-lumcol_counts<-as.data.frame(t(lumcol_counts))
-toptaxa<- rowMeans(lumcol_counts)
-length(names(lumcol_counts))
-
-lumcol_counts$averageRA <-toptaxa
-lumcol_counts <- lumcol_counts %>%
-  dplyr::mutate(keeptaxa = ifelse(averageRA >0.01, row.names(lumcol_counts), "Other"))
-lumcol_counts <-select(lumcol_counts,-averageRA)
-
-taxa<-lumcol_counts$keeptaxa
-lumcol_counts <- select(lumcol_counts,-keeptaxa)
-lumcol_counts <- as.matrix(sapply(lumcol_counts,as.numeric))
-lumcol_counts <- as.data.frame(prop.table(lumcol_counts,2))
+taxa<-L2_lum$keeptaxa
+L2_lum <- select(L2_lum,-keeptaxa)
+L2_lum <- as.matrix(sapply(L2_lum,as.numeric))
+L2_lum <- as.data.frame(prop.table(L2_lum,2))
+taxa<-gsub(".*g__","",taxa )
 
 L2_lum$Taxa <-taxa
-L2_lum<- tidyr::pivot_longer(L2_lum, -c(Taxa), values_to ="Value", names_to ="Site")
-L2_lum$Value <- L2_lum$Value * 100
+labels_lum <- unique(L2_lum$Taxa)
+
+## Extract taxa >0.001 for use in legend ---
+L2_lum<-read.csv("Trios/MucCol_level-6.csv",header=TRUE,row.names=1)
+L2_lum<- as.matrix(L2_lum)
+L2_lum<-funrar::make_relative(L2_lum)
+L2_lum<-as.data.frame(t(L2_lum))
+toptaxa<- rowMeans(L2_lum)
+L2_lum$averageRA <-toptaxa
+L2_lum <- L2_lum %>% mutate(keeptaxa = ifelse(averageRA >0.001, row.names(L2_lum), "Other"))
+L2_lum <-select(L2_lum,-averageRA)
+
+taxa<-L2_lum$keeptaxa
+L2_lum <- select(L2_lum,-keeptaxa)
+L2_lum <- as.matrix(sapply(L2_lum,as.numeric))
+L2_lum <- as.data.frame(prop.table(L2_lum,2))
+taxa<-gsub(".*g__","",taxa )
+
+L2_lum$Taxa <-taxa
+labels_muc <- unique(L2_lum$Taxa)
+
+global <- union(labels_lum,labels_muc)
+length(global)
+## Generate a color key using paletteer colors ---
+
+add_cols2 <- paletteer_d("ggthemes::Classic_20",20)	
+add_cols4 <- paletteer_d("ggthemes::calc",12)
+add_cols3 <- paletteer_d("ggsci::category20_d3", 20)
+add_cols5 <- paletteer_d("basetheme::clean",2)
+add_cols6 <- paletteer_d("basetheme::dark",10)
+global_genera_cols <- c(add_cols2,add_cols3,add_cols6, add_cols4,add_cols5)
+global_genera_cols <- unique(global_genera_cols)
+names(global_genera_cols) <- global
+saveRDS(global_genera_cols,"Trios/Genera_cols.RDS")
+
+
+
+

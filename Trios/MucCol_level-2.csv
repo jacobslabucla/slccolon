@@ -1,0 +1,4 @@
+index,k__Bacteria;p__Firmicutes,k__Bacteria;p__Bacteroidota,k__Bacteria;p__Desulfobacterota,k__Bacteria;p__Verrucomicrobiota,k__Bacteria;p__Proteobacteria,k__Bacteria;p__Actinobacteriota,k__Bacteria;p__Cyanobacteria,k__Bacteria;p__Deferribacterota,k__Bacteria;p__Deinococcota,k__Bacteria;p__Acidobacteriota,k__Bacteria;p__Fusobacteriota,k__Bacteria;p__Patescibacteria,k__Archaea;p__Halobacterota,k__Bacteria;p__Synergistota,k__Bacteria;p__Aquificota,k__Bacteria;p__,k__Bacteria;p__Chloroflexi
+WT,59922.0,23886.0,1647.0,952.0,8173.0,1145.0,305.0,13.0,65.0,3.0,1.0,0.0,1.0,0.0,1.0,0.0,1.0
+HET,75117.0,31026.0,1735.0,311.0,1388.0,1100.0,156.0,203.0,9.0,3.0,1.0,1.0,0.0,0.0,0.0,0.0,0.0
+MUT,80767.0,36487.0,1958.0,842.0,1277.0,1543.0,136.0,2.0,16.0,3.0,1.0,3.0,1.0,1.0,0.0,1.0,0.0

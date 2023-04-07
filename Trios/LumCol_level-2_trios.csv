@@ -1,0 +1,4 @@
+index,k__Bacteria;p__Firmicutes,k__Bacteria;p__Bacteroidota,k__Bacteria;p__Desulfobacterota,k__Bacteria;p__Verrucomicrobiota,k__Bacteria;p__Proteobacteria,k__Bacteria;p__Actinobacteriota,k__Bacteria;p__Cyanobacteria,k__Bacteria;p__Deferribacterota,k__Bacteria;p__Patescibacteria,k__Bacteria;p__
+WT,46228.0,42271.0,1118.0,3983.0,1121.0,940.0,66.0,2.0,0.0,0.0
+HET,38453.0,39717.0,894.0,1188.0,1201.0,661.0,47.0,1.0,1.0,0.0
+MUT,43409.0,45462.0,1369.0,2142.0,1257.0,558.0,37.0,1.0,1.0,1.0

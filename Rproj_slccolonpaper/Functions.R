@@ -47,6 +47,7 @@ generate_L6_taxa_plots <- function(path_to_RDS, titlestring,greppattern, fillvec
 ## handle the genera names for taxonomy boxplot --
 wrangle_genera_names <- function(csv_dataframe, filepathstring, rds_string){
   input_data<-read.csv(csv_dataframe, row.names=1, header=TRUE)
+  
   taxa<-colnames(input_data)
   colnames <- strsplit(taxa, ".f__")
   
@@ -89,7 +90,7 @@ wrangle_genera_names <- function(csv_dataframe, filepathstring, rds_string){
 ## Make a taxonomy dotplot --
 
 make_taxa_dotplot <- function(ASV_significant_results_dataset, taxonomy_tsv_filepath, 
-                              Relative_Abundance_filepath_rds,titlestring){
+                              Relative_Abundance_filepath_rds,titlestring, colorvariable){
 data<-as.data.frame(ASV_significant_results_dataset)
 taxonomy <- read.delim(taxonomy_tsv_filepath)
 taxonomy$feature <- taxonomy$Feature.ID
@@ -113,17 +114,17 @@ relA <- readRDS(Relative_Abundance_filepath_rds)
 relA$feature <- row.names(relA)
 relA$Relative_Abundance <- relA$V1
 data<-merge(data,relA,by="feature")
-min(data$Relative_Abundance)
+print(summary(data$Relative_Abundance))
 max(data$Relative_Abundance)
 
 #make graph
 y = tapply(data$coef, data$annotation, function(y) max(y))  # orders the genera by the highest fold change of any ASV in the genus; can change max(y) to mean(y) if you want to order genera by the average log2 fold change
 y = sort(y, FALSE)   #switch to TRUE to reverse direction
 data$annotation= factor(as.character(data$annotation), levels = names(y))
-baseline_DAT <- ggplot(data, aes(x = coef, y = annotation, color = Phylum)) + 
+baseline_DAT <- ggplot(data, aes(x = coef, y = annotation, color = {{colorvariable}})) + 
   geom_point(aes(size = sqrt(Relative_Abundance))) + 
   scale_size_continuous(name="Relative Abundance",range = c(0.5,8),
-                        limits=c(sqrt(0.00001),sqrt(0.3)),
+                        limits=c(sqrt(0.000001),sqrt(0.3)),
                         breaks=c(sqrt(0.0001),sqrt(0.001),sqrt(0.01),sqrt(0.1)),
                         labels=c("0.0001","0.001","0.01","0.1")) + 
   #scale_color_manual(name="Phylum", values = phyla_colors)+

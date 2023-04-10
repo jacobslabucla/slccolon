@@ -88,11 +88,9 @@ wrangle_genera_names <- function(csv_dataframe, filepathstring, rds_string){
 
 ## Make a taxonomy dotplot --
 
-make_taxa_dotplot <- function(ASV_significant_results_tsv_filepath, taxonomy_tsv_filepath, 
+make_taxa_dotplot <- function(ASV_significant_results_dataset, taxonomy_tsv_filepath, 
                               Relative_Abundance_filepath_rds,titlestring){
-data<-read.table(ASV_significant_results_tsv_filepath, header=TRUE)
-data <- data %>% filter(qval <0.25)
-data <- data %>% filter(metadata=="Genotype")
+data<-as.data.frame(ASV_significant_results_dataset)
 taxonomy <- read.delim(taxonomy_tsv_filepath)
 taxonomy$feature <- taxonomy$Feature.ID
 data <- merge(data,taxonomy, by="feature")
@@ -128,7 +126,7 @@ baseline_DAT <- ggplot(data, aes(x = coef, y = annotation, color = Phylum)) +
                         limits=c(sqrt(0.00001),sqrt(0.3)),
                         breaks=c(sqrt(0.0001),sqrt(0.001),sqrt(0.01),sqrt(0.1)),
                         labels=c("0.0001","0.001","0.01","0.1")) + 
-  scale_color_manual(name="Phylum", values = phyla_colors)+
+  #scale_color_manual(name="Phylum", values = phyla_colors)+
   geom_vline(xintercept = 0) + 
   xlab(label="Log2 Fold Change")+
   ylab(label=NULL)+

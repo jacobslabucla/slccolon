@@ -30,9 +30,21 @@
                 "source": false
               }
             }
+          },
+          {
+            "id": "97fb062bd9d6d094",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Long Term DAT with Maaslin2 log TSS.md",
+                "mode": "source",
+                "source": false
+              }
+            }
           }
         ],
-        "currentTab": 1
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -98,7 +110,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "DAT with Maaslin2 log TSS for Trios.md",
+                "file": "Long Term DAT with Maaslin2 log TSS.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -115,7 +127,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "DAT with Maaslin2 log TSS for Trios.md",
+                "file": "Long Term DAT with Maaslin2 log TSS.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -138,7 +150,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "DAT with Maaslin2 log TSS for Trios.md"
+                "file": "Long Term DAT with Maaslin2 log TSS.md"
               }
             }
           }
@@ -159,9 +171,10 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "73791d47c60214bf",
+  "active": "97fb062bd9d6d094",
   "lastOpenFiles": [
-    "SLC Colon Paper Microbiome Figures.md",
-    "DAT with Maaslin2 log TSS for Trios.md"
+    "DAT with Maaslin2 log TSS for Trios.md",
+    "Long Term DAT with Maaslin2 log TSS.md",
+    "SLC Colon Paper Microbiome Figures.md"
   ]
 }

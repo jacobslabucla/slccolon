@@ -49,14 +49,39 @@ wrangle_genera_names <- function(csv_dataframe, filepathstring, rds_string){
   input_data<-read.csv(csv_dataframe, row.names=1, header=TRUE)
   
   taxa<-colnames(input_data)
-  colnames <- strsplit(taxa, ".f__")
+  colnames <- strsplit(taxa, ".o__")
   
-  family=rlang::new_list(length(colnames(input_data)))
+  order=new_list(length(colnames(input_data)))
   i=1
   for (i in 1:length(colnames)) {
-    family[i] <- colnames[[i]][2]
+    order[i] <- colnames[[i]][2]
     i=i+1
   }
+  
+  order<-unlist(order)
+  order <- strsplit(order, ".f__")
+  
+  family =new_list(length(colnames(input_data)))
+  i=1
+  for (i in 1:length(order)) {
+    family[i] <- order[[i]][2]
+    i=i+1
+  }
+  
+  order<-as.list(order)
+  
+  i=1
+  for (i in 1:length(family)) {
+    if (isFALSE(family[[i]]==".g__")) {
+      family[[i]] = family[[i]] 
+    }
+    else {
+      family[[i]] <- paste0(order[[i]]," (o)")   
+      family[[i]] <- family[[i]][1]
+    }
+    i=i+1
+  }
+  
   
   family<-unlist(family)
   family <- strsplit(family, ".g__")
@@ -81,6 +106,9 @@ wrangle_genera_names <- function(csv_dataframe, filepathstring, rds_string){
     }
     i=i+1
   }
+  
+  
+
   colnames(input_data) <-as.character(genus)
   
   saveRDS(input_data, paste0(filepathstring, rds_string))
@@ -137,4 +165,39 @@ baseline_DAT <- ggplot(data, aes(x = coef, y = annotation, color = {{colorvariab
   theme(legend.position = "right") 
 baseline_DAT 
 
+}
+
+calculate_rsjensen <- function(data){
+  relativedata<-sweep(data,2,colSums(data),"/")
+  
+  dist.JSD <- function(inMatrix, pseudocount=0.000001, ...) {
+    KLD <- function(x,y) sum(x *log(x/y))
+    JSD<- function(x,y) sqrt(0.5 * KLD(x, (x+y)/2) + 0.5 * KLD(y, (x+y)/2))
+    matrixColSize <- length(colnames(inMatrix))
+    matrixRowSize <- length(rownames(inMatrix))
+    colnames <- colnames(inMatrix)
+    resultsMatrix <- matrix(0, matrixColSize, matrixColSize)
+    
+    inMatrix = apply(inMatrix,1:2,function(x) ifelse (x==0,pseudocount,x))
+    
+    for(i in 1:matrixColSize) {
+      for(j in 1:matrixColSize) { 
+        resultsMatrix[i,j]=JSD(as.vector(inMatrix[,i]),
+                               as.vector(inMatrix[,j]))
+      }
+    }
+    colnames -> colnames(resultsMatrix) -> rownames(resultsMatrix)
+    as.dist(resultsMatrix)->resultsMatrix
+    attr(resultsMatrix, "method") <- "dist"
+    return(resultsMatrix) 
+  }
+  ## From: http://enterotype.embl.de/enterotypes.html
+  
+  data.dist=dist.JSD(relativedata)
+  
+  # to export distance matrix
+  x=data.dist
+  y=as.matrix(x)
+  
+  return(y) 
 }

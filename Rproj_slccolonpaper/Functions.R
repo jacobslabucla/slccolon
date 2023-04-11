@@ -201,3 +201,48 @@ calculate_rsjensen <- function(data){
   
   return(y) 
 }
+
+generate_pcoA_plots <- function(distance_matrix, counts, metadata, title, colorvariable,colorvector, wa_scores_filepath){
+  # calculate mds
+  lumcol.dist <- distance_matrix
+  lumcol_counts <- counts 
+  lumcol_meta <- metadata
+  
+  mds <- cmdscale(lumcol.dist, eig = TRUE, x.ret = TRUE)
+  
+  mds_values <- mds$points
+  wa_scores <- wascores(mds_values, t(lumcol_counts))
+  wa_scores <- data.frame(sample = rownames(wa_scores),
+                          x = wa_scores[,1],
+                          y = wa_scores[,2])
+  
+  # isolate taxa with strongest contribution to principal coordinate axes
+  n_taxa <- 10
+  wa_scores_1<- head(arrange(wa_scores, desc(abs(wa_scores$x))), n = n_taxa)
+  wa_scores_2<- head(arrange(wa_scores, desc(abs(wa_scores$y))), n = n_taxa)
+  wa_scores_final <- rbind(wa_scores_1, wa_scores_2)
+  write.csv(wa_scores_final, {{wa_scores_filepath}})
+  
+  # calculate percentage of variation that each mds axis accounts for
+  mds_var_per <- round(mds$eig/sum(mds$eig) * 100, 1)
+  
+  # plot
+  mds_data <- data.frame(sample = rownames(mds_values),
+                         x = mds_values[,1],
+                         y = mds_values[,2])
+  
+  #merge phenotypic data 
+  lumcol_meta$sample <- lumcol_meta$SampleID
+  mds_meta <- merge(mds_data, lumcol_meta, by = "sample")
+  
+  
+  p<- ggplot(mds_meta, aes(x, y, colour={{colorvariable}})) + 
+    geom_point(size=3) + 
+    labs(x = paste("PC1(", mds_var_per[1], "%)",sep=""),
+         y = paste("PC2(", mds_var_per[2], "%)",sep="")) +
+    scale_colour_manual(name="",values={{colorvector}}) +
+    theme_cowplot(16)+
+    theme(legend.position="top",legend.justification = "center") +
+    labs(title= paste0({{title}})) 
+  return(p)
+}

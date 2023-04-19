@@ -1,0 +1,58 @@
+2023-03-01 15:03:13 INFO::Writing function arguments to log file
+2023-03-01 15:03:13 DEBUG::Function arguments
+2023-03-01 15:03:13 DEBUG::Output folder: PICRUST2_PWY_Luminal_Colon_Maaslin2_Sex_Genotype_Sequencing_Run
+2023-03-01 15:03:13 DEBUG::Min Abundance: 0.000000
+2023-03-01 15:03:13 DEBUG::Min Prevalence: 0.150000
+2023-03-01 15:03:13 DEBUG::Normalization: TSS
+2023-03-01 15:03:13 DEBUG::Transform: LOG
+2023-03-01 15:03:13 DEBUG::Analysis method: LM
+2023-03-01 15:03:13 DEBUG::Max significance: 0.250000
+2023-03-01 15:03:13 DEBUG::Random effects: MouseID
+2023-03-01 15:03:13 DEBUG::Fixed effects: Sex,Genotype,Sequencing_Run
+2023-03-01 15:03:13 DEBUG::Correction method: BH
+2023-03-01 15:03:13 DEBUG::Standardize: TRUE
+2023-03-01 15:03:13 DEBUG::Cores: 1
+2023-03-01 15:03:13 INFO::Verifying options selected are valid
+2023-03-01 15:03:13 INFO::Determining format of input files
+2023-03-01 15:03:13 INFO::Input format is data samples as columns and metadata samples as rows
+2023-03-01 15:03:13 DEBUG::Transformed data so samples are rows
+2023-03-01 15:03:13 DEBUG::A total of 90 samples were found in both the data and metadata
+2023-03-01 15:03:13 DEBUG::Reordering data/metadata to use same sample ordering
+2023-03-01 15:03:13 INFO::Formula for random effects: expr ~ (1 | MouseID)
+2023-03-01 15:03:13 INFO::Formula for fixed effects: expr ~  Sex + Genotype + Sequencing_Run
+2023-03-01 15:03:13 INFO::Filter data based on min abundance and min prevalence
+2023-03-01 15:03:13 INFO::Total samples in data: 90
+2023-03-01 15:03:13 INFO::Min samples required with min abundance for a feature not to be filtered: 13.500000
+2023-03-01 15:03:13 INFO::Total filtered features: 69
+2023-03-01 15:03:13 INFO::Filtered feature names from abundance and prevalence filtering: CHLOROPHYLL.SYN, DENITRIFICATION.PWY, LIPASYN.PWY, LPSSYN.PWY, METHANOGENESIS.PWY, NADSYN.PWY, P241.PWY, P261.PWY, P621.PWY, PWY.1361, PWY.1501, PWY.1622, PWY.1882, PWY.2221, PWY.3661, PWY.4722, PWY.5005, PWY.5088, PWY.5183, PWY.5198, PWY.5392, PWY.5419, PWY.5420, PWY.5430, PWY.5529, PWY.5531, PWY.5647, PWY.5651, PWY.5654, PWY.5655, PWY.5823, PWY.5941, PWY.6107, PWY.6141, PWY.6148, PWY.6167, PWY.6174, PWY.6210, PWY.622, PWY.6349, PWY.6350, PWY.6383, PWY.6397, PWY.6404, PWY.6505, PWY.6562, PWY.6654, PWY.6660, PWY.6662, PWY.6728, PWY.6731, PWY.6906, PWY.6948, PWY.6957, PWY.6992, PWY.7007, PWY.7046, PWY.7159, PWY.7255, PWY.7286, PWY.7295, PWY.7347, PWY.7373, PWY.7391, PWY.7528, PWY.7616, PWY1G.0, SUCSYN.PWY, VALDEG.PWY
+2023-03-01 15:03:13 INFO::Total filtered features with variance filtering: 0
+2023-03-01 15:03:13 INFO::Filtered feature names from variance filtering:
+2023-03-01 15:03:13 INFO::Running selected normalization method: TSS
+2023-03-01 15:03:13 INFO::Applying z-score to standardize continuous metadata
+2023-03-01 15:03:13 INFO::Running selected transform method: LOG
+2023-03-01 15:03:13 INFO::Running selected analysis method: LM
+2023-03-01 15:03:13 INFO::Fitting model to feature number 1, X1CMET2.PWY
+2023-03-01 15:03:13 INFO::Fitting model to feature number 2, X3.HYDROXYPHENYLACETATE.DEGRADATION.PWY
+2023-03-01 15:03:13 INFO::Fitting model to feature number 3, AEROBACTINSYN.PWY
+2023-03-01 15:03:13 INFO::Fitting model to feature number 4, ALL.CHORISMATE.PWY
+2023-03-01 15:03:13 INFO::Fitting model to feature number 5, ANAEROFRUCAT.PWY
+2023-03-01 15:03:14 INFO::Fitting model to feature number 6, ANAGLYCOLYSIS.PWY
+2023-03-01 15:03:14 INFO::Fitting model to feature number 7, ARG.POLYAMINE.SYN
+2023-03-01 15:03:14 INFO::Fitting model to feature number 8, ARGDEG.PWY
+2023-03-01 15:03:14 INFO::Fitting model to feature number 9, ARGORNPROST.PWY
+2023-03-01 15:03:14 INFO::Fitting model to feature number 10, ARGSYN.PWY
+2023-03-01 15:03:14 INFO::Fitting model to feature number 11, ARGSYNBSUB.PWY
+2023-03-01 15:03:14 INFO::Fitting model to feature number 12, ARO.PWY
+2023-03-01 15:03:14 INFO::Fitting model to feature number 13, ASPASN.PWY
+2023-03-01 15:03:14 INFO::Fitting model to feature number 14, AST.PWY
+2023-03-01 15:03:15 INFO::Fitting model to feature number 15, BIOTIN.BIOSYNTHESIS.PWY
+2023-03-01 15:03:15 INFO::Fitting model to feature number 16, BRANCHED.CHAIN.AA.SYN.PWY
+2023-03-01 15:03:15 INFO::Fitting model to feature number 17, CALVIN.PWY
+2023-03-01 15:03:15 INFO::Fitting model to feature number 18, CATECHOL.ORTHO.CLEAVAGE.PWY
+2023-03-01 15:03:15 INFO::Fitting model to feature number 19, CENTFERM.PWY
+2023-03-01 15:03:15 INFO::Fitting model to feature number 20, COA.PWY
+2023-03-01 15:03:15 INFO::Fitting model to feature number 21, COBALSYN.PWY
+2023-03-01 15:03:15 INFO::Fitting model to feature number 22, CODH.PWY
+2023-03-01 15:03:15 INFO::Fitting model to feature number 23, COLANSYN.PWY
+2023-03-01 15:03:15 INFO::Fitting model to feature number 24, COMPLETE.ARO.PWY
+2023-03-01 15:03:15 INFO::Fitting model to feature number 25, CRNFORCAT.PWY

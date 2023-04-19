@@ -26,6 +26,12 @@ baseline_meta <- metadata
 row.names(baseline_meta)=baseline_meta$SampleID
 baseline_counts <- counts 
 
+# NIH mice 
+NIH_meta <- metadata %>% filter(Background=="NIH", SampleID %in% names(counts))
+row.names(JAX_meta) <- JAX_meta$SampleID
+NIH <- NIH_meta$SampleID
+NIH_counts <- counts %>% select(all_of(NIH))
+
 ## Prevalence filter datasets -- 
 # JAX
 t_df_input_data<-as.data.frame(t(JAX_counts))
@@ -52,6 +58,30 @@ JAX_counts_prev<- JAX_counts%>% filter(prevalence>=13) #[Result: 557 features, 9
 
 JAX_counts_prev <- JAX_counts %>% select(-c(prevalence))
 
+# NIH
+t_df_input_data<-as.data.frame(t(NIH_counts))
+
+ctr= 0
+prevalence <- vector(mode="numeric")
+
+for(i in 1:ncol(t_df_input_data)){
+  v<-t_df_input_data %>% pull(i)
+  for(j in 1:length(v)){
+    if (t_df_input_data[j,i]>0){
+      ctr=1+ctr
+    }
+    else {
+      ctr=ctr
+    }
+  }
+  prevalence<-append(prevalence,ctr)
+  ctr=0
+}
+0.15*45 #7 samples 
+NIH_counts$prevalence<-prevalence
+NIH_counts_prev<- NIH_counts%>% filter(prevalence>=7) #[Result: 242 features, 46 samples]
+
+NIH_counts_prev <- NIH_counts %>% select(-c(prevalence))
 # Full Dataset
 t_df_input_data<-as.data.frame(t(baseline_counts))
 
@@ -80,11 +110,20 @@ baseline_counts_prev <- baseline_counts %>% select(-c(prevalence))
 ## Calculate RS Jensen Shannon distance matrix -- 
 
 
-baseline.dist <- calculate_rsjensen(baseline_counts_prev)
+# JAX 
 JAX.dist <- calculate_rsjensen(JAX_counts_prev)
 
 data.adonis=adonis(JAX.dist ~ Sex + Genotype, data=JAX_meta, permutations=10000)
 data.adonis$aov.tab 
+
+# NIH
+NIH.dist <- calculate_rsjensen(NIH_counts_prev)
+
+data.adonis=adonis(NIH.dist ~ Sex + Genotype, data=NIH_meta, permutations=10000)
+data.adonis$aov.tab 
+
+# Baseline
+baseline.dist <- calculate_rsjensen(baseline_counts_prev)
 
 target <- row.names(baseline.dist)
 baseline_meta= baseline_meta[match(target, row.names(baseline_meta)),]
@@ -102,12 +141,20 @@ data.adonis$aov.tab
 cols <- c("WT"="black", "HET"= "blue", "MUT"="red")
 
 jax_baseline_pcoa <- generate_pcoA_plots(distance_matrix=JAX.dist,
-                                   counts = JAX_counts,
+                                   counts = JAX_counts_prev,
                                    metadata = JAX_meta,
                                    title="JAX - Fecal Pellet RS Jensen",
                                    colorvariable = Genotype,
                                    colorvector = cols,
                                    wa_scores_filepath = "Baseline/beta_diversity/JAX_Top_Taxa_PcoA.csv")
+
+NIH_baseline_pcoa <- generate_pcoA_plots(distance_matrix=NIH.dist,
+                                         counts = NIH_counts_prev,
+                                         metadata = NIH_meta,
+                                         title="NIH - Fecal Pellet RS Jensen",
+                                         colorvariable = Genotype,
+                                         colorvector = cols,
+                                         wa_scores_filepath = "Baseline/beta_diversity/NIH_Top_Taxa_PcoA.csv")
 
 full_baseline_pcoa <- generate_pcoA_plots(distance_matrix=baseline.dist,
                                    counts = baseline_counts_prev,
@@ -135,4 +182,5 @@ generate_pcoA_plots(distance_matrix=JAX.dist,
                     colorvector = cols,
                     wa_scores_filepath = "Baseline/beta_diversity/JAX_Top_Taxa_PcoA.csv")
 
-plot_grid(jax_baseline_pcoa,full_baseline_pcoa, labels=c("E","F"),label_size = 20)
+plot_grid(jax_baseline_pcoa,full_baseline_pcoa, NIH_baseline_pcoa,
+          labels=c("E","F", "G"),label_size = 20, nrow=1)

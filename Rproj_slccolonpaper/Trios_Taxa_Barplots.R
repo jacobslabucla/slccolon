@@ -43,7 +43,7 @@ grid::grid.draw(legend)
 ## Final Figures --
 plot_grid(trios_lc_barplot,trios_mc_barplot)
 ## Extract taxa >0.001 for use in legend ---
-L2_lum<-read.csv("Trios/LumCol_level-6_trios.csv",header=TRUE,row.names=1)
+L2_lum<-read_rds("Trios/LuminalColon_level-6.RDS")
 L2_lum<- as.matrix(L2_lum)
 L2_lum<-funrar::make_relative(L2_lum)
 L2_lum<-as.data.frame(t(L2_lum))
@@ -56,7 +56,7 @@ taxa<-L2_lum$keeptaxa
 L2_lum <- select(L2_lum,-keeptaxa)
 L2_lum <- as.matrix(sapply(L2_lum,as.numeric))
 L2_lum <- as.data.frame(prop.table(L2_lum,2))
-taxa<-gsub(".*g__","",taxa )
+
 
 L2_lum$Taxa <-taxa
 labels_lum <- unique(L2_lum$Taxa)

@@ -5,10 +5,12 @@ library(nlme)
 library(tidyr)
 library(knitr)
 
-setwd("../SLC_DSS/") # CHANGE to the directory containing the fastq files
+setwd("../") # CHANGE to the directory containing the fastq files
 here::i_am("Rproj_slccolonpaper/SLC_DSS_phenotype.R")
 
-data <- read.csv("Stool_Phenotype.csv",header=TRUE)
+data <- read.csv("SLC_DSS/Stool_Phenotype.csv",header=TRUE)
+weight <- read.csv("SLC_DSS/Weight.csv")
+pct_weight <- read.csv("SLC_DSS/PCT_Body_Weight.csv")
 
 data_long <- pivot_longer(data, 
                           cols = starts_with("D"), 
@@ -19,10 +21,34 @@ data_long$Day <- as.integer(stringr::str_extract(data_long$Day, "\\d+"))
 data_long$Genotype <- factor(data_long$Genotype, levels=c("WT", "HET", "MUT"))
 data_long <- remove_missing(data_long)
 
+weight_long <- pivot_longer(weight, 
+                          cols = starts_with("D"), 
+                          names_to = "Day", 
+                          values_to = "Score")
+
+weight_long$Day <- as.integer(stringr::str_extract(weight_long$Day, "\\d+"))
+weight_long$Day <- factor(weight_long$Day)
+weight_long$Genotype <- factor(weight_long$Genotype, levels=c("WT", "HET", "MUT"))
+weight_long <- remove_missing(weight_long)
+
+pct_weight_long <- pivot_longer(pct_weight, 
+                            cols = starts_with("D"), 
+                            names_to = "Day", 
+                            values_to = "Score")
+
+pct_weight_long$Day <- as.integer(stringr::str_extract(pct_weight_long$Day, "\\d+"))
+pct_weight_long$Day <- factor(pct_weight_long$Day)
+pct_weight_long$Score <- gsub("%","",pct_weight_long$Score)
+pct_weight_long$Score <- as.numeric(pct_weight_long$Score)
+pct_weight_long$Genotype <- factor(pct_weight_long$Genotype, levels=c("WT", "HET", "MUT"))
+pct_weight_long <- pct_weight_long %>% select(-c("X"))
+pct_weight_long <- remove_missing(pct_weight_long)
+
 ## All together -- 
 # Calculate the mean and standard error for each group
 
-make_longitudinal_graph <- function(filterby, ylab) {
+make_longitudinal_graph <- function(dataframe, filterby, ylab) {
+data_long<- as.data.frame(dataframe)
 df_summary <- data_long %>% filter(Phenotype==filterby) %>%
   group_by(Genotype, Day) %>%
   summarise(mean = mean(Score), 
@@ -43,11 +69,13 @@ ggplot(df_summary, aes(x = Day, y = mean, group = Genotype, color = Genotype)) +
 
 } 
 
-clin_score <- make_longitudinal_graph("Clinical_Score", "Clinical Score")
-stool_consist <- make_longitudinal_graph("Stool_Consistency", "Stool Consistency")
-occult_score <- make_longitudinal_graph("Occult_Score", "Fecal Occult")
+clin_score <- make_longitudinal_graph(data_long,"Clinical_Score", "Clinical Score")
+stool_consist <- make_longitudinal_graph(data_long,"Stool_Consistency", "Stool Consistency")
+occult_score <- make_longitudinal_graph(data_long, "Occult_Score", "Fecal Occult")
+weight_raw <- make_longitudinal_graph(weight_long,"Body_Weight", "Body Weight (g)")
+percent_weight<- make_longitudinal_graph(pct_weight_long,"Percent_Change_Weight", "Body Weight (% Baseline)")
 
-plot_grid(clin_score, stool_consist, occult_score, labels=c("C", "D", "E"), ncol=3, label_size = 22)
+plot_grid(weight_raw, percent_weight,NULL,clin_score, stool_consist, occult_score, labels=c("A","B","","C", "D", "E"), ncol=3,nrow=2, label_size = 22)
 
 
 ### Stats ---
@@ -59,7 +87,17 @@ clinical <- data_long %>% filter(Phenotype=="Clinical_Score")
 occult <- data_long %>% filter(Phenotype=="Occult_Score")
 consist <- data_long %>% filter(Phenotype=="Stool_Consistency")
 
+weight_long <- pivot_longer(weight, 
+                            cols = starts_with("D"), 
+                            names_to = "Day", 
+                            values_to = "Score")
 
+pct_weight_long <- pivot_longer(pct_weight, 
+                                cols = starts_with("D"), 
+                                names_to = "Day", 
+                                values_to = "Score")
+pct_weight_long$Score <- gsub("%","",pct_weight_long$Score)
+pct_weight_long$Score <- as.numeric(pct_weight_long$Score)
 ## Pairwise compairison --
 
 ## Splitting the dataframe by Day - Clinical -
@@ -148,6 +186,64 @@ md_table <- knitr::kable(results_df, format = "markdown", align = c("c", "c", "c
 
 # Write the markdown table to a file
 writeLines(md_table, "DSS_Stool_Consistency_wilcoxon_results.md")
+
+## Splitting the dataframe by Day - Clinical -
+df_list <- split(weight_long, weight_long$Day)
+
+# Defining the function to perform Wilcoxon rank sum test
+wilcox_test <- function(df) {
+  wt_mut <- wilcox.test(Score ~ Genotype, data = df[df$Genotype %in% c("WT", "MUT"),])
+  wt_het <- wilcox.test(Score ~ Genotype, data = df[df$Genotype %in% c("WT", "HET"),])
+  return(list(wt_mut, wt_het))
+}
+
+# Applying the function to each split dataframe
+results <- lapply(df_list, wilcox_test)
+results[1]
+# Combining the results into a data frame
+results_df <- do.call(rbind, lapply(seq_along(df_list), function(i) {
+  day <- names(df_list)[i]
+  res <- results[[i]]
+  data.frame(Day = rep(day, 4),
+             Genotype = rep(c("WT-MUT", "MUT-WT", "WT-HET", "HET-WT"), each = 1),
+             W = c(res[[1]]$statistic, res[[1]]$statistic, res[[2]]$statistic, res[[2]]$statistic),
+             p.value = c(res[[1]]$p.value, res[[1]]$p.value, res[[2]]$p.value, res[[2]]$p.value))
+}))
+
+# Convert the data frame to a markdown table
+md_table <- knitr::kable(results_df, format = "markdown", align = c("c", "c", "c", "c"))
+
+# Write the markdown table to a file
+writeLines(md_table, "SLC_DSS/BW_raw_wilcoxon_results.md")
+
+## Splitting the dataframe by Day - Clinical -
+df_list <- split(pct_weight_long, pct_weight_long$Day)
+
+# Defining the function to perform Wilcoxon rank sum test
+wilcox_test <- function(df) {
+  wt_mut <- wilcox.test(Score ~ Genotype, data = df[df$Genotype %in% c("WT", "MUT"),])
+  wt_het <- wilcox.test(Score ~ Genotype, data = df[df$Genotype %in% c("WT", "HET"),])
+  return(list(wt_mut, wt_het))
+}
+
+# Applying the function to each split dataframe
+results <- lapply(df_list, wilcox_test)
+results[1]
+# Combining the results into a data frame
+results_df <- do.call(rbind, lapply(seq_along(df_list), function(i) {
+  day <- names(df_list)[i]
+  res <- results[[i]]
+  data.frame(Day = rep(day, 4),
+             Genotype = rep(c("WT-MUT", "MUT-WT", "WT-HET", "HET-WT"), each = 1),
+             W = c(res[[1]]$statistic, res[[1]]$statistic, res[[2]]$statistic, res[[2]]$statistic),
+             p.value = c(res[[1]]$p.value, res[[1]]$p.value, res[[2]]$p.value, res[[2]]$p.value))
+}))
+
+# Convert the data frame to a markdown table
+md_table <- knitr::kable(results_df, format = "markdown", align = c("c", "c", "c", "c"))
+
+# Write the markdown table to a file
+writeLines(md_table, "SLC_DSS/PCT_BW_wilcoxon_results.md")
 
 ## LMEM -- 
 output <- lme(fixed= FP_output ~ Sex + SLC_Genotype + ASO_Tg, random = ~1|MouseID, data=data_long)

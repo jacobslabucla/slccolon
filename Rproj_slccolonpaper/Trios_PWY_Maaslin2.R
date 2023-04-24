@@ -5,7 +5,23 @@ library(ggplot2)
 library(cowplot)
 library(plyr)
 
-setwd("/Users/rochellelai/Box Sync/JacobsLab/slcproject/SLC_Microbiome_Trios_RL/Pathway")
+setwd("C:/Users/Jacobs Laboratory/Documents/JCYang/slccolonpaper/slccolon/") # CHANGE to the directory containing the fastq files
+here::i_am("Rproj_slccolonpaper/Trios_ASV_level_Maaslin2.R")
+
+metadata <- read.table("Trios/starting_files/SLC_TOTAL_OCT2020_FULL_Metadata.tsv", header=TRUE)
+counts <- read.table("Trios/starting_files/Trios_ASV_table_Silva_v138_1.tsv", header = TRUE, row.names=1)
+pathway <- read.delim("Trios/differential_Pathway/feature-table.tsv", header = TRUE, row.names=1)
+
+## Store taxonomy in an annotation file --
+annotation <- tibble::rownames_to_column(counts, "feature") %>% select(c("feature", "taxonomy"))
+counts <- counts %>% select(-c("taxonomy"))
+pathway <- pathway %>% select(-c("taxonomy"))
+
+## Apply minimum sequencing depth threshold --
+counts <- counts[colSums(counts) >= 10000]
+
+## Grab samples in the pathway table that are present in counts --
+pathway <- pathway %>% select(c(names(counts)))
 
 ## Luminal Colon
 

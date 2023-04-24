@@ -8,8 +8,8 @@ library(funrar)
 setwd("C:/Users/Jacobs Laboratory/Documents/JCYang/slccolonpaper/slccolon/") # CHANGE to the directory containing the fastq files
 here::i_am("Rproj_slccolonpaper/Trios_ASV_level_Maaslin2.R")
 
-metadata <- read.table("Trios/SLC_TOTAL_OCT2020_FULL_Metadata.tsv", header=TRUE)
-counts <- read.table("Trios/Trios_ASV_table_Silva_v138_1.tsv", header = TRUE, row.names=1)
+metadata <- read.table("Trios/starting_files/SLC_TOTAL_OCT2020_FULL_Metadata.tsv", header=TRUE)
+counts <- read.table("Trios/starting_files/Trios_ASV_table_Silva_v138_1.tsv", header = TRUE, row.names=1)
 
 ## Store taxonomy in an annotation file --
 annotation <- tibble::rownames_to_column(counts, "feature") %>% select(c("feature", "taxonomy"))

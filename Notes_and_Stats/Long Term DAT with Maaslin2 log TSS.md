@@ -16,4 +16,4 @@ Model failed to converge with 1 negative eigenvalue: -2.7e+00
 ```
 
 ##### Model 2: ASV ~ Site + Sex + Genotype + (1/MouseID) 
-- all good, no probs
+- all good, no probs 

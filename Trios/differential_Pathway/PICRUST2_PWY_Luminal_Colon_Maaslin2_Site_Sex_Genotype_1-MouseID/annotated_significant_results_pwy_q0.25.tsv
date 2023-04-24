@@ -1,0 +1,4 @@
+"","feature","metadata","value","coef","stderr","N","N.not.0","pval","qval","description"
+"1","GOLPDLCAT.PWY","Genotype","MUT",-0.241712769445735,0.135497569665045,89,0,0.0861201586567332,0.240170079422243,"superpathway of glycerol degradation to 1,3-propanediol"
+"2","P23.PWY","Genotype","MUT",-0.169615933685075,0.0883044722565156,89,0,0.0657899434922884,0.195404225838255,"reductive TCA cycle I"
+"3","P461.PWY","Genotype","HET",0.12408164137574,0.0583463650468848,89,0,0.0430204363207044,0.137959273969621,"hexitol fermentation to lactate, formate, ethanol and acetate"

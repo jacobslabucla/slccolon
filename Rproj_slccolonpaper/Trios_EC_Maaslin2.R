@@ -4,6 +4,7 @@ library(dplyr)
 library(ggplot2)
 library(cowplot)
 library(plyr)
+library(tidyr)
 
 setwd("C:/Users/Jacobs Laboratory/Documents/JCYang/slccolonpaper/slccolon/") # CHANGE to the directory containing the fastq files
 here::i_am("Rproj_slccolonpaper/Trios_EC_Maaslin2.R")
@@ -114,6 +115,22 @@ annotation <- read.delim("Trios/differential_EC/annotated_EC.tsv", row.names=1)
 annotation$feature <- row.names(annotation)
 annotation <- annotation %>% select(c("feature","description"))
 annotation$feature <- gsub(":", ".", annotation$feature)
+annotation$feature
+# define a function to assign letters based on first number
+assign_letter <- function(x) {
+  first_num <- substr(x, start = 4, stop = 4)
+  letter <- switch(first_num,
+                   "1" = "Oxidoreductases",
+                   "2" = "Transferases",
+                   "3" = "Hydrolases",
+                   "4" = "Lyases",
+                   "5"="Isomerases",
+                   "6"="Ligases","unknown")
+  return(letter)
+}
+
+annotation$enzyme_class <- sapply(annotation$feature, assign_letter)
+
 data <- merge(data,annotation, by="feature")
 write.csv(data, "Trios/differential_EC/PICRUST2_EC_Luminal_Colon_Maaslin2_Site_Sex_Genotype_1-MouseID/annotated_significant_results_pwy_q0.25.tsv")
 

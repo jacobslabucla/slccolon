@@ -4,6 +4,7 @@ library(dplyr)
 library(ggplot2)
 library(cowplot)
 library(plyr)
+library(circlize)
 
 setwd("C:/Users/Jacobs Laboratory/Documents/JCYang/slccolonpaper/slccolon/") # CHANGE to the directory containing the fastq files
 here::i_am("Rproj_slccolonpaper/Trios_PWY_Maaslin2.R")
@@ -63,6 +64,15 @@ fit_data = Maaslin2(input_data=df_input_data,
                     min_prevalence = 0.15,
                     transform ="log",plot_heatmap = FALSE,plot_scatter = FALSE)
 
+fit_data = Maaslin2(input_data=df_input_data, 
+                    input_metadata=df_input_metadata, 
+                    output = paste0("Trios/differential_Pathway/PICRUST2_PWY_Luminal_Colon_Maaslin2_SequencingRun_Site_Sex_Genotype_1-MouseID"), 
+                    fixed_effects = c("Sequencing_Run","Site",  "Sex", "Genotype"), normalization = "TSS", 
+                    random_effects = c("MouseID"),
+                    #reference = c("Genotype,WT", "Site,Distal_Colon"),
+                    min_prevalence = 0.15,
+                    transform ="log",plot_heatmap = FALSE,plot_scatter = FALSE)
+
 ### Mucosal Colon ---
 
 input_metadata <- metadata
@@ -102,135 +112,291 @@ fit_data = Maaslin2(input_data=df_input_data,
                     min_prevalence = 0.15,
                     transform ="log",plot_heatmap = FALSE,plot_scatter = FALSE)
 
+fit_data = Maaslin2(input_data=df_input_data, 
+                    input_metadata=df_input_metadata, 
+                    output = paste0("Trios/differential_Pathway/PICRUST2_PWY_Mucosal_Colon_Maaslin2_SequencingRun_Site_Sex_Genotype_1-MouseID"), 
+                    fixed_effects = c("Sequencing_Run","Site",  "Sex", "Genotype"), normalization = "TSS", 
+                    random_effects = c("MouseID"),
+                    #reference = c("Genotype,WT", "Site,Distal_Colon"),
+                    min_prevalence = 0.15,
+                    transform ="log",plot_heatmap = FALSE,plot_scatter = FALSE)
 
-### Visualize PWY results ---
+### Visualization of the Results ---
 
-## Luminal Colon --
-data<-read.table("Trios/differential_Pathway/PICRUST2_PWY_Luminal_Colon_Maaslin2_Site_Sex_Genotype_1-MouseID/significant_results.tsv", header=TRUE)
-data <- data %>% filter(qval <0.25)
-data <- data %>% filter(metadata=="Genotype")
-annotation <- read.delim("Trios/differential_Pathway/annotated_pwy.tsv", row.names=1)
-annotation$feature <- row.names(annotation)
-annotation <- annotation %>% select(c("feature","description"))
-annotation$feature <- gsub("-", ".", annotation$feature)
-data <- merge(data,annotation, by="feature")
-write.csv(data, "Trios/differential_Pathway/PICRUST2_PWY_Luminal_Colon_Maaslin2_Site_Sex_Genotype_1-MouseID/annotated_significant_results_pwy_q0.25.tsv")
+create_bar_plot <- function(res_plot, title) {
+  y <- tapply(res_plot$coef, res_plot$description, function(y) mean(y))
+  y <- sort(y, FALSE)
+  res_plot$description <- factor(as.character(res_plot$description), levels = names(y))
+  cols <- c(WT = "black", HET = "blue", MUT = "firebrick")
+  res_plot %>%
+    arrange(coef) %>%
+    filter(qval < 0.25, abs(coef) > 0) %>%
+    ggplot(aes(coef, description, fill = site)) +
+    geom_bar(stat = "identity") +
+    theme_cowplot(16) +
+    theme(axis.text.y = element_text(face = "bold")) +
+    scale_fill_manual(values = cols) +
+    labs(x = "Effect size", y = "", fill = "") +
+    theme(legend.position = "none") +
+    ggtitle(title) +
+    theme(plot.title = element_text(hjust = 0.5))
+}
 
-res_plot <- data %>% filter(value=="MUT")
-res_plot <- unique(res_plot)
-res_plot <- res_plot %>%
-  mutate(site = ifelse(coef< 0, "WT", "MUT"))
-
-y = tapply(res_plot$coef, res_plot$description, function(y) mean(y))  # orders the genera by the highest fold change of any ASV in the genus; can change max(y) to mean(y) if you want to order genera by the average log2 fold change
-y = sort(y, FALSE)   #switch to TRUE to reverse direction
-res_plot$description= factor(as.character(res_plot$description), levels = names(y))
-
-cols <- c("WT"="black", "HET"="blue", "MUT"="firebrick")
-pwy_mut <- res_plot %>%
-  arrange(coef) %>%
-  filter(qval < 0.25, abs(coef) > 0) %>%
-  ggplot2::ggplot(aes(coef, description, fill = site)) +
-  geom_bar(stat = "identity") +
-  cowplot::theme_cowplot(16) +
-  theme(axis.text.y = element_text(face = "bold")) +
-  scale_fill_manual(values = cols) +
-  labs(x = "Effect size (MUT/WT)",
-       y = "",
-       fill = "") +
-  theme(legend.position = "none")+
-  ggtitle("Luminal Colon: WT vs MUT q<0.25") +
-  theme(plot.title = element_text(hjust = 0.5))
-pwy_mut
-
-res_plot <- data %>% filter(value=="HET")
-res_plot <- unique(res_plot)
-res_plot <- res_plot %>%
-  mutate(site = ifelse(coef< 0, "WT", "HET"))
-
-y = tapply(res_plot$coef, res_plot$description, function(y) mean(y))  # orders the genera by the highest fold change of any ASV in the genus; can change max(y) to mean(y) if you want to order genera by the average log2 fold change
-y = sort(y, FALSE)   #switch to TRUE to reverse direction
-res_plot$description= factor(as.character(res_plot$description), levels = names(y))
-
-cols <- c("WT"="black", "HET"="blue", "MUT"="firebrick")
-pwy_het <- res_plot %>%
-  arrange(coef) %>%
-  filter(qval < 0.25, abs(coef) > 0) %>%
-  ggplot2::ggplot(aes(coef, description, fill = site)) +
-  geom_bar(stat = "identity") +
-  cowplot::theme_cowplot(16) +
-  theme(axis.text.y = element_text(face = "bold")) +
-  scale_fill_manual(values = cols) +
-  labs(x = "Effect size (HET/WT)",
-       y = "",
-       fill = "") +
-  theme(legend.position = "none")+
-  ggtitle("Luminal Colon: WT vs HET q<0.25") +
-  theme(plot.title = element_text(hjust = 0.5))
-pwy_het
-
-plot_grid(pwy_mut, pwy_het, labels=c("A","B"))
-
-
-## Mucosal Colon --
+## Model 1: PWY ~ Site + Sex + Genotype + (1|mouseID) --
+# Mucosal Colon -
 data<-read.table("Trios/differential_Pathway/PICRUST2_PWY_Mucosal_Colon_Maaslin2_Site_Sex_Genotype_1-MouseID/significant_results.tsv", header=TRUE)
-data <- data %>% filter(qval <0.25)
-data <- data %>% filter(metadata=="Genotype")
 annotation <- read.delim("Trios/differential_Pathway/annotated_pwy.tsv", row.names=1)
 annotation$feature <- row.names(annotation)
 annotation <- annotation %>% select(c("feature","description"))
 annotation$feature <- gsub("-", ".", annotation$feature)
 data <- merge(data,annotation, by="feature")
-write.csv(data, "Trios/differential_Pathway/PICRUST2_PWY_Mucosal_Colon_Maaslin2_Site_Sex_Genotype_1-MouseID/annotated_significant_results_pwy_q0.25.tsv")
 
-res_plot <- data %>% filter(value=="MUT")
-res_plot <- unique(res_plot)
-res_plot <- res_plot %>%
-  mutate(site = ifelse(coef< 0, "WT", "MUT"))
+res_plot <- data %>%
+    filter(value == "MUT") %>%
+    unique() %>%
+    mutate(site = ifelse(coef < 0, "WT", "MUT"))
+pwy_mut <- create_bar_plot(res_plot, "Mucosal Colon: WT vs MUT q<0.25")
+res_plot <- data %>%
+    filter(value == "HET") %>%
+    unique() %>%
+    mutate(site = ifelse(coef < 0, "WT", "HET"))
+pwy_het <- create_bar_plot(res_plot, "Mucosal colon: WT vs HET q<0.25")
+plot_grid(pwy_mut, pwy_het, labels = c("A", "B"))
 
-y = tapply(res_plot$coef, res_plot$description, function(y) mean(y))  # orders the genera by the highest fold change of any ASV in the genus; can change max(y) to mean(y) if you want to order genera by the average log2 fold change
-y = sort(y, FALSE)   #switch to TRUE to reverse direction
-res_plot$description= factor(as.character(res_plot$description), levels = names(y))
+# Luminal Colon -
+data<-read.table("Trios/differential_Pathway/PICRUST2_PWY_Luminal_Colon_Maaslin2_Site_Sex_Genotype_1-MouseID/significant_results.tsv", header=TRUE)
+annotation <- read.delim("Trios/differential_Pathway/annotated_pwy.tsv", row.names=1)
+annotation$feature <- row.names(annotation)
+annotation <- annotation %>% select(c("feature","description"))
+annotation$feature <- gsub("-", ".", annotation$feature)
+data <- merge(data,annotation, by="feature")
 
-cols <- c("WT"="black", "HET"="blue", "MUT"="firebrick")
-mc_pwy_mut <- res_plot %>%
-  arrange(coef) %>%
-  filter(qval < 0.25, abs(coef) > 0) %>%
-  ggplot2::ggplot(aes(coef, description, fill = site)) +
-  geom_bar(stat = "identity") +
-  cowplot::theme_cowplot(16) +
-  theme(axis.text.y = element_text(face = "bold")) +
-  scale_fill_manual(values = cols) +
-  labs(x = "Effect size (MUT/WT)",
-       y = "",
-       fill = "") +
-  theme(legend.position = "none")+
-  ggtitle("Mucosal Colon: WT vs MUT q<0.25") +
-  theme(plot.title = element_text(hjust = 0.5))
+res_plot <- data %>%
+  filter(value == "MUT") %>%
+  unique() %>%
+  mutate(site = ifelse(coef < 0, "WT", "MUT"))
+pwy_mut <- create_bar_plot(res_plot, "Mucosal Colon: WT vs MUT q<0.25")
+res_plot <- data %>%
+  filter(value == "HET") %>%
+  unique() %>%
+  mutate(site = ifelse(coef < 0, "WT", "HET"))
+pwy_het <- create_bar_plot(res_plot, "Mucosal colon: WT vs HET q<0.25")
+plot_grid(pwy_mut, pwy_het, labels = c("A", "B"))
 
-res_plot <- data %>% filter(value=="HET")
-res_plot <- unique(res_plot)
-res_plot <- res_plot %>%
-  mutate(site = ifelse(coef< 0, "WT", "HET"))
+## Model 2: PWY ~ Sequencing_Run + Site + Sex + Genotype + (1|mouseID) --
+# Mucosal Colon -
+data<-read.table("Trios/differential_Pathway/PICRUST2_PWY_Mucosal_Colon_Maaslin2_SequencingRun_Site_Sex_Genotype_1-MouseID/significant_results.tsv", header=TRUE)
+annotation <- read.delim("Trios/differential_Pathway/annotated_pwy.tsv", row.names=1)
+annotation$feature <- row.names(annotation)
+annotation <- annotation %>% select(c("feature","description"))
+annotation$feature <- gsub("-", ".", annotation$feature)
+data <- merge(data,annotation, by="feature")
+higher_classification <- read.csv("MetaCyc_pathwaynames_Key.csv", row.names=1, header=TRUE)
+higher_classification$feature <- row.names(higher_classification)
+data <- merge(data,higher_classification, by="feature")
 
-y = tapply(res_plot$coef, res_plot$description, function(y) mean(y))  # orders the genera by the highest fold change of any ASV in the genus; can change max(y) to mean(y) if you want to order genera by the average log2 fold change
-y = sort(y, FALSE)   #switch to TRUE to reverse direction
-res_plot$description= factor(as.character(res_plot$description), levels = names(y))
+res_plot <- data %>%
+  filter(value == "MUT") %>%
+  unique() %>%
+  mutate(site = ifelse(coef < 0, "WT", "MUT"))
+pwy_mut <- create_bar_plot(res_plot, "Mucosal Colon: WT vs MUT q<0.25")
+res_plot <- data %>%
+  filter(value == "HET") %>%
+  unique() %>%
+  mutate(site = ifelse(coef < 0, "WT", "HET"))
+pwy_het <- create_bar_plot(res_plot, "Mucosal colon: WT vs HET q<0.25")
+plot_grid(pwy_mut, pwy_het, labels = c("A", "B"))
 
-cols <- c("WT"="black", "HET"="blue", "MUT"="firebrick")
-mc_pwy_het <- res_plot %>%
-  arrange(coef) %>%
-  filter(qval < 0.25, abs(coef) > 0) %>%
-  ggplot2::ggplot(aes(coef, description, fill = site)) +
-  geom_bar(stat = "identity") +
-  cowplot::theme_cowplot(16) +
-  theme(axis.text.y = element_text(face = "bold")) +
-  scale_fill_manual(values = cols) +
-  labs(x = "Effect size (HET/WT)",
-       y = "",
-       fill = "") +
-  theme(legend.position = "none")+
-  ggtitle("Mucosal Colon: WT vs HET q<0.25") +
-  theme(plot.title = element_text(hjust = 0.5))
-pwy_het
+# Luminal Colon -
+data<-read.table("Trios/differential_Pathway/PICRUST2_PWY_Luminal_Colon_Maaslin2_SequencingRun_Site_Sex_Genotype_1-MouseID/significant_results.tsv", header=TRUE)
+annotation <- read.delim("Trios/differential_Pathway/annotated_pwy.tsv", row.names=1)
+annotation$feature <- row.names(annotation)
+annotation <- annotation %>% select(c("feature","description"))
+annotation$feature <- gsub("-", ".", annotation$feature)
+data <- merge(data,annotation, by="feature")
 
-plot_grid(mc_pwy_mut, mc_pwy_het, labels=c("A","B"))
+res_plot <- data %>%
+  filter(value == "MUT") %>%
+  unique() %>%
+  mutate(site = ifelse(coef < 0, "WT", "MUT"))
+pwy_mut <- create_bar_plot(res_plot, "Luminal Colon: WT vs MUT q<0.25")
+res_plot <- data %>%
+  filter(value == "HET") %>%
+  unique() %>%
+  mutate(site = ifelse(coef < 0, "WT", "HET"))
+pwy_het <- create_bar_plot(res_plot, "Luminal Colon: WT vs HET q<0.25")
+plot_grid(pwy_mut, pwy_het, labels = c("A", "B"))
+
+## Try making a circle plot for mucosal colon --
+
+# Mucosal Colon MUT enriched 
+data<-read.table("Trios/differential_Pathway/PICRUST2_PWY_Mucosal_Colon_Maaslin2_SequencingRun_Site_Sex_Genotype_1-MouseID/significant_results.tsv", header=TRUE)
+data <- data %>% 
+  filter(value=="MUT") %>% 
+  filter(coef>0)
+annotation <- read.delim("Trios/differential_Pathway/annotated_pwy.tsv", row.names=1)
+annotation$feature <- row.names(annotation)
+annotation <- annotation %>% select(c("feature","description"))
+annotation$feature <- gsub("-", ".", annotation$feature)
+data <- merge(data,annotation, by="feature")
+
+#Classification strategy no 1 
+higher_classification <- read.csv("MetaCyc_pathwaynames_Key.csv", row.names=1, header=TRUE)
+higher_classification$feature <- row.names(higher_classification)
+data <- merge(data,higher_classification, by="feature")
+data <- rename(data, replace = c("L4A" = "classification"))
+data <- data %>% 
+  filter(value=="MUT") %>% 
+  filter(coef>0) %>%
+  select(c("feature", "classification","coef"))
+
+#Classification strategy no 2 
+# split the paths column by "|"
+higher_classification <- read.delim("Huttenhower_MetaCyc_Hierarchy.txt",header=TRUE)
+df <- higher_classification
+df_split <- strsplit(df$annotation, "\\|")
+df_new <- data.frame(do.call(rbind, df_split))
+df_new$feature <- higher_classification$feature
+df_new$feature <- gsub("-",".",df_new$feature)
+data <- merge(data,df_new, by="feature")
+data <- data %>% 
+  select(c("feature", "X1","coef"))
+
+mat <- data 
+?circos.text()
+circos.clear()
+dev.new(width=10,height=10)
+chordDiagram(mat,annotationTrack = "grid",preAllocateTracks = list(track.height = max(strwidth(unlist(dimnames(mat))))))
+obj <- circos.track(track.index = 1, panel.fun = function(x, y) {
+  circos.text(CELL_META$xcenter, CELL_META$ylim[1], CELL_META$sector.index, 
+              facing = "clockwise", niceFacing = TRUE, adj = 0.25,
+              cex=1)
+}, bg.border = NA) 
+circos.clear()
+
+# Mucosal Colon MUT depleted 
+data<-read.table("Trios/differential_Pathway/PICRUST2_PWY_Mucosal_Colon_Maaslin2_SequencingRun_Site_Sex_Genotype_1-MouseID/significant_results.tsv", header=TRUE)
+data <- data %>% 
+  filter(value=="MUT") %>% 
+  filter(coef<0)
+annotation <- read.delim("Trios/differential_Pathway/annotated_pwy.tsv", row.names=1)
+annotation$feature <- row.names(annotation)
+annotation <- annotation %>% select(c("feature","description"))
+annotation$feature <- gsub("-", ".", annotation$feature)
+data <- merge(data,annotation, by="feature")
+
+# Classification strategy no 1
+higher_classification <- read.csv("MetaCyc_pathwaynames_Key.csv", row.names=1, header=TRUE)
+higher_classification$feature <- row.names(higher_classification)
+data <- merge(data,higher_classification, by="feature")
+data <- rename(data, replace = c("L4A" = "classification"))
+data <- data %>% 
+  select(c("feature", "classification","coef"))
+data<- remove_missing(data)
+
+#Classification strategy no 2 
+# split the paths column by "|"
+higher_classification <- read.delim("Huttenhower_MetaCyc_Hierarchy.txt",header=TRUE)
+df <- higher_classification
+df_split <- strsplit(df$annotation, "\\|")
+df_new <- data.frame(do.call(rbind, df_split))
+df_new$feature <- higher_classification$feature
+df_new$feature <- gsub("-",".",df_new$feature)
+data <- merge(data,df_new, by="feature")
+data <- data %>% 
+  select(c("feature", "X1","coef"))
+data <- unique(data)
+
+mat <- data 
+?circos.text()
+circos.clear()
+dev.new(width=10,height=10)
+chordDiagram(mat,annotationTrack = "grid",preAllocateTracks = list(track.height = max(strwidth(unlist(dimnames(mat))))))
+obj <- circos.track(track.index = 1, panel.fun = function(x, y) {
+  circos.text(CELL_META$xcenter, CELL_META$ylim[1], CELL_META$sector.index, 
+              facing = "clockwise", niceFacing = TRUE, adj = 0.4,
+              cex=1)
+}, bg.border = NA) 
+circos.clear()
+
+# Luminal Colon MUT enriched 
+data<-read.table("Trios/differential_Pathway/PICRUST2_PWY_Luminal_Colon_Maaslin2_SequencingRun_Site_Sex_Genotype_1-MouseID/significant_results.tsv", header=TRUE)
+data <- data %>% 
+  filter(value=="MUT") %>% 
+  filter(coef>0)
+annotation <- read.delim("Trios/differential_Pathway/annotated_pwy.tsv", row.names=1)
+annotation$feature <- row.names(annotation)
+annotation <- annotation %>% select(c("feature","description"))
+annotation$feature <- gsub("-", ".", annotation$feature)
+data <- merge(data,annotation, by="feature")
+
+# split the paths column by "|"
+higher_classification <- read.delim("Huttenhower_MetaCyc_Hierarchy.txt",header=TRUE)
+df <- higher_classification
+df_split <- strsplit(df$annotation, "\\|")
+df_new <- data.frame(do.call(rbind, df_split))
+df_new$feature <- higher_classification$feature
+df_new$feature <- gsub("-",".",df_new$feature)
+
+# Merge higher_classification column
+data <- merge(data,df_new, by="feature")
+data <- data %>% 
+  select(c("description", "X1","coef"))
+
+mat <- data 
+?circos.text()
+circos.clear()
+dev.new(width=10,height=10)
+chordDiagram(mat,annotationTrack = "grid",preAllocateTracks = list(track.height = max(strwidth(unlist(dimnames(mat))))))
+obj <- circos.track(track.index = 1, panel.fun = function(x, y) {
+  circos.text(CELL_META$xcenter, CELL_META$ylim[1], CELL_META$sector.index, 
+              facing = "clockwise", niceFacing = TRUE, adj = 0.25,
+              cex=1)
+}, bg.border = NA) 
+circos.clear()
+
+# Luminal Colon MUT depleted 
+data<-read.table("Trios/differential_Pathway/PICRUST2_PWY_Luminal_Colon_Maaslin2_SequencingRun_Site_Sex_Genotype_1-MouseID/significant_results.tsv", header=TRUE)
+data <- data %>% 
+  filter(value=="MUT") %>% 
+  filter(coef<0)
+annotation <- read.delim("Trios/differential_Pathway/annotated_pwy.tsv", row.names=1)
+annotation$feature <- row.names(annotation)
+annotation <- annotation %>% select(c("feature","description"))
+annotation$feature <- gsub("-", ".", annotation$feature)
+data <- merge(data,annotation, by="feature")
+
+# Classification strategy no 1
+higher_classification <- read.csv("MetaCyc_pathwaynames_Key.csv", row.names=1, header=TRUE)
+higher_classification$feature <- row.names(higher_classification)
+data <- merge(data,higher_classification, by="feature")
+data <- rename(data, replace = c("L4A" = "classification"))
+data <- data %>% 
+  select(c("feature", "classification","coef"))
+data<- remove_missing(data)
+
+#Classification strategy no 2 
+# split the paths column by "|"
+higher_classification <- read.delim("Huttenhower_MetaCyc_Hierarchy.txt",header=TRUE)
+df <- higher_classification
+df_split <- strsplit(df$annotation, "\\|")
+df_new <- data.frame(do.call(rbind, df_split))
+df_new$feature <- higher_classification$feature
+df_new$feature <- gsub("-",".",df_new$feature)
+data <- merge(data,df_new, by="feature")
+plot <- data %>% 
+  select(c("feature", "X1","coef"))
+plot <- data %>% 
+  select(c("feature", "X2","coef"))
+
+mat <- plot
+?circos.text()
+circos.clear()
+dev.new(width=10,height=10)
+chordDiagram(mat,annotationTrack = "grid",preAllocateTracks = list(track.height = max(strwidth(unlist(dimnames(mat))))))
+obj <- circos.track(track.index = 1, panel.fun = function(x, y) {
+  circos.text(CELL_META$xcenter, CELL_META$ylim[1], CELL_META$sector.index, 
+              facing = "clockwise", niceFacing = TRUE, adj = 0.4,
+              cex=1)
+}, bg.border = NA) 
+circos.clear()

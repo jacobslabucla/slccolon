@@ -6,8 +6,6 @@ In checkConv(attr(opt, "derivs"), opt$par, ctrl = control$checkConv,  :
 ```
 
 ### Pathway ~ Site  + Sex + Genotype + 1/ MouseID
-Only 3 hits total 
-- WT vs MUT
-	- WT enriched 
-		- reductive TCA cycle I
-		- superpathway of glycerol degradation to 1,3- propanediol 
+Disappointingly few hits: 
+
+![[Pasted image 20230427113812.png]]

@@ -6,16 +6,12 @@ library(cowplot)
 library(plyr)
 
 setwd("C:/Users/Jacobs Laboratory/Documents/JCYang/slccolonpaper/slccolon/") # CHANGE to the directory containing the fastq files
-here::i_am("Rproj_slccolonpaper/Trios_EC_Maaslin2.R")
+here::i_am("Rproj_slccolonpaper/Long_Term_PWY_Maaslin2.R")
 
-metadata <- read.table("Trios/starting_files/SLC_TOTAL_OCT2020_FULL_Metadata.tsv", header=TRUE)
-counts <- read.table("Trios/starting_files/Trios_ASV_table_Silva_v138_1.tsv", header = TRUE, row.names=1)
-pathway <- read.delim("Trios/differential_EC/feature-table.tsv", header = TRUE, row.names=1)
 
-## Store taxonomy in an annotation file --
-annotation <- tibble::rownames_to_column(counts, "feature") %>% select(c("feature", "taxonomy"))
-counts <- counts %>% select(-c("taxonomy"))
-pathway <- pathway %>% select(-c("taxonomy"))
+metadata <- read.csv("Long_Term/starting_files/SLC_LT_metadata.csv", header=TRUE)
+counts <- read.table("Long_Term/starting_files/SLT_ASV_table_Silva_v138_1.tsv", header = TRUE, row.names=1)
+pathway <- read.delim("Long_Term/starting_files/picrust2_output_SLT_ASV_table_Silva_v138_1.qza/export_pathway_abundance/feature-table.tsv", header = TRUE, row.names=1)
 
 ## Apply minimum sequencing depth threshold --
 counts <- counts[colSums(counts) >= 10000]
@@ -45,24 +41,15 @@ df_input_metadata$Site <- factor(df_input_metadata$Site, levels=c("Distal_Colon"
 df_input_metadata$Sex <- factor(df_input_metadata$Sex)
 sapply(df_input_metadata,levels)
 
-#failure to converge
 fit_data = Maaslin2(input_data=df_input_data, 
                     input_metadata=df_input_metadata, 
-                    output = paste0("Trios/differential_EC/PICRUST2_EC_Luminal_Colon_Maaslin2_Site_Sex_Genotype_1-Litter_1-MouseID"), 
-                    fixed_effects = c("Site",  "Sex", "Genotype"), normalization = "TSS", 
-                    random_effects = c("Litter","MouseID"),
-                    #reference = c("Genotype,WT", "Site,Distal_Colon"),
-                    min_prevalence = 0.15,
-                    transform ="log",plot_heatmap = FALSE,plot_scatter = FALSE)
-
-fit_data = Maaslin2(input_data=df_input_data, 
-                    input_metadata=df_input_metadata, 
-                    output = paste0("Trios/differential_EC/PICRUST2_EC_Luminal_Colon_Maaslin2_Site_Sex_Genotype_1-MouseID"), 
+                    output = paste0("Long_Term/differential_Pathway/PICRUST2_PWY_Luminal_Colon_Maaslin2_Site_Sex_Genotype_1-MouseID"), 
                     fixed_effects = c("Site",  "Sex", "Genotype"), normalization = "TSS", 
                     random_effects = c("MouseID"),
                     #reference = c("Genotype,WT", "Site,Distal_Colon"),
                     min_prevalence = 0.15,
                     transform ="log",plot_heatmap = FALSE,plot_scatter = FALSE)
+
 
 ### Mucosal Colon ---
 
@@ -87,16 +74,7 @@ sapply(df_input_metadata,levels)
 
 fit_data = Maaslin2(input_data=df_input_data, 
                     input_metadata=df_input_metadata, 
-                    output = paste0("Trios/differential_EC/PICRUST2_EC_Mucosal_Colon_Maaslin2_Site_Sex_Genotype_1-Litter_1-MouseID"), 
-                    fixed_effects = c("Site",  "Sex", "Genotype"), normalization = "TSS", 
-                    random_effects = c("Litter","MouseID"),
-                    #reference = c("Genotype,WT", "Site,Distal_Colon"),
-                    min_prevalence = 0.15,
-                    transform ="log",plot_heatmap = FALSE,plot_scatter = FALSE)
-
-fit_data = Maaslin2(input_data=df_input_data, 
-                    input_metadata=df_input_metadata, 
-                    output = paste0("Trios/differential_EC/PICRUST2_EC_Mucosal_Colon_Maaslin2_Site_Sex_Genotype_1-MouseID"), 
+                    output = paste0("Long_Term/differential_Pathway/PICRUST2_PWY_Mucosal_Colon_Maaslin2_Site_Sex_Genotype_1-MouseID"), 
                     fixed_effects = c("Site",  "Sex", "Genotype"), normalization = "TSS", 
                     random_effects = c("MouseID"),
                     #reference = c("Genotype,WT", "Site,Distal_Colon"),
@@ -104,18 +82,19 @@ fit_data = Maaslin2(input_data=df_input_data,
                     transform ="log",plot_heatmap = FALSE,plot_scatter = FALSE)
 
 
+
 ### Visualize PWY results ---
 
 ## Luminal Colon --
-data<-read.table("Trios/differential_EC/PICRUST2_EC_Luminal_Colon_Maaslin2_Site_Sex_Genotype_1-MouseID/significant_results.tsv", header=TRUE)
+data<-read.table("Long_Term/differential_Pathway/PICRUST2_PWY_Luminal_Colon_Maaslin2_Site_Sex_Genotype_1-MouseID/significant_results.tsv", header=TRUE)
 data <- data %>% filter(qval <0.25)
 data <- data %>% filter(metadata=="Genotype")
-annotation <- read.delim("Trios/differential_EC/annotated_EC.tsv", row.names=1)
+annotation <- read.delim("Long_Term/starting_files/picrust2_output_SLT_ASV_table_Silva_v138_1.qza/export_pathway_abundance/annotated_pathway.tsv", row.names=1)
 annotation$feature <- row.names(annotation)
 annotation <- annotation %>% select(c("feature","description"))
-annotation$feature <- gsub(":", ".", annotation$feature)
+annotation$feature <- gsub("-", ".", annotation$feature)
 data <- merge(data,annotation, by="feature")
-write.csv(data, "Trios/differential_EC/PICRUST2_EC_Luminal_Colon_Maaslin2_Site_Sex_Genotype_1-MouseID/annotated_significant_results_pwy_q0.25.tsv")
+write.csv(data, "Long_Term/differential_Pathway/PICRUST2_PWY_Luminal_Colon_Maaslin2_Site_Sex_Genotype_1-MouseID/annotated_significant_results_pwy_q0.25.tsv")
 
 res_plot <- data %>% filter(value=="MUT")
 res_plot <- unique(res_plot)
@@ -129,7 +108,7 @@ res_plot$description= factor(as.character(res_plot$description), levels = names(
 cols <- c("WT"="black", "HET"="blue", "MUT"="firebrick")
 pwy_mut <- res_plot %>%
   arrange(coef) %>%
-  filter(qval < 0.25, abs(coef) > 0.5) %>%
+  filter(qval < 0.25, abs(coef) > 0) %>%
   ggplot2::ggplot(aes(coef, description, fill = site)) +
   geom_bar(stat = "identity") +
   cowplot::theme_cowplot(16) +
@@ -155,7 +134,7 @@ res_plot$description= factor(as.character(res_plot$description), levels = names(
 cols <- c("WT"="black", "HET"="blue", "MUT"="firebrick")
 pwy_het <- res_plot %>%
   arrange(coef) %>%
-  filter(qval < 0.25, abs(coef) > 0.5) %>%
+  filter(qval < 0.25, abs(coef) > 0) %>%
   ggplot2::ggplot(aes(coef, description, fill = site)) +
   geom_bar(stat = "identity") +
   cowplot::theme_cowplot(16) +
@@ -173,15 +152,15 @@ plot_grid(pwy_mut, pwy_het, labels=c("A","B"))
 
 
 ## Mucosal Colon --
-data<-read.table("Trios/differential_EC/PICRUST2_EC_Mucosal_Colon_Maaslin2_Site_Sex_Genotype_1-MouseID/significant_results.tsv", header=TRUE)
+data<-read.table("Long_Term/differential_Pathway/PICRUST2_PWY_Mucosal_Colon_Maaslin2_Site_Sex_Genotype_1-MouseID/significant_results.tsv", header=TRUE)
 data <- data %>% filter(qval <0.25)
 data <- data %>% filter(metadata=="Genotype")
-annotation <- read.delim("Trios/differential_EC/annotated_EC.tsv", row.names=1)
+annotation <- read.delim("Long_Term/starting_files/picrust2_output_SLT_ASV_table_Silva_v138_1.qza/export_pathway_abundance/annotated_pathway.tsv", row.names=1)
 annotation$feature <- row.names(annotation)
 annotation <- annotation %>% select(c("feature","description"))
 annotation$feature <- gsub("-", ".", annotation$feature)
 data <- merge(data,annotation, by="feature")
-write.csv(data, "Trios/differential_EC/PICRUST2_EC_Mucosal_Colon_Maaslin2_Site_Sex_Genotype_1-MouseID/annotated_significant_results_pwy_q0.25.tsv")
+write.csv(data, "Long_Term/differential_Pathway/PICRUST2_PWY_Mucosal_Colon_Maaslin2_Site_Sex_Genotype_1-MouseID/annotated_significant_results_pwy_q0.25.tsv")
 
 res_plot <- data %>% filter(value=="MUT")
 res_plot <- unique(res_plot)
@@ -195,7 +174,7 @@ res_plot$description= factor(as.character(res_plot$description), levels = names(
 cols <- c("WT"="black", "HET"="blue", "MUT"="firebrick")
 mc_pwy_mut <- res_plot %>%
   arrange(coef) %>%
-  filter(qval < 0.25, abs(coef) > 0.5) %>%
+  filter(qval < 0.25, abs(coef) > 0) %>%
   ggplot2::ggplot(aes(coef, description, fill = site)) +
   geom_bar(stat = "identity") +
   cowplot::theme_cowplot(16) +
@@ -220,7 +199,7 @@ res_plot$description= factor(as.character(res_plot$description), levels = names(
 cols <- c("WT"="black", "HET"="blue", "MUT"="firebrick")
 mc_pwy_het <- res_plot %>%
   arrange(coef) %>%
-  filter(qval < 0.25, abs(coef) > 0.5) %>%
+  filter(qval < 0.25, abs(coef) > 0) %>%
   ggplot2::ggplot(aes(coef, description, fill = site)) +
   geom_bar(stat = "identity") +
   cowplot::theme_cowplot(16) +

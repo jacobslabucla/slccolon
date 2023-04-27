@@ -4,8 +4,8 @@ library(dplyr)
 setwd("C:/Users/Jacobs Laboratory/Documents/JCYang/slccolonpaper/slccolon/") # CHANGE to the directory containing the fastq files
 
 
-metadata <- read.csv("Long_Term/SLC_LT_metadata.csv", header=TRUE)
-counts <- read.table("Long_Term/SLT_ASV_table_Silva_v138_1.tsv", header = TRUE, row.names=1)
+metadata <- read.csv("Long_Term/starting_files/SLC_LT_metadata.csv", header=TRUE)
+counts <- read.table("Long_Term/starting_files/SLT_ASV_table_Silva_v138_1.tsv", header = TRUE, row.names=1)
 
 ## Store taxonomy in an annotation file --
 annotation <- tibble::rownames_to_column(counts, "feature") %>% select(c("feature", "taxonomy"))

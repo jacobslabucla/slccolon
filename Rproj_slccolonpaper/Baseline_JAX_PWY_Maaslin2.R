@@ -4,10 +4,11 @@ library(dplyr)
 library(ggplot2)
 library(cowplot)
 library(plyr)
+library(circlize)
 
 setwd("C:/Users/Jacobs Laboratory/Documents/JCYang/slccolonpaper/slccolon/") # CHANGE to the directory containing the fastq files
 here::i_am("Rproj_slccolonpaper/Baseline_JAX_PWY_Maaslin2.R")
-
+setwd("..")
 metadata <- read.table("Baseline/starting_files/Baseline_Metadata.tsv", header=TRUE)
 counts <- read.table("Baseline/starting_files/Baseline_ASV_table_Silva_v138_1.tsv", header = TRUE, row.names=1)
 pathway <- read.delim("Baseline/differential_Pathway/feature-table.tsv", header = TRUE, row.names=1)
@@ -76,13 +77,13 @@ run_Maaslin2(counts = ko,
              metadata= JAX_meta,
              subset_string = "Baseline_JAX_KO")
 
-### Visualize EC results  ---
+### Visualize KO results  ---
 
 # Baseline WT vs HET
-data<-read.table("Baseline/differential_Pathway/feature-table.tsv", header=TRUE)
-data <- data %>% filter(qval <0.10)
+data<-read.table("Baseline/Baseline_JAX_KO_Maaslin2_Sex_Genotype/significant_results.tsv", header=TRUE)
+data <- data %>% filter(qval <0.25)
 data <- data %>% filter(metadata=="Genotype")
-annotation <- read.delim("starting_files/picrust2_output_Baseline_ASV_table_Silva_v138_1.qza/export_ec_metagenome/annotated_EC.tsv", row.names=1)
+annotation <- read.delim("Baseline/differential_KO/annotated_KO.tsv", row.names=1)
 annotation$feature <- row.names(annotation)
 annotation <- annotation %>% select(c("feature","description"))
 annotation$feature <- gsub(":", ".", annotation$feature)
@@ -100,7 +101,7 @@ res_plot$description= factor(as.character(res_plot$description), levels = names(
 cols <- c("WT"="black", "HET"="blue", "MUT"="firebrick")
 baseline_ec_het <- res_plot %>%
   arrange(coef) %>%
-  filter(qval < 0.10, abs(coef) > 0) %>%
+  filter(qval < 0.25, abs(coef) > 0) %>%
   ggplot2::ggplot(aes(coef, description, fill = site)) +
   geom_bar(stat = "identity") +
   cowplot::theme_cowplot(16) +
@@ -154,10 +155,10 @@ plot_grid(baseline_ec_het, baseline_ec_mut, labels = c("A", "B"))
 ### Visualize Pathway results  ---
 
 # Baseline WT vs HET
-data<-read.table("ASV-level_SLC_Baseline_PWY_Maaslin2_Line_Sex_Genotype/significant_results.tsv", header=TRUE)
-data <- data %>% filter(qval <0.20)
+data<-read.table("Baseline_JAX_PWY_Maaslin2_Sex_Genotype/significant_results.tsv", header=TRUE)
+data <- data %>% filter(qval <0.25)
 data <- data %>% filter(metadata=="Genotype")
-annotation <- read.delim("starting_files/picrust2_output_Baseline_ASV_table_Silva_v138_1.qza/export_pathway_abundance/annotated_pwy.tsv", row.names=1)
+annotation <- read.delim("differential_Pathway/annotated_pwy.tsv", row.names=1)
 annotation$feature <- row.names(annotation)
 annotation <- annotation %>% select(c("feature","description"))
 annotation$feature <- gsub("-", ".", annotation$feature)
@@ -191,10 +192,10 @@ baseline_pwy_het
 
 
 # Baseline WT vs MUT
-data<-read.table("ASV-level_SLC_Baseline_PWY_Maaslin2_Line_Sex_Genotype/significant_results.tsv", header=TRUE)
-data <- data %>% filter(qval <0.20)
+data<-read.table("Baseline_JAX_PWY_Maaslin2_Sex_Genotype/significant_results.tsv", header=TRUE)
+data <- data %>% filter(qval <0.25)
 data <- data %>% filter(metadata=="Genotype")
-annotation <- read.delim("starting_files/picrust2_output_Baseline_ASV_table_Silva_v138_1.qza/export_pathway_abundance/annotated_pwy.tsv", row.names=1)
+annotation <- read.delim("differential_Pathway/annotated_pwy.tsv", row.names=1)
 annotation$feature <- row.names(annotation)
 annotation <- annotation %>% select(c("feature","description"))
 annotation$feature <- gsub("-", ".", annotation$feature)
@@ -213,7 +214,7 @@ res_plot$description= factor(as.character(res_plot$description), levels = names(
 cols <- c("WT"="black", "HET"="blue", "MUT"="firebrick")
 baseline_pwy_mut <- res_plot %>%
   arrange(coef) %>%
-  filter(qval < 0.20, abs(coef) > 0) %>%
+  filter(qval < 0.25, abs(coef) > 0) %>%
   ggplot2::ggplot(aes(coef, description, fill = site)) +
   geom_bar(stat = "identity") +
   cowplot::theme_cowplot(16) +
@@ -229,3 +230,176 @@ baseline_pwy_mut
 
 plot_grid(baseline_pwy_het, baseline_pwy_mut, labels = c("C", "D"))
 
+
+### Visualizing results as circle plots ---
+
+# Baseline MUT enriched 
+data<-read.table("Baseline/Baseline_JAX_PWY_Maaslin2_Sex_Genotype/significant_results.tsv", header=TRUE)
+data <- data %>% 
+  filter(value=="MUT") %>% 
+  filter(coef>0)
+annotation <- read.delim("Baseline/differential_Pathway/annotated_pwy.tsv", row.names=1)
+annotation$feature <- row.names(annotation)
+annotation <- annotation %>% select(c("feature","description"))
+annotation$feature <- gsub("-", ".", annotation$feature)
+data <- merge(data,annotation, by="feature")
+
+#Classification strategy no 1 
+higher_classification <- read.csv("MetaCyc_pathwaynames_Key.csv", row.names=1, header=TRUE)
+higher_classification$feature <- row.names(higher_classification)
+data <- merge(data,higher_classification, by="feature")
+data <- rename(data, replace = c("L4A" = "classification"))
+data <- data %>% 
+  filter(value=="MUT") %>% 
+  filter(coef>0) %>%
+  select(c("feature", "classification","coef"))
+
+#Classification strategy no 2 
+# split the paths column by "|"
+higher_classification <- read.delim("Huttenhower_MetaCyc_Hierarchy.txt",header=TRUE)
+df <- higher_classification
+df_split <- strsplit(df$annotation, "\\|")
+df_new <- data.frame(do.call(rbind, df_split))
+df_new$feature <- higher_classification$feature
+df_new$feature <- gsub("-",".",df_new$feature)
+data <- merge(data,df_new, by="feature")
+plot <- data %>% 
+  select(c("description", "X2","coef"))
+
+mat <- plot 
+?circos.text()
+circos.clear()
+dev.new(width=10,height=10)
+chordDiagram(mat,annotationTrack = "grid",preAllocateTracks = list(track.height = max(strwidth(unlist(dimnames(mat))))))
+obj <- circos.track(track.index = 1, panel.fun = function(x, y) {
+  circos.text(CELL_META$xcenter, CELL_META$ylim[1], CELL_META$sector.index, 
+              facing = "clockwise", niceFacing = TRUE, adj = 0.5,
+              cex=1)
+}, bg.border = NA) 
+circos.clear()
+
+# Baseline MUT depleted 
+data<-read.table("Baseline/Baseline_JAX_PWY_Maaslin2_Sex_Genotype/significant_results.tsv", header=TRUE)
+data <- data %>% 
+  filter(value=="MUT") %>% 
+  filter(coef<0)
+annotation <- read.delim("Baseline/differential_Pathway/annotated_pwy.tsv", row.names=1)
+annotation$feature <- row.names(annotation)
+annotation <- annotation %>% select(c("feature","description"))
+annotation$feature <- gsub("-", ".", annotation$feature)
+data <- merge(data,annotation, by="feature")
+
+# Classification strategy no 1
+higher_classification <- read.csv("MetaCyc_pathwaynames_Key.csv", row.names=1, header=TRUE)
+higher_classification$feature <- row.names(higher_classification)
+data <- merge(data,higher_classification, by="feature")
+data <- rename(data, replace = c("L4A" = "classification"))
+data <- data %>% 
+  select(c("feature", "classification","coef"))
+data<- remove_missing(data)
+
+#Classification strategy no 2 
+# split the paths column by "|"
+higher_classification <- read.delim("Huttenhower_MetaCyc_Hierarchy.txt",header=TRUE)
+df <- higher_classification
+df_split <- strsplit(df$annotation, "\\|")
+df_new <- data.frame(do.call(rbind, df_split))
+df_new$feature <- higher_classification$feature
+df_new$feature <- gsub("-",".",df_new$feature)
+data <- merge(data,df_new, by="feature")
+plot <- data %>% 
+  select(c("feature", "X1","coef"))
+
+mat <- plot
+?circos.text()
+circos.clear()
+dev.new(width=10,height=10)
+chordDiagram(mat,annotationTrack = "grid",preAllocateTracks = list(track.height = max(strwidth(unlist(dimnames(mat))))))
+obj <- circos.track(track.index = 1, panel.fun = function(x, y) {
+  circos.text(CELL_META$xcenter, CELL_META$ylim[1], CELL_META$sector.index, 
+              facing = "clockwise", niceFacing = TRUE, adj = 0.4,
+              cex=1)
+}, bg.border = NA) 
+circos.clear()
+
+# Luminal Colon MUT enriched 
+data<-read.table("Trios/differential_Pathway/PICRUST2_PWY_Luminal_Colon_Maaslin2_SequencingRun_Site_Sex_Genotype_1-MouseID/significant_results.tsv", header=TRUE)
+data <- data %>% 
+  filter(value=="MUT") %>% 
+  filter(coef>0)
+annotation <- read.delim("Trios/differential_Pathway/annotated_pwy.tsv", row.names=1)
+annotation$feature <- row.names(annotation)
+annotation <- annotation %>% select(c("feature","description"))
+annotation$feature <- gsub("-", ".", annotation$feature)
+data <- merge(data,annotation, by="feature")
+
+# split the paths column by "|"
+higher_classification <- read.delim("Huttenhower_MetaCyc_Hierarchy.txt",header=TRUE)
+df <- higher_classification
+df_split <- strsplit(df$annotation, "\\|")
+df_new <- data.frame(do.call(rbind, df_split))
+df_new$feature <- higher_classification$feature
+df_new$feature <- gsub("-",".",df_new$feature)
+
+# Merge higher_classification column
+data <- merge(data,df_new, by="feature")
+data <- data %>% 
+  select(c("description", "X1","coef"))
+
+mat <- data 
+?circos.text()
+circos.clear()
+dev.new(width=10,height=10)
+chordDiagram(mat,annotationTrack = "grid",preAllocateTracks = list(track.height = max(strwidth(unlist(dimnames(mat))))))
+obj <- circos.track(track.index = 1, panel.fun = function(x, y) {
+  circos.text(CELL_META$xcenter, CELL_META$ylim[1], CELL_META$sector.index, 
+              facing = "clockwise", niceFacing = TRUE, adj = 0.25,
+              cex=1)
+}, bg.border = NA) 
+circos.clear()
+
+# Luminal Colon MUT depleted 
+data<-read.table("Trios/differential_Pathway/PICRUST2_PWY_Luminal_Colon_Maaslin2_SequencingRun_Site_Sex_Genotype_1-MouseID/significant_results.tsv", header=TRUE)
+data <- data %>% 
+  filter(value=="MUT") %>% 
+  filter(coef<0)
+annotation <- read.delim("Trios/differential_Pathway/annotated_pwy.tsv", row.names=1)
+annotation$feature <- row.names(annotation)
+annotation <- annotation %>% select(c("feature","description"))
+annotation$feature <- gsub("-", ".", annotation$feature)
+data <- merge(data,annotation, by="feature")
+
+# Classification strategy no 1
+higher_classification <- read.csv("MetaCyc_pathwaynames_Key.csv", row.names=1, header=TRUE)
+higher_classification$feature <- row.names(higher_classification)
+data <- merge(data,higher_classification, by="feature")
+data <- rename(data, replace = c("L4A" = "classification"))
+data <- data %>% 
+  select(c("feature", "classification","coef"))
+data<- remove_missing(data)
+
+#Classification strategy no 2 
+# split the paths column by "|"
+higher_classification <- read.delim("Huttenhower_MetaCyc_Hierarchy.txt",header=TRUE)
+df <- higher_classification
+df_split <- strsplit(df$annotation, "\\|")
+df_new <- data.frame(do.call(rbind, df_split))
+df_new$feature <- higher_classification$feature
+df_new$feature <- gsub("-",".",df_new$feature)
+data <- merge(data,df_new, by="feature")
+plot <- data %>% 
+  select(c("feature", "X1","coef"))
+plot <- data %>% 
+  select(c("feature", "X2","coef"))
+
+mat <- plot
+?circos.text()
+circos.clear()
+dev.new(width=10,height=10)
+chordDiagram(mat,annotationTrack = "grid",preAllocateTracks = list(track.height = max(strwidth(unlist(dimnames(mat))))))
+obj <- circos.track(track.index = 1, panel.fun = function(x, y) {
+  circos.text(CELL_META$xcenter, CELL_META$ylim[1], CELL_META$sector.index, 
+              facing = "clockwise", niceFacing = TRUE, adj = 0.4,
+              cex=1)
+}, bg.border = NA) 
+circos.clear()

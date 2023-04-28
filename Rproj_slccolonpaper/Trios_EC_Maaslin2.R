@@ -65,6 +65,15 @@ fit_data = Maaslin2(input_data=df_input_data,
                     min_prevalence = 0.15,
                     transform ="log",plot_heatmap = FALSE,plot_scatter = FALSE)
 
+fit_data = Maaslin2(input_data=df_input_data, 
+                    input_metadata=df_input_metadata, 
+                    output = paste0("Trios/differential_EC/PICRUST2_EC_Luminal_Colon_Maaslin2_SequencingRun_Site_Sex_Genotype_1-MouseID"), 
+                    fixed_effects = c("Sequencing_Run","Site",  "Sex", "Genotype"), normalization = "TSS", 
+                    random_effects = c("MouseID"),
+                    #reference = c("Genotype,WT", "Site,Distal_Colon"),
+                    min_prevalence = 0.15,
+                    transform ="log",plot_heatmap = FALSE,plot_scatter = FALSE)
+
 ### Mucosal Colon ---
 
 input_metadata <- metadata
@@ -104,8 +113,17 @@ fit_data = Maaslin2(input_data=df_input_data,
                     min_prevalence = 0.15,
                     transform ="log",plot_heatmap = FALSE,plot_scatter = FALSE)
 
+fit_data = Maaslin2(input_data=df_input_data, 
+                    input_metadata=df_input_metadata, 
+                    output = paste0("Trios/differential_EC/PICRUST2_EC_Mucosal_Colon_Maaslin2_SequencingRun_Site_Sex_Genotype_1-MouseID"), 
+                    fixed_effects = c("Sequencing_Run","Site",  "Sex", "Genotype"), normalization = "TSS", 
+                    random_effects = c("MouseID"),
+                    #reference = c("Genotype,WT", "Site,Distal_Colon"),
+                    min_prevalence = 0.15,
+                    transform ="log",plot_heatmap = FALSE,plot_scatter = FALSE)
 
-### Visualize PWY results ---
+
+### Visualize EC results ---
 
 ## Luminal Colon --
 data<-read.table("Trios/differential_EC/PICRUST2_EC_Luminal_Colon_Maaslin2_Site_Sex_Genotype_1-MouseID/significant_results.tsv", header=TRUE)
@@ -116,19 +134,141 @@ annotation$feature <- row.names(annotation)
 annotation <- annotation %>% select(c("feature","description"))
 annotation$feature <- gsub(":", ".", annotation$feature)
 annotation$feature
-# define a function to assign letters based on first number
-assign_letter <- function(x) {
-  first_num <- substr(x, start = 4, stop = 4)
-  letter <- switch(first_num,
-                   "1" = "Oxidoreductases",
-                   "2" = "Transferases",
-                   "3" = "Hydrolases",
-                   "4" = "Lyases",
-                   "5"="Isomerases",
-                   "6"="Ligases","unknown")
-  return(letter)
-}
+annotation$enzyme_class <- sapply(annotation$feature, assign_letter)
 
+data <- merge(data,annotation, by="feature")
+write.csv(data, "Trios/differential_EC/PICRUST2_EC_Luminal_Colon_Maaslin2_Site_Sex_Genotype_1-MouseID/annotated_significant_results_pwy_q0.25.tsv")
+
+res_plot <- data %>% filter(value=="MUT")
+res_plot <- unique(res_plot)
+res_plot <- res_plot %>%
+  mutate(site = ifelse(coef< 0, "WT", "MUT"))
+
+y = tapply(res_plot$coef, res_plot$description, function(y) mean(y))  # orders the genera by the highest fold change of any ASV in the genus; can change max(y) to mean(y) if you want to order genera by the average log2 fold change
+y = sort(y, FALSE)   #switch to TRUE to reverse direction
+res_plot$description= factor(as.character(res_plot$description), levels = names(y))
+
+cols <- c("WT"="black", "HET"="blue", "MUT"="firebrick")
+pwy_mut <- res_plot %>%
+  arrange(coef) %>%
+  filter(qval < 0.25, abs(coef) > 0.5) %>%
+  ggplot2::ggplot(aes(coef, description, fill = site)) +
+  geom_bar(stat = "identity") +
+  cowplot::theme_cowplot(16) +
+  theme(axis.text.y = element_text(face = "bold")) +
+  scale_fill_manual(values = cols) +
+  labs(x = "Effect size (MUT/WT)",
+       y = "",
+       fill = "") +
+  theme(legend.position = "none")+
+  ggtitle("Luminal Colon: WT vs MUT q<0.25") +
+  theme(plot.title = element_text(hjust = 0.5))
+pwy_mut
+
+res_plot <- data %>% filter(value=="HET")
+res_plot <- unique(res_plot)
+res_plot <- res_plot %>%
+  mutate(site = ifelse(coef< 0, "WT", "HET"))
+
+y = tapply(res_plot$coef, res_plot$description, function(y) mean(y))  # orders the genera by the highest fold change of any ASV in the genus; can change max(y) to mean(y) if you want to order genera by the average log2 fold change
+y = sort(y, FALSE)   #switch to TRUE to reverse direction
+res_plot$description= factor(as.character(res_plot$description), levels = names(y))
+
+cols <- c("WT"="black", "HET"="blue", "MUT"="firebrick")
+pwy_het <- res_plot %>%
+  arrange(coef) %>%
+  filter(qval < 0.25, abs(coef) > 0.5) %>%
+  ggplot2::ggplot(aes(coef, description, fill = site)) +
+  geom_bar(stat = "identity") +
+  cowplot::theme_cowplot(16) +
+  theme(axis.text.y = element_text(face = "bold")) +
+  scale_fill_manual(values = cols) +
+  labs(x = "Effect size (HET/WT)",
+       y = "",
+       fill = "") +
+  theme(legend.position = "none")+
+  ggtitle("Luminal Colon: WT vs HET q<0.25") +
+  theme(plot.title = element_text(hjust = 0.5))
+pwy_het
+
+plot_grid(pwy_mut, pwy_het, labels=c("A","B"))
+
+
+## Mucosal Colon --
+data<-read.table("Trios/differential_EC/PICRUST2_EC_Mucosal_Colon_Maaslin2_Site_Sex_Genotype_1-MouseID/significant_results.tsv", header=TRUE)
+data <- data %>% filter(qval <0.25)
+data <- data %>% filter(metadata=="Genotype")
+annotation <- read.delim("Trios/differential_EC/annotated_EC.tsv", row.names=1)
+annotation$feature <- row.names(annotation)
+annotation <- annotation %>% select(c("feature","description"))
+annotation$feature <- gsub("-", ".", annotation$feature)
+data <- merge(data,annotation, by="feature")
+write.csv(data, "Trios/differential_EC/PICRUST2_EC_Mucosal_Colon_Maaslin2_Site_Sex_Genotype_1-MouseID/annotated_significant_results_pwy_q0.25.tsv")
+
+res_plot <- data %>% filter(value=="MUT")
+res_plot <- unique(res_plot)
+res_plot <- res_plot %>%
+  mutate(site = ifelse(coef< 0, "WT", "MUT"))
+
+y = tapply(res_plot$coef, res_plot$description, function(y) mean(y))  # orders the genera by the highest fold change of any ASV in the genus; can change max(y) to mean(y) if you want to order genera by the average log2 fold change
+y = sort(y, FALSE)   #switch to TRUE to reverse direction
+res_plot$description= factor(as.character(res_plot$description), levels = names(y))
+
+cols <- c("WT"="black", "HET"="blue", "MUT"="firebrick")
+mc_pwy_mut <- res_plot %>%
+  arrange(coef) %>%
+  filter(qval < 0.25, abs(coef) > 0.5) %>%
+  ggplot2::ggplot(aes(coef, description, fill = site)) +
+  geom_bar(stat = "identity") +
+  cowplot::theme_cowplot(16) +
+  theme(axis.text.y = element_text(face = "bold")) +
+  scale_fill_manual(values = cols) +
+  labs(x = "Effect size (MUT/WT)",
+       y = "",
+       fill = "") +
+  theme(legend.position = "none")+
+  ggtitle("Mucosal Colon: WT vs MUT q<0.25") +
+  theme(plot.title = element_text(hjust = 0.5))
+
+res_plot <- data %>% filter(value=="HET")
+res_plot <- unique(res_plot)
+res_plot <- res_plot %>%
+  mutate(site = ifelse(coef< 0, "WT", "HET"))
+
+y = tapply(res_plot$coef, res_plot$description, function(y) mean(y))  # orders the genera by the highest fold change of any ASV in the genus; can change max(y) to mean(y) if you want to order genera by the average log2 fold change
+y = sort(y, FALSE)   #switch to TRUE to reverse direction
+res_plot$description= factor(as.character(res_plot$description), levels = names(y))
+
+cols <- c("WT"="black", "HET"="blue", "MUT"="firebrick")
+mc_pwy_het <- res_plot %>%
+  arrange(coef) %>%
+  filter(qval < 0.25, abs(coef) > 0.5) %>%
+  ggplot2::ggplot(aes(coef, description, fill = site)) +
+  geom_bar(stat = "identity") +
+  cowplot::theme_cowplot(16) +
+  theme(axis.text.y = element_text(face = "bold")) +
+  scale_fill_manual(values = cols) +
+  labs(x = "Effect size (HET/WT)",
+       y = "",
+       fill = "") +
+  theme(legend.position = "none")+
+  ggtitle("Mucosal Colon: WT vs HET q<0.25") +
+  theme(plot.title = element_text(hjust = 0.5))
+pwy_het
+
+plot_grid(mc_pwy_mut, mc_pwy_het, labels=c("A","B"))
+
+### Visualize EC results ---
+
+## Luminal Colon --
+data<-read.table("Trios/differential_EC/PICRUST2_EC_Luminal_Colon_Maaslin2_Site_Sex_Genotype_1-MouseID/significant_results.tsv", header=TRUE)
+data <- data %>% filter(qval <0.25)
+data <- data %>% filter(metadata=="Genotype")
+annotation <- read.delim("Trios/differential_EC/annotated_EC.tsv", row.names=1)
+annotation$feature <- row.names(annotation)
+annotation <- annotation %>% select(c("feature","description"))
+annotation$feature <- gsub(":", ".", annotation$feature)
+annotation$feature
 annotation$enzyme_class <- sapply(annotation$feature, assign_letter)
 
 data <- merge(data,annotation, by="feature")

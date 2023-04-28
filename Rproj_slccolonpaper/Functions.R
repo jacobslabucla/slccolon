@@ -246,3 +246,17 @@ generate_pcoA_plots <- function(distance_matrix, counts, metadata, title, colorv
     labs(title= paste0({{title}})) 
   return(p)
 }
+
+
+assign_letter <- function(x) {
+  first_num <- substr(x, start = 4, stop = 4)
+  letter <- switch(first_num,
+                   "1" = "Oxidoreductases",
+                   "2" = "Transferases",
+                   "3" = "Hydrolases",
+                   "4" = "Lyases",
+                   "5"="Isomerases",
+                   "6"="Ligases","unknown")
+  return(letter)
+}
+

@@ -12,7 +12,7 @@ setwd("..")
 metadata <- read.table("Baseline/starting_files/Baseline_Metadata.tsv", header=TRUE)
 counts <- read.table("Baseline/starting_files/Baseline_ASV_table_Silva_v138_1.tsv", header = TRUE, row.names=1)
 pathway <- read.delim("Baseline/differential_Pathway/feature-table.tsv", header = TRUE, row.names=1)
-enzyme <- read.delim("Baseline/differential_Pathway/feature-table.tsv", header = TRUE, row.names=1)
+enzyme <- read.delim("Baseline/differential_EC/feature-table.tsv", header = TRUE, row.names=1)
 ko <- read.delim("Baseline/differential_KO/feature-table.tsv", header = TRUE, row.names=1)
 
 ## Store taxonomy in an annotation file --

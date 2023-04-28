@@ -227,7 +227,7 @@ res_plot <- data %>%
 pwy_het <- create_bar_plot(res_plot, "Luminal Colon: WT vs HET q<0.25")
 plot_grid(pwy_mut, pwy_het, labels = c("A", "B"))
 
-## Try making a circle plot for mucosal colon --
+### Visualizing results as circle plots ---
 
 # Mucosal Colon MUT enriched 
 data<-read.table("Trios/differential_Pathway/PICRUST2_PWY_Mucosal_Colon_Maaslin2_SequencingRun_Site_Sex_Genotype_1-MouseID/significant_results.tsv", header=TRUE)

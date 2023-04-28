@@ -214,3 +214,184 @@ mc_pwy_het <- res_plot %>%
 pwy_het
 
 plot_grid(mc_pwy_mut, mc_pwy_het, labels=c("A","B"))
+
+
+### Visualizing results as circle plots ---
+
+# Mucosal Colon MUT enriched 
+data<-read.table("Long_Term/differential_Pathway/PICRUST2_PWY_Mucosal_Colon_Maaslin2_Site_Sex_Genotype_1-MouseID/significant_results.tsv", header=TRUE)
+data <- data %>% 
+  filter(value=="MUT") %>% 
+  filter(coef>0)
+annotation <- read.delim("Long_Term/starting_files/picrust2_output_SLT_ASV_table_Silva_v138_1.qza/export_pathway_abundance/annotated_pathway.tsv", row.names=1)
+annotation$feature <- row.names(annotation)
+annotation <- annotation %>% select(c("feature","description"))
+annotation$feature <- gsub("-", ".", annotation$feature)
+data <- merge(data,annotation, by="feature")
+
+#Classification strategy no 1 
+higher_classification <- read.csv("MetaCyc_pathwaynames_Key.csv", row.names=1, header=TRUE)
+higher_classification$feature <- row.names(higher_classification)
+data <- merge(data,higher_classification, by="feature")
+data <- rename(data, replace = c("L4A" = "classification"))
+data <- data %>% 
+  filter(value=="MUT") %>% 
+  filter(coef>0) %>%
+  select(c("feature", "classification","coef"))
+
+#Classification strategy no 2 
+# split the paths column by "|"
+higher_classification <- read.delim("Huttenhower_MetaCyc_Hierarchy.txt",header=TRUE)
+df <- higher_classification
+df_split <- strsplit(df$annotation, "\\|")
+df_new <- data.frame(do.call(rbind, df_split))
+df_new$feature <- higher_classification$feature
+df_new$feature <- gsub("-",".",df_new$feature)
+data <- merge(data,df_new, by="feature")
+plot <- data %>% 
+  select(c("feature", "X1","coef"))
+
+mat <- plot 
+?circos.text()
+circos.clear()
+dev.new(width=10,height=10)
+chordDiagram(mat,annotationTrack = "grid",preAllocateTracks = list(track.height = max(strwidth(unlist(dimnames(mat))))))
+obj <- circos.track(track.index = 1, panel.fun = function(x, y) {
+  circos.text(CELL_META$xcenter, CELL_META$ylim[1], CELL_META$sector.index, 
+              facing = "clockwise", niceFacing = TRUE, adj = 0.5,
+              cex=1)
+}, bg.border = NA) 
+circos.clear()
+
+# Mucosal Colon MUT depleted 
+data<-read.table("Long_Term/differential_Pathway/PICRUST2_PWY_Mucosal_Colon_Maaslin2_Site_Sex_Genotype_1-MouseID/significant_results.tsv", header=TRUE)
+data <- data %>% 
+  filter(value=="MUT") %>% 
+  filter(coef<0)
+annotation <- read.delim("Long_Term/starting_files/picrust2_output_SLT_ASV_table_Silva_v138_1.qza/export_pathway_abundance/annotated_pathway.tsv", row.names=1)
+annotation$feature <- row.names(annotation)
+annotation <- annotation %>% select(c("feature","description"))
+annotation$feature <- gsub("-", ".", annotation$feature)
+data <- merge(data,annotation, by="feature")
+
+# Classification strategy no 1
+higher_classification <- read.csv("MetaCyc_pathwaynames_Key.csv", row.names=1, header=TRUE)
+higher_classification$feature <- row.names(higher_classification)
+data <- merge(data,higher_classification, by="feature")
+data <- rename(data, replace = c("L4A" = "classification"))
+data <- data %>% 
+  select(c("feature", "classification","coef"))
+data<- remove_missing(data)
+
+#Classification strategy no 2 
+# split the paths column by "|"
+higher_classification <- read.delim("Huttenhower_MetaCyc_Hierarchy.txt",header=TRUE)
+df <- higher_classification
+df_split <- strsplit(df$annotation, "\\|")
+df_new <- data.frame(do.call(rbind, df_split))
+df_new$feature <- higher_classification$feature
+df_new$feature <- gsub("-",".",df_new$feature)
+data <- merge(data,df_new, by="feature")
+#plot <- data %>% 
+  #select(c("feature", "X1","coef"))
+plot <- data %>% 
+  select(c("feature", "X2","coef"))
+#plot <- data %>% 
+  #select(c("description", "X2","coef"))
+
+mat <- plot
+?circos.text()
+circos.clear()
+dev.new(width=10,height=10)
+chordDiagram(mat,annotationTrack = "grid",preAllocateTracks = list(track.height = max(strwidth(unlist(dimnames(mat))))))
+obj <- circos.track(track.index = 1, panel.fun = function(x, y) {
+  circos.text(CELL_META$xcenter, CELL_META$ylim[1], CELL_META$sector.index, 
+              facing = "clockwise", niceFacing = TRUE, adj = 0.5,
+              cex=1)
+}, bg.border = NA) 
+circos.clear()
+
+# Luminal Colon MUT enriched 
+data<-read.table("Long_Term/differential_Pathway/PICRUST2_PWY_Luminal_Colon_Maaslin2_Site_Sex_Genotype_1-MouseID/significant_results.tsv", header=TRUE)
+data <- data %>% 
+  filter(value=="MUT") %>% 
+  filter(coef>0)
+annotation <- read.delim("Long_Term/starting_files/picrust2_output_SLT_ASV_table_Silva_v138_1.qza/export_pathway_abundance/annotated_pathway.tsv", row.names=1)
+annotation$feature <- row.names(annotation)
+annotation <- annotation %>% select(c("feature","description"))
+annotation$feature <- gsub("-", ".", annotation$feature)
+data <- merge(data,annotation, by="feature")
+
+# split the paths column by "|"
+higher_classification <- read.delim("Huttenhower_MetaCyc_Hierarchy.txt",header=TRUE)
+df <- higher_classification
+df_split <- strsplit(df$annotation, "\\|")
+df_new <- data.frame(do.call(rbind, df_split))
+df_new$feature <- higher_classification$feature
+df_new$feature <- gsub("-",".",df_new$feature)
+
+# Merge higher_classification column
+data <- merge(data,df_new, by="feature")
+plot <- data %>% 
+  select(c("description", "X2","coef"))
+
+mat <- plot 
+?circos.text()
+circos.clear()
+dev.new(width=10,height=10)
+chordDiagram(mat,annotationTrack = "grid",preAllocateTracks = list(track.height = max(strwidth(unlist(dimnames(mat))))))
+obj <- circos.track(track.index = 1, panel.fun = function(x, y) {
+  circos.text(CELL_META$xcenter, CELL_META$ylim[1], CELL_META$sector.index, 
+              facing = "clockwise", niceFacing = TRUE, adj = 0.5,
+              cex=1)
+}, bg.border = NA) 
+circos.clear()
+
+# Luminal Colon MUT depleted 
+data<-read.table("Long_Term/differential_Pathway/PICRUST2_PWY_Luminal_Colon_Maaslin2_Site_Sex_Genotype_1-MouseID/significant_results.tsv", header=TRUE)
+data <- data %>% 
+  filter(value=="MUT") %>% 
+  filter(coef<0)
+annotation <- read.delim("Long_Term/starting_files/picrust2_output_SLT_ASV_table_Silva_v138_1.qza/export_pathway_abundance/annotated_pathway.tsv", row.names=1)
+annotation$feature <- row.names(annotation)
+annotation <- annotation %>% select(c("feature","description"))
+annotation$feature <- gsub("-", ".", annotation$feature)
+data <- merge(data,annotation, by="feature")
+
+# Classification strategy no 1
+higher_classification <- read.csv("MetaCyc_pathwaynames_Key.csv", row.names=1, header=TRUE)
+higher_classification$feature <- row.names(higher_classification)
+data <- merge(data,higher_classification, by="feature")
+data <- rename(data, replace = c("L4A" = "classification"))
+data <- data %>% 
+  select(c("feature", "classification","coef"))
+data<- remove_missing(data)
+
+#Classification strategy no 2 
+# split the paths column by "|"
+higher_classification <- read.delim("Huttenhower_MetaCyc_Hierarchy.txt",header=TRUE)
+df <- higher_classification
+df_split <- strsplit(df$annotation, "\\|")
+df_new <- data.frame(do.call(rbind, df_split))
+df_new$feature <- higher_classification$feature
+df_new$feature <- gsub("-",".",df_new$feature)
+data <- merge(data,df_new, by="feature")
+#plot <- data %>% 
+  #select(c("feature", "X1","coef"))
+#plot <- data %>% 
+  #select(c("feature", "X2","coef"))
+plot <- data %>% 
+  select(c("description", "X2","coef"))
+
+
+mat <- plot
+?circos.text()
+circos.clear()
+dev.new(width=10,height=10)
+chordDiagram(mat,annotationTrack = "grid",preAllocateTracks = list(track.height = max(strwidth(unlist(dimnames(mat))))))
+obj <- circos.track(track.index = 1, panel.fun = function(x, y) {
+  circos.text(CELL_META$xcenter, CELL_META$ylim[1], CELL_META$sector.index, 
+              facing = "clockwise", niceFacing = TRUE, adj = 0.5,
+              cex=1)
+}, bg.border = NA) 
+circos.clear()

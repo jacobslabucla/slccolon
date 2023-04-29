@@ -1,11 +1,19 @@
+### Trios - Dataset wrangling ---
+### Date : 4/4/23
+library(here) #v 1.0.1
+library(dplyr) #v 1.0.7
+library(Maaslin2) #v 1.2.0
+library(funrar)
 
-library(dada2)
-library(dplyr)
 setwd("C:/Users/Jacobs Laboratory/Documents/JCYang/slccolonpaper/slccolon/") # CHANGE to the directory containing the fastq files
+here::i_am("Rproj_slccolonpaper/Trios_ASV_level_Maaslin2.R")
 
+metadata <- read.table("Trios/starting_files/SLC_TOTAL_OCT2020_FULL_Metadata.tsv", header=TRUE)
+counts <- read.table("Trios/starting_files/Trios_ASV_table_Silva_v138_1.tsv", header = TRUE, row.names=1)
 
-metadata <- read.csv("Long_Term/starting_files/SLC_LT_metadata.csv", header=TRUE)
-counts <- read.table("Long_Term/starting_files/SLT_ASV_table_Silva_v138_1.tsv", header = TRUE, row.names=1)
+## Store taxonomy in an annotation file --
+annotation <- tibble::rownames_to_column(counts, "feature") %>% select(c("feature", "taxonomy"))
+counts <- counts %>% select(-c("taxonomy"))
 
 ## Apply minimum sequencing depth threshold --
 counts <- counts[colSums(counts) >= 10000]
@@ -24,12 +32,14 @@ row.names(muccol_meta) <- muccol_meta$SampleID
 muccol <- muccol_meta$SampleID
 muccol_counts <- counts %>% select(all_of(muccol))
 
-## Read in L6 aggregated counts -- 
-lc_genus <- read.delim("Long_Term/collapsed_ASV/export_L6_Luminal_Colon_SLT_ASV_table_Silva_v138_1/feature-table.tsv",header=TRUE, row.names=1)
-mc_genus <- read.delim("Long_Term/collapsed_ASV/export_L6_Mucosal_Colon_SLT_ASV_table_Silva_v138_1/feature-table.tsv",header=TRUE, row.names=1)
 
-                                
-## Run Maaslin 2 --
+## Read in L6 aggregated counts -- 
+lc_genus <- read.delim("Trios/collapsed_ASV/export_L6_Luminal_Colon_notax_Trios_ASV_table_Silva_v138_1/feature-table.tsv",header=TRUE, row.names=1)
+lc_genus <- lc_genus %>% select(names(c(lumcol_counts)))
+
+mc_genus <- read.delim("Trios/collapsed_ASV/export_L6_Mucosal_Colon_notax_Trios_ASV_table_Silva_v138_1/feature-table.tsv",header=TRUE, row.names=1)
+mc_genus <- mc_genus %>% select(names(c(muccol_counts)))
+
 run_Maaslin2 <- function(counts_filepath, metadata_filepath, subset_string, fixed_effects_vector, results_string, random_effects_vector) {
   
   #input_data <- read.csv(counts_filepath, header=TRUE, row.names=1) # choose filtered non rarefied csv file
@@ -45,7 +55,7 @@ run_Maaslin2 <- function(counts_filepath, metadata_filepath, subset_string, fixe
   Relative_Abundance <- summarize_all(df_relative_ASV, mean)
   Relative_Abundance <- as.data.frame(t(Relative_Abundance))
   
-  readr::write_rds(Relative_Abundance,paste0("Long_Term/",subset_string,"-ASV.RDS"))
+  readr::write_rds(Relative_Abundance,paste0("Trios/",subset_string,"Relative_Abundance-ASV.RDS"))
   
   #input_metadata <-read.delim(metadata_filepath,sep="\t",header=TRUE, row.names=1)
   input_metadata <- as.data.frame(metadata_filepath)
@@ -53,13 +63,13 @@ run_Maaslin2 <- function(counts_filepath, metadata_filepath, subset_string, fixe
   
   target <- colnames(df_input_data)
   input_metadata = input_metadata[match(target, row.names(input_metadata)),]
-  print(target == row.names(input_metadata))
+  target == row.names(input_metadata)
   
   df_input_metadata<-input_metadata
   df_input_metadata$MouseID <- factor(df_input_metadata$MouseID)
   df_input_metadata$Site <- factor(df_input_metadata$Site, levels=c("Distal_Colon","Proximal_Colon", "Cecum"))
   df_input_metadata$Sex <- factor(df_input_metadata$Sex, levels = c("Male", "Female"))
-  df_input_metadata$Breeder <- factor(df_input_metadata$Breeder)
+  df_input_metadata$Sequencing_Run <- factor(df_input_metadata$Sequencing_Run)
   df_input_metadata$Litter <- factor(df_input_metadata$Litter)
   df_input_metadata$SampleType <- factor(df_input_metadata$SampleType)
   df_input_metadata$Genotype <- factor(df_input_metadata$Genotype, levels=c("WT","HET", "MUT"))
@@ -68,58 +78,37 @@ run_Maaslin2 <- function(counts_filepath, metadata_filepath, subset_string, fixe
   ?Maaslin2
   fit_data = Maaslin2(input_data=df_input_data, 
                       input_metadata=df_input_metadata, 
-                      output = paste0("Long_Term/",subset_string, {{results_string}}), 
+                      output = paste0("Trios/",subset_string, {{results_string}}), 
                       fixed_effects = {{fixed_effects_vector}},normalization="TSS",
                       random_effects= {{random_effects_vector}},
                       min_prevalence = 0.15,
                       transform ="log",plot_heatmap = FALSE,plot_scatter = FALSE)
 }
-## Model 8 -- ASV 
 
-# Luminal Colon
+## Genus level Model 8 -- sus
+
+# Luminal Colon-- Model fails to converge
 fixed_effects <- c( "Site", "Sex", "Genotype")
 random_effects <- c("Litter", "MouseID")
-run_Maaslin2(lumcol_counts,lumcol_meta,"Luminal Colon", fixed_effects, "_ASV_Maaslin2_Site_Sex_Genotype_1-MouseID_1-Litter", random_effects)
+run_Maaslin2(lc_genus,lumcol_meta,"differential_taxa/L6_Luminal_Colon", 
+             fixed_effects, "_L6_Maaslin2_Site_Sex_Genotype_1-MouseID_1-Litter", random_effects)
 
-# Mucosal Colon
+# Mucosal Colon-- is ok 
 fixed_effects <- c("Site", "Sex","Genotype")
 random_effects <- c("Litter","MouseID")
-run_Maaslin2(muccol_counts,muccol_meta,"Mucosal Colon", fixed_effects, "_ASV_Maaslin2_Site_Sex_Genotype_1-MouseID_1-Litter", random_effects)
+run_Maaslin2(mc_genus,muccol_meta,"differential_taxa/L6_Mucosal_Colon", 
+             fixed_effects, "_L6_Maaslin2_Site_Sex_Genotype_1-MouseID_1-Litter", random_effects)
 
+## Genus level Model 9 -- all good, no erros 
 
-## Model 1 -- ASV
-
-# Luminal Colon
-fixed_effects <- c( "Site", "Sex", "Genotype")
-random_effects <- c("Breeder", "MouseID")
-run_Maaslin2(lumcol_counts,lumcol_meta,"Luminal Colon", fixed_effects, "_ASV_Maaslin2_Site_Sex_Genotype_1-MouseID_1-Breeder", random_effects)
-
-# Mucosal Colon
-fixed_effects <- c("Site", "Sex","Genotype")
-random_effects <- c("Breeder","MouseID")
-run_Maaslin2(muccol_counts,muccol_meta,"Mucosal Colon", fixed_effects, "_ASV_Maaslin2_Site_Sex_Genotype_1-MouseID_1-Breeder", random_effects)
-
-
-## Model 2 -- ASV
-
-# Luminal Colon
-fixed_effects <- c( "Site", "Sex", "Genotype")
+# Luminal Colon-- Model fails to converge
+fixed_effects <- c("Sequencing_Run","Site", "Sex", "Genotype")
 random_effects <- c("MouseID")
-run_Maaslin2(lumcol_counts,lumcol_meta,"Luminal Colon", fixed_effects, "_ASV_Maaslin2_Site_Sex_Genotype_1-MouseID", random_effects)
+run_Maaslin2(lc_genus,lumcol_meta,"differential_taxa/L6_Luminal_Colon", 
+             fixed_effects, "_L6_Maaslin2_Sequencing_Run_Site_Sex_Genotype_1-MouseID", random_effects)
 
-# Mucosal Colon
-fixed_effects <- c("Site", "Sex","Genotype")
+# Mucosal Colon-- is ok 
+fixed_effects <- c("Sequencing_Run","Site", "Sex", "Genotype")
 random_effects <- c("MouseID")
-run_Maaslin2(muccol_counts,muccol_meta,"Mucosal Colon", fixed_effects, "_ASV_Maaslin2_Site_Sex_Genotype_1-MouseID", random_effects)
-
-## Model 2 -- L6
-
-# Luminal Colon
-fixed_effects <- c( "Site", "Sex", "Genotype")
-random_effects <- c("MouseID")
-run_Maaslin2(lc_genus,lumcol_meta,"differential_taxa/L6_Luminal_Colon", fixed_effects, "_L6_Maaslin2_Site_Sex_Genotype_1-MouseID", random_effects)
-
-# Mucosal Colon
-fixed_effects <- c("Site", "Sex","Genotype")
-random_effects <- c("MouseID")
-run_Maaslin2(muccol_counts,muccol_meta,"Mucosal Colon", fixed_effects, "_ASV_Maaslin2_Site_Sex_Genotype_1-MouseID", random_effects)
+run_Maaslin2(lc_genus,lumcol_meta,"differential_taxa/L6_Mucosal_Colon", 
+             fixed_effects, "_L6_Maaslin2_Sequencing_Run_Site_Sex_Genotype_1-MouseID", random_effects)

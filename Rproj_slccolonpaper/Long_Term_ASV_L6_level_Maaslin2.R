@@ -17,6 +17,7 @@ lumcol_meta <- metadata %>% filter(Subset=="Luminal_Colon", SampleID %in% names(
 row.names(lumcol_meta) <- lumcol_meta$SampleID
 lumcol <- lumcol_meta$SampleID
 lumcol_counts <- counts %>% select(all_of(lumcol))
+print(names(lumcol_counts))
 
 # Mucosal Colon
 muccol_meta <- metadata %>% filter(Subset=="Mucosal_Colon", SampleID %in% names(counts))
@@ -26,7 +27,10 @@ muccol_counts <- counts %>% select(all_of(muccol))
 
 ## Read in L6 aggregated counts -- 
 lc_genus <- read.delim("Long_Term/collapsed_ASV/export_L6_Luminal_Colon_SLT_ASV_table_Silva_v138_1/feature-table.tsv",header=TRUE, row.names=1)
+lc_genus <- lc_genus %>% select(names(c(lumcol_counts)))
+
 mc_genus <- read.delim("Long_Term/collapsed_ASV/export_L6_Mucosal_Colon_SLT_ASV_table_Silva_v138_1/feature-table.tsv",header=TRUE, row.names=1)
+mc_genus <- mc_genus %>% select(names(c(muccol_counts)))
 
                                 
 ## Run Maaslin 2 --
@@ -122,4 +126,4 @@ run_Maaslin2(lc_genus,lumcol_meta,"differential_taxa/L6_Luminal_Colon", fixed_ef
 # Mucosal Colon
 fixed_effects <- c("Site", "Sex","Genotype")
 random_effects <- c("MouseID")
-run_Maaslin2(muccol_counts,muccol_meta,"Mucosal Colon", fixed_effects, "_ASV_Maaslin2_Site_Sex_Genotype_1-MouseID", random_effects)
+run_Maaslin2(mc_genus,muccol_meta,"differential_taxa/L6_Mucosal_Colon", fixed_effects, "_L6_Maaslin2_Site_Sex_Genotype_1-MouseID", random_effects)

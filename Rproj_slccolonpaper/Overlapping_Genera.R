@@ -35,7 +35,6 @@ trios_l6_het_significant<- data %>% filter(value=="HET")
 data<-read.table("Long_Term/differential_taxa/L6_Luminal_Colon_L6_Maaslin2_Site_Sex_Genotype_1-MouseID/significant_results.tsv", header=TRUE)
 data <- data %>% filter(qval <0.25)
 data <- data %>% filter(metadata=="Genotype")
-taxonomy <- read.delim("Long_Term/starting_files/final_taxonomy.tsv")
 data$Taxon <- data$feature
 data$Phylum <- gsub(".*p__","",data$Taxon)
 data$Phylum <- gsub("\\..*","",data$Phylum)
@@ -57,10 +56,11 @@ long_term_l6_het_significant <- data %>% filter(value=="HET")
 
 
 # Baseline
-data<-read.table("Baseline/differential_taxa/", header=TRUE)
-ddata <- data %>% filter(qval <0.25)
+data<-read.table("Baseline/differential_taxa/JAX_L6_Maaslin2_Sex_Genotype/significant_results.tsv", header=TRUE)
+data <- data %>% filter(qval <0.25)
 data <- data %>% filter(metadata=="Genotype")
-taxonomy <- read.delim("Long_Term/starting_files/final_taxonomy.tsv")
+data <- data %>% filter(qval <0.25)
+data <- data %>% filter(metadata=="Genotype")
 data$Taxon <- data$feature
 data$Phylum <- gsub(".*p__","",data$Taxon)
 data$Phylum <- gsub("\\..*","",data$Phylum)

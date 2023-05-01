@@ -4,6 +4,7 @@ library(cowplot)
 library(nlme)
 library(tidyr)
 library(knitr)
+library(ggbeeswarm)
 
 setwd("../") # CHANGE to the directory containing the fastq files
 here::i_am("Rproj_slccolonpaper/SLC_DSS_phenotype.R")
@@ -11,6 +12,25 @@ here::i_am("Rproj_slccolonpaper/SLC_DSS_phenotype.R")
 data <- read.csv("SLC_DSS/Stool_Phenotype.csv",header=TRUE)
 weight <- read.csv("SLC_DSS/Weight.csv")
 pct_weight <- read.csv("SLC_DSS/PCT_Body_Weight.csv")
+histology <- read.csv("SLC_DSS/Histology.csv")
+
+## Remove NA from histology data 
+histology <- remove_missing(histology)
+histology$Genotype <- factor(histology$Genotype, levels=c("WT","HET","MUT"))
+
+histo_plot <- histology %>%
+  ggplot( aes(x=Genotype, y=Score, fill=Genotype)) +
+  geom_boxplot(alpha=0.6) +
+  scale_fill_manual(values = c("WT" ="black","MUT" = "red", "HET" = "blue")) +
+  geom_beeswarm(size=3)+
+  theme_cowplot(20)+
+  ggtitle("Histology Score") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(legend.background = element_rect(fill="lightblue", size=0.5, linetype="solid")) +
+  theme(legend.position = "top",legend.title = element_text(hjust = 0.5), legend.justification = "center")
+
+
+## Wrangle longitudinal data into long formats --
 
 data_long <- pivot_longer(data, 
                           cols = starts_with("D"), 
@@ -75,7 +95,7 @@ occult_score <- make_longitudinal_graph(data_long, "Occult_Score", "Fecal Occult
 weight_raw <- make_longitudinal_graph(weight_long,"Body_Weight", "Body Weight (g)")
 percent_weight<- make_longitudinal_graph(pct_weight_long,"Percent_Change_Weight", "Body Weight (% Baseline)")
 
-plot_grid(weight_raw, percent_weight,NULL,clin_score, stool_consist, occult_score, labels=c("A","B","","C", "D", "E"), ncol=3,nrow=2, label_size = 22)
+plot_grid(weight_raw, percent_weight,histo_plot,clin_score, stool_consist, occult_score, labels=c("A","B","C","D", "E", "F"), ncol=3,nrow=2, label_size = 22)
 
 
 ### Stats ---
@@ -129,7 +149,7 @@ md_table <- knitr::kable(results_df, format = "markdown", align = c("c", "c", "c
 # Write the markdown table to a file
 writeLines(md_table, "DSS_Clinical_Score_wilcoxon_results.md")
 
-## Splitting the dataframe by Day - Occult -
+## Splitting the dataframe by Day - Occult --
 df_list <- split(occult, occult$Day)
 
 # Defining the function to perform Wilcoxon rank sum test
@@ -244,6 +264,13 @@ md_table <- knitr::kable(results_df, format = "markdown", align = c("c", "c", "c
 
 # Write the markdown table to a file
 writeLines(md_table, "SLC_DSS/PCT_BW_wilcoxon_results.md")
+
+## Histo Stats --
+df_het <- histology %>% filter(Genotype!="MUT")
+wilcox.test(Score~Genotype, df_het)
+
+df_mut <- histology %>% filter(Genotype!="HET")
+wilcox.test(Score~Genotype,df_mut)
 
 ## LMEM -- 
 output <- lme(fixed= FP_output ~ Sex + SLC_Genotype + ASO_Tg, random = ~1|MouseID, data=data_long)

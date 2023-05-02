@@ -19,11 +19,13 @@ wrangle_genera_names("Long_Term/taxa_barplots/LumCol_level-6.csv", "Long_Term/ta
 wrangle_genera_names("Long_Term/taxa_barplots/MucCol_level-6.csv", "Long_Term/taxa_barplots/","MucosalColon_level-6.RDS")
 
 ## Plot the barplots --
-trios_lc_barplot <- generate_L6_taxa_plots("Trios/LuminalColon_level-6.RDS","Luminal Colon", ".*g__",global_genera_cols) +
+lt_lc_barplot <- generate_L6_taxa_plots("Long_Term/taxa_barplots/LuminalColon_level-6.RDS","Luminal Colon", ".*g__",global_genera_cols) +
   theme(legend.position = "none")
 
-trios_mc_barplot <- generate_L6_taxa_plots("Trios/MucosalColon_level-6.RDS","Mucosal Colon", ".*g__",global_genera_cols) +
+lt_mc_barplot <- generate_L6_taxa_plots("Long_Term/taxa_barplots/MucosalColon_level-6.RDS","Mucosal Colon", ".*g__",global_genera_cols) +
   theme(legend.position = "none")
+
+plot_grid(lt_lc_barplot, lt_mc_barplot)
 
 ## Draw the legend --
 L6_legend <- generate_L6_taxa_plots("Trios/MucosalColon_level-6.RDS","Mucosal Colon", ".*g__",global_genera_cols) +
@@ -44,7 +46,7 @@ L2_lum<-funrar::make_relative(L2_lum)
 L2_lum<-as.data.frame(t(L2_lum))
 toptaxa<- rowMeans(L2_lum)
 L2_lum$averageRA <-toptaxa
-L2_lum <- L2_lum %>% mutate(keeptaxa = ifelse(averageRA >0.001, row.names(L2_lum), "Other"))
+L2_lum <- L2_lum %>% mutate(keeptaxa = ifelse(averageRA >0.01, row.names(L2_lum), "Other"))
 L2_lum <-select(L2_lum,-averageRA)
 
 taxa<-L2_lum$keeptaxa
@@ -62,7 +64,7 @@ L2_lum<-funrar::make_relative(L2_lum)
 L2_lum<-as.data.frame(t(L2_lum))
 toptaxa<- rowMeans(L2_lum)
 L2_lum$averageRA <-toptaxa
-L2_lum <- L2_lum %>% mutate(keeptaxa = ifelse(averageRA >0.001, row.names(L2_lum), "Other"))
+L2_lum <- L2_lum %>% mutate(keeptaxa = ifelse(averageRA >0.01, row.names(L2_lum), "Other"))
 L2_lum <-select(L2_lum,-averageRA)
 
 taxa<-L2_lum$keeptaxa
@@ -74,14 +76,22 @@ taxa<-gsub(".*g__","",taxa )
 L2_lum$Taxa <-taxa
 labels_muc <- unique(L2_lum$Taxa)
 
-global <- union(labels_lum,labels_muc)
-length(global)
+lt_global <- union(labels_lum,labels_muc)
+length(lt_global)
 print(global)
 ## Generate a color key using paletteer colors ---
 
+lt_trios_global <- c(lt_global, trios_global)
+
+lt_cols2 <- paletteer_d("ggthemes::Classic_20",20)	
+lt_cols4 <- paletteer_d("ggthemes::calc",1)
+global_genera_cols <- c(add_cols2, add_cols4, add_cols3) 
+global_genera_cols <- unique(global_genera_cols)
+
+union(names(global), )
 add_cols2 <- paletteer_d("ggthemes::Classic_20",20)	
 add_cols4 <- paletteer_d("ggthemes::calc",12)
-add_cols3 <- paletteer_d("ggsci::category20_d3", 20)
+add_cols3 <- paletteer_d("ggsci::category20_d3", 9)
 add_cols5 <- paletteer_d("basetheme::clean",2)
 add_cols6 <- paletteer_d("basetheme::dark",10)
 global_genera_cols <- c(add_cols2,add_cols3,add_cols6, add_cols4,add_cols5)

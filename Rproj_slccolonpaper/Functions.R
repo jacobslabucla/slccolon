@@ -1,6 +1,6 @@
 ## Make a taxa summary plot --
 generate_L6_taxa_plots <- function(path_to_RDS, titlestring,greppattern, fillvector){
-  #L2_lum<-readRDS("Regional-Mouse-Biogeography-Analysis/2021-8-Microbiome-Batch-Correction-Analysis/Taxa-Barplots/SI_LumMuc_L6.RDS")
+  #L2_lum<-readRDS("Long_Term/taxa_barplots/LuminalColon_level-6.RDS")
   #taxa <- gsub(".*g__","",taxa)
   #cols<-assign_cols
   titlestring<-c(titlestring)
@@ -10,22 +10,28 @@ generate_L6_taxa_plots <- function(path_to_RDS, titlestring,greppattern, fillvec
   L2_lum<-as.data.frame(t(L2_lum))
   toptaxa<- rowMeans(L2_lum)
   L2_lum$averageRA <-toptaxa
-  L2_lum <- L2_lum %>% dplyr::mutate(keeptaxa = ifelse(averageRA >0.001, row.names(L2_lum), "Other"))
+  L2_lum <- L2_lum %>% dplyr::mutate(keeptaxa = ifelse(averageRA >0.01, row.names(L2_lum), "Other"))
   L2_lum <-select(L2_lum,-averageRA)
   
   taxa<-L2_lum$keeptaxa
   L2_lum <- select(L2_lum,-keeptaxa)
   L2_lum <- as.matrix(sapply(L2_lum,as.numeric))
   L2_lum <- as.data.frame(prop.table(L2_lum,2))
-  taxa<-gsub(greppattern,"",taxa )
+  #taxa<-gsub(greppattern,"",taxa )
   
-  L2_lum$Taxa <-taxa
-  L2_lum<- tidyr::pivot_longer(L2_lum, -c(Taxa), values_to ="Value", names_to ="Site")
+  family<-gsub(".*f__","",taxa )
+  genus <- gsub(".*g__","",taxa)
+  
+  L2_lum$Family<-gsub(".g__.*","",family)
+  L2_lum$Genus <- genus
+  L2_lum <- L2_lum %>% mutate(annotation = ifelse(L2_lum$Genus=="", paste0(L2_lum$Family,"..f."), L2_lum$Genus))
+  
+  L2_lum<- tidyr::pivot_longer(L2_lum, -c(Family, Genus, annotation), values_to ="Value", names_to ="Site")
   L2_lum$Value <- L2_lum$Value * 100
   
   L2_lum$Site <- factor(L2_lum$Site, levels=c("WT", "HET","MUT"))
   cols <- fillvector
-  ggplot2::ggplot(data=L2_lum, aes(x=Site, y=Value, fill=Taxa)) +
+  ggplot2::ggplot(data=L2_lum, aes(x=Site, y=Value, fill=annotation)) +
     geom_bar(stat="identity")+
     #scale_fill_paletteer_d(palette="colorBlindness::SteppedSequential5Steps") +
     #scale_fill_paletteer_d(palette="dutchmasters::milkmaid") +

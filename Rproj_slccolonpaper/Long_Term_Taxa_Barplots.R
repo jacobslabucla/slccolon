@@ -28,7 +28,7 @@ lt_mc_barplot <- generate_L6_taxa_plots("Long_Term/taxa_barplots/MucosalColon_le
 plot_grid(lt_lc_barplot, lt_mc_barplot)
 
 ## Draw the legend --
-L6_legend <- generate_L6_taxa_plots("Trios/MucosalColon_level-6.RDS","Mucosal Colon", ".*g__",global_genera_cols) +
+L6_legend <- generate_L6_taxa_plots("Long_Term/taxa_barplots/MucosalColon_level-6.RDS","Mucosal Colon", ".*g__",global_genera_cols) +
   theme(legend.position = "right") +
   guides(fill=guide_legend(nrow=22, byrow=TRUE))+
   theme(legend.spacing.y = unit(0.1, 'cm')) +
@@ -50,6 +50,7 @@ L2_lum <- L2_lum %>% mutate(keeptaxa = ifelse(averageRA >0.01, row.names(L2_lum)
 L2_lum <-select(L2_lum,-averageRA)
 
 taxa<-L2_lum$keeptaxa
+print(taxa)
 L2_lum <- select(L2_lum,-keeptaxa)
 L2_lum <- as.matrix(sapply(L2_lum,as.numeric))
 L2_lum <- as.data.frame(prop.table(L2_lum,2))
@@ -57,7 +58,7 @@ L2_lum <- as.data.frame(prop.table(L2_lum,2))
 L2_lum$Taxa <-taxa
 labels_lum <- unique(L2_lum$Taxa)
 print(labels_lum)
-## Extract taxa >0.001 for use in legend ---
+## Extract taxa >0.01 for use in legend ---
 L2_lum<-read.csv("Long_Term/taxa_barplots/MucCol_level-6.csv",header=TRUE,row.names=1)
 L2_lum<- as.matrix(L2_lum)
 L2_lum<-funrar::make_relative(L2_lum)
@@ -68,24 +69,29 @@ L2_lum <- L2_lum %>% mutate(keeptaxa = ifelse(averageRA >0.01, row.names(L2_lum)
 L2_lum <-select(L2_lum,-averageRA)
 
 taxa<-L2_lum$keeptaxa
+print(taxa)
 L2_lum <- select(L2_lum,-keeptaxa)
 L2_lum <- as.matrix(sapply(L2_lum,as.numeric))
 L2_lum <- as.data.frame(prop.table(L2_lum,2))
-taxa<-gsub(".*g__","",taxa )
+family<-gsub(".*f__","",taxa )
+genus <- gsub(".*g__","",taxa)
 
-L2_lum$Taxa <-taxa
-labels_muc <- unique(L2_lum$Taxa)
+L2_lum$Family<-gsub(".g__.*","",family)
+L2_lum$Genus <- genus
+L2_lum <- L2_lum %>% mutate(annotation = ifelse(L2_lum$Genus=="", paste0(L2_lum$Family,"..f."), L2_lum$Genus))
 
+labels_muc <- unique(L2_lum$annotation)
+print(taxa)
 lt_global <- union(labels_lum,labels_muc)
 length(lt_global)
 print(global)
 ## Generate a color key using paletteer colors ---
 
 lt_trios_global <- c(lt_global, trios_global)
-
-lt_cols2 <- paletteer_d("ggthemes::Classic_20",20)	
-lt_cols4 <- paletteer_d("ggthemes::calc",1)
-global_genera_cols <- c(add_cols2, add_cols4, add_cols3) 
+unique(lt_trios_global)
+add_cols2 <- paletteer_d("ggthemes::Classic_20",20)	
+add_cols4 <- paletteer_d("ggthemes::calc",6)
+global_genera_cols <- c(add_cols2, add_cols4) 
 global_genera_cols <- unique(global_genera_cols)
 
 union(names(global), )

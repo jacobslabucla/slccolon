@@ -66,9 +66,79 @@
                 "source": false
               }
             }
+          },
+          {
+            "id": "cd6593607f83570f",
+            "type": "leaf",
+            "state": {
+              "type": "release-notes",
+              "state": {
+                "currentVersion": "1.2.7"
+              }
+            }
+          },
+          {
+            "id": "3a16e07f835b8e32",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Trios Beta Diversity - without Repeat Measures.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "b0bc167eaf89a28a",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Trios Beta Diversity - Repeat Measures.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "126a382baed3519c",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Long Term Beta Diversity - without Repeat Measures.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "c105f5766d848344",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Baseline JAX Beta Diversity.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "a172db2ddc56fa9b",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Trios Beta Diversity - Repeat Measures.md",
+                "mode": "source",
+                "source": false
+              }
+            }
           }
         ],
-        "currentTab": 4
+        "currentTab": 10
       }
     ],
     "direction": "vertical"
@@ -113,6 +183,14 @@
               "type": "starred",
               "state": {}
             }
+          },
+          {
+            "id": "8b9817a0aee31803",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {}
+            }
           }
         ]
       }
@@ -134,7 +212,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "SLC DSS Stats.md",
+                "file": "Trios Beta Diversity - Repeat Measures.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -151,7 +229,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "SLC DSS Stats.md",
+                "file": "Trios Beta Diversity - Repeat Measures.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -174,7 +252,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "SLC DSS Stats.md"
+                "file": "Trios Beta Diversity - Repeat Measures.md"
               }
             }
           }
@@ -195,8 +273,13 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "f37a79c9886e66bf",
+  "active": "a172db2ddc56fa9b",
   "lastOpenFiles": [
+    "Long Term Beta Diversity - Repeat Measures.md",
+    "Trios Beta Diversity - without Repeat Measures.md",
+    "Trios Beta Diversity - Repeat Measures.md",
+    "Baseline JAX Beta Diversity.md",
+    "Long Term Beta Diversity - without Repeat Measures.md",
     "Trios Pathway Maaslin2 log TSS.md",
     "SLC DSS Stats.md",
     "Untitled",

@@ -21,6 +21,13 @@ row.names(JAX_meta) <- JAX_meta$SampleID
 JAX <- JAX_meta$SampleID
 JAX_counts <- counts %>% select(all_of(JAX))
 
+nohet_JAX_meta <- metadata %>%
+  filter(Genotype!="HET") %>%
+  filter(Background=="JAX", SampleID %in% names(counts))
+row.names(nohet_JAX_meta) <- nohet_JAX_meta$SampleID
+JAX <- nohet_JAX_meta$SampleID
+nohet_JAX_counts <- counts %>% select(all_of(JAX))
+
 # full dataset
 baseline_meta <- metadata
 row.names(baseline_meta)=baseline_meta$SampleID
@@ -34,87 +41,42 @@ NIH_counts <- counts %>% select(all_of(NIH))
 
 ## Prevalence filter datasets -- 
 # JAX
-t_df_input_data<-as.data.frame(t(JAX_counts))
+0.15*87
+JAX_counts_prev <- prevalence_filter(JAX_counts,13)
 
-ctr= 0
-prevalence <- vector(mode="numeric")
-
-for(i in 1:ncol(t_df_input_data)){
-  v<-t_df_input_data %>% pull(i)
-  for(j in 1:length(v)){
-    if (t_df_input_data[j,i]>0){
-      ctr=1+ctr
-    }
-    else {
-      ctr=ctr
-    }
-  }
-  prevalence<-append(prevalence,ctr)
-  ctr=0
-}
-0.15*87 #13.5 samples 
-JAX_counts$prevalence<-prevalence #features present in at least 13 samples our of 90
-JAX_counts_prev<- JAX_counts%>% filter(prevalence>=13) #[Result: 557 features, 90 samples]
-
-JAX_counts_prev <- JAX_counts %>% select(-c(prevalence))
+0.15*57
+nohet_JAX_counts_prev <- prevalence_filter(nohet_JAX_counts,9)
 
 # NIH
-t_df_input_data<-as.data.frame(t(NIH_counts))
 
-ctr= 0
-prevalence <- vector(mode="numeric")
+NIH_counts_prev <- prevalence_filter(NIH_counts,7)
 
-for(i in 1:ncol(t_df_input_data)){
-  v<-t_df_input_data %>% pull(i)
-  for(j in 1:length(v)){
-    if (t_df_input_data[j,i]>0){
-      ctr=1+ctr
-    }
-    else {
-      ctr=ctr
-    }
-  }
-  prevalence<-append(prevalence,ctr)
-  ctr=0
-}
-0.15*45 #7 samples 
-NIH_counts$prevalence<-prevalence
-NIH_counts_prev<- NIH_counts%>% filter(prevalence>=7) #[Result: 242 features, 46 samples]
-
-NIH_counts_prev <- NIH_counts %>% select(-c(prevalence))
 # Full Dataset
-t_df_input_data<-as.data.frame(t(baseline_counts))
-
-ctr= 0
-prevalence <- vector(mode="numeric")
-
-for(i in 1:ncol(t_df_input_data)){
-  v<-t_df_input_data %>% pull(i)
-  for(j in 1:length(v)){
-    if (t_df_input_data[j,i]>0){
-      ctr=1+ctr
-    }
-    else {
-      ctr=ctr
-    }
-  }
-  prevalence<-append(prevalence,ctr)
-  ctr=0
-}
-0.15*133 #20 samples 
-baseline_counts$prevalence<-prevalence #features present in at least 15 samples our of 100
-baseline_counts_prev <- baseline_counts %>% filter(prevalence>=20) #[Result: 244 features, 133 samples]
-
-baseline_counts_prev <- baseline_counts %>% select(-c(prevalence))
+baseline_counts_prev <- prevalence_filter(baseline_counts,20)
 
 ## Calculate RS Jensen Shannon distance matrix -- 
 
 
 # JAX 
 JAX.dist <- calculate_rsjensen(JAX_counts_prev)
-
+set.seed(11)
 data.adonis=adonis(JAX.dist ~ Sex + Genotype, data=JAX_meta, permutations=10000)
 data.adonis$aov.tab 
+
+nohet_JAX.dist <- calculate_rsjensen(nohet_JAX_counts_prev)
+
+data.dist<-nohet_JAX.dist
+metadata <- nohet_JAX_meta
+
+target <- row.names(data.dist)
+metadata = metadata[match(target, row.names(metadata)),]
+target == row.names(metadata)
+data.dist <- as.dist(as(data.dist, "matrix"))
+
+set.seed(11)
+data.adonis=adonis(nohet_JAX.dist ~ Sex + Genotype, data=nohet_JAX_meta, permutations=10000)
+data.adonis$aov.tab 
+
 
 # NIH
 NIH.dist <- calculate_rsjensen(NIH_counts_prev)
@@ -139,6 +101,15 @@ data.adonis$aov.tab
 ## Principal Coordinates Analysis -- 
 
 cols <- c("WT"="black", "HET"= "blue", "MUT"="red")
+
+nohet_jax_baseline_pcoa <- generate_pcoA_plots(distance_matrix=nohet_JAX.dist,
+                                         counts = nohet_JAX_counts_prev,
+                                         metadata = nohet_JAX_meta,
+                                         title="JAX - Fecal Pellet RS Jensen",
+                                         colorvariable = Genotype,
+                                         colorvector = cols,
+                                         wa_scores_filepath = "Baseline/beta_diversity/nohet_JAX_Top_Taxa_PcoA.csv")
+
 
 jax_baseline_pcoa <- generate_pcoA_plots(distance_matrix=JAX.dist,
                                    counts = JAX_counts_prev,

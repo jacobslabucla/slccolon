@@ -110,5 +110,5 @@ run_Maaslin2(lc_genus,lumcol_meta,"differential_taxa/L6_Luminal_Colon",
 # Mucosal Colon-- is ok 
 fixed_effects <- c("Sequencing_Run","Site", "Sex", "Genotype")
 random_effects <- c("MouseID")
-run_Maaslin2(lc_genus,lumcol_meta,"differential_taxa/L6_Mucosal_Colon", 
+run_Maaslin2(mc_genus,muccol_meta,"differential_taxa/L6_Mucosal_Colon", 
              fixed_effects, "_L6_Maaslin2_Sequencing_Run_Site_Sex_Genotype_1-MouseID", random_effects)

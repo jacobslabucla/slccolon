@@ -27,62 +27,45 @@ row.names(trios_muccol_meta) <- trios_muccol_meta$SampleID
 muccol <- trios_muccol_meta$SampleID
 muccol_counts <- counts %>% select(all_of(muccol))
 
+# Luminal Colon no HET 
+nohet_trios_lumcol_meta <- metadata %>%
+  filter(Genotype!="HET")%>%
+  filter(Subset=="Luminal_Colon", SampleID %in% names(counts))
+row.names(nohet_trios_lumcol_meta) <- nohet_trios_lumcol_meta$SampleID
+lumcol <- nohet_trios_lumcol_meta$SampleID
+nohet_lumcol_counts <- counts %>% select(all_of(lumcol))
+
+# Mucosal Colon no HET
+nohet_trios_muccol_meta <- metadata %>% 
+  filter(Genotype!="HET")%>%
+  filter(Subset=="Mucosal_Colon", SampleID %in% names(counts))
+row.names(nohet_trios_muccol_meta) <- nohet_trios_muccol_meta$SampleID
+muccol <- nohet_trios_muccol_meta$SampleID
+nohet_muccol_counts <- counts %>% select(all_of(muccol))
+
 ## Prevalence filter datasets -- 
-# Luminal Colon 
-t_df_input_data<-as.data.frame(t(lumcol_counts))
-
-ctr= 0
-prevalence <- vector(mode="numeric")
-
-for(i in 1:ncol(t_df_input_data)){
-  v<-t_df_input_data %>% pull(i)
-  for(j in 1:length(v)){
-    if (t_df_input_data[j,i]>0){
-      ctr=1+ctr
-    }
-    else {
-      ctr=ctr
-    }
-  }
-  prevalence<-append(prevalence,ctr)
-  ctr=0
-}
-0.15*90 #13.5 samples 
-lumcol_counts$prevalence<-prevalence #features present in at least 13 samples our of 90
-lumcol_counts<- lumcol_counts%>% filter(prevalence>=13) #[Result: 383 features, 90 samples]
-
-trios_lumcol_counts <- lumcol_counts %>% select(-c(prevalence))
+# Luminal Colon
+trios_lumcol_counts <- prevalence_filter(lumcol_counts,13)
 
 # Mucosal Colon 
-t_df_input_data<-as.data.frame(t(muccol_counts))
+trios_muccol_counts <- prevalence_filter(muccol_counts,12)
 
-ctr= 0
-prevalence <- vector(mode="numeric")
+# Luminal Colon - no HET 
+0.15*60 #9 samples
+nohet_trios_lumcol_counts <- prevalence_filter(nohet_lumcol_counts,9)
 
-for(i in 1:ncol(t_df_input_data)){
-  v<-t_df_input_data %>% pull(i)
-  for(j in 1:length(v)){
-    if (t_df_input_data[j,i]>0){
-      ctr=1+ctr
-    }
-    else {
-      ctr=ctr
-    }
-  }
-  prevalence<-append(prevalence,ctr)
-  ctr=0
-}
-0.15*82 #12 samples 
-muccol_counts$prevalence<-prevalence #features present in at least 15 samples our of 100
-muccol_counts <- muccol_counts %>% filter(prevalence>=12) #[Result: 450 features, 83 samples]
-
-trios_muccol_counts <- muccol_counts %>% select(-c(prevalence))
+# Mucosal Colon - no HET 
+0.15*52 #8 samples
+nohet_trios_muccol_counts <- prevalence_filter(nohet_muccol_counts,8)
 
 ## Calculate RS Jensen Shannon distance matrix -- 
 
 
 trios_muccol.dist <- calculate_rsjensen(trios_muccol_counts)
 trios_lumcol.dist <- calculate_rsjensen(trios_lumcol_counts)
+nohet_trios_muccol.dist <- calculate_rsjensen(nohet_trios_muccol_counts)
+nohet_trios_lumcol.dist <- calculate_rsjensen(nohet_trios_lumcol_counts)
+
 
 
 
@@ -106,4 +89,152 @@ trios_mc_pcoa <- generate_pcoA_plots(distance_matrix=muccol.dist,
                                      colorvector = cols,
                                      wa_scores_filepath = "Trios/beta_diversity/MucCol_Top_Taxa_PcoA.csv")
 
+nohet_trios_lc_pcoa <- generate_pcoA_plots(distance_matrix=nohet_trios_lumcol.dist,
+                                     counts = nohet_trios_lumcol_counts,
+                                     metadata = nohet_trios_lumcol_meta,
+                                     title="Trios - Luminal Colon RS Jensen",
+                                     colorvariable = Genotype,
+                                     colorvector = cols,
+                                     wa_scores_filepath = "Trios/beta_diversity/nohet_LumCol_Top_Taxa_PcoA.csv")
+
+nohet_trios_mc_pcoa <- generate_pcoA_plots(distance_matrix=nohet_trios_muccol.dist,
+                                     counts = nohet_trios_muccol_counts,
+                                     metadata = nohet_trios_muccol_meta,
+                                     title="Trios - Mucosal Colon RS Jensen",
+                                     colorvariable = Genotype,
+                                     colorvector = cols,
+                                     wa_scores_filepath = "Trios/beta_diversity/nohet_MucCol_Top_Taxa_PcoA.csv")
+
 plot_grid(trios_lc_pcoa, trios_mc_pcoa,labels=c("A","B"),label_size=20)
+plot_grid(nohet_trios_lc_pcoa, nohet_trios_mc_pcoa,labels=c("A","B"),label_size=20)
+
+## Statistics --
+
+## PERMANOVA
+
+# Luminal Colon
+data.dist<-trios_lumcol.dist
+metadata <- trios_lumcol_meta
+
+target <- row.names(data.dist)
+metadata = metadata[match(target, row.names(metadata)),]
+target == row.names(metadata)
+data.dist <- as.dist(as(data.dist, "matrix"))
+
+set.seed(11)
+data.adonis=adonis(data.dist ~ Sequencing_Run + Litter + Sex + Site + Genotype, data=metadata, permutations=10000)
+data.adonis$aov.tab
+
+set.seed(11)
+data.adonis=adonis(data.dist ~ Sequencing_Run + Sex + Site + Genotype, data=metadata, permutations=10000)
+data.adonis$aov.tab
+
+# Mucosal Colon
+data.dist<-trios_muccol.dist
+metadata <- trios_muccol_meta
+
+target <- row.names(data.dist)
+metadata = metadata[match(target, row.names(metadata)),]
+target == row.names(metadata)
+data.dist <- as.dist(as(data.dist, "matrix"))
+
+set.seed(11)
+data.adonis=adonis(data.dist ~ Sequencing_Run + Litter + Sex + Site + Genotype, data=metadata, permutations=10000)
+data.adonis$aov.tab
+
+set.seed(11)
+data.adonis=adonis(data.dist ~ Sequencing_Run + Sex + Site + Genotype, data=metadata, permutations=10000)
+data.adonis$aov.tab
+
+# Luminal Colon - no HETs
+data.dist<-nohet_trios_lumcol.dist
+metadata <- nohet_trios_lumcol_meta
+
+target <- row.names(data.dist)
+metadata = metadata[match(target, row.names(metadata)),]
+target == row.names(metadata)
+data.dist <- as.dist(as(data.dist, "matrix"))
+
+set.seed(11)
+data.adonis=adonis(data.dist ~ Sequencing_Run + Litter + Sex + Site + Genotype, data=metadata, permutations=10000)
+data.adonis$aov.tab
+
+set.seed(11)
+data.adonis=adonis(data.dist ~ Sequencing_Run + Sex + Site + Genotype, data=metadata, permutations=10000)
+data.adonis$aov.tab
+
+# Mucosal Colon - no HETs
+data.dist<-nohet_trios_muccol.dist
+metadata <- nohet_trios_muccol_meta
+
+target <- row.names(data.dist)
+metadata = metadata[match(target, row.names(metadata)),]
+target == row.names(metadata)
+data.dist <- as.dist(as(data.dist, "matrix"))
+
+set.seed(11)
+data.adonis=adonis(data.dist ~ Sequencing_Run + Litter + Sex + Site + Genotype, data=metadata, permutations=10000)
+data.adonis$aov.tab
+
+set.seed(11)
+data.adonis=adonis(data.dist ~ Sequencing_Run + Sex + Site + Genotype, data=metadata, permutations=10000)
+data.adonis$aov.tab
+
+
+
+## Repeat-Measures-Aware 
+# Luminal Colon
+site <- c("Site")
+mouseID <- c("Sequencing_Run","Litter","Sex","Genotype","MouseID")
+order_vector <- c("Sequencing_Run","Litter","Sex","Site","Genotype")
+run_repeated_PERMANOVA(trios_lumcol.dist,
+                       trios_lumcol_meta,
+                       site,
+                       mouseID,
+                       order_vector)
+
+site <- c("Site")
+mouseID <- c("Sequencing_Run","Sex","Genotype","MouseID")
+order_vector <- c("Sequencing_Run","Sex","Site","Genotype")
+run_repeated_PERMANOVA(trios_lumcol.dist,
+                       trios_lumcol_meta,
+                       site,
+                       mouseID,
+                       order_vector)
+
+names(nohet_trios_lumcol_meta)
+site <- c("Site")
+mouseID <- c("Sequencing_Run","Litter","Sex","Genotype","MouseID")
+order_vector <- c("Sequencing_Run","Litter","Sex","Site","Genotype")
+run_repeated_PERMANOVA(nohet_trios_lumcol.dist,
+                       nohet_trios_lumcol_meta,
+                       site,
+                       mouseID,
+                       order_vector)
+
+# Mucosal Colon
+site <- c("Site")
+mouseID <- c("Sequencing_Run","Litter","Sex","Genotype","MouseID")
+order_vector <- c("Sequencing_Run","Litter","Sex","Site","Genotype")
+run_repeated_PERMANOVA(trios_muccol.dist,
+                       trios_muccol_meta,
+                       site,
+                       mouseID,
+                       order_vector)
+site <- c("Site")
+mouseID <- c("Sequencing_Run","Sex","Genotype","MouseID")
+order_vector <- c("Sequencing_Run","Sex","Site","Genotype")
+run_repeated_PERMANOVA(trios_muccol.dist,
+                       trios_muccol_meta,
+                       site,
+                       mouseID,
+                       order_vector)
+site <- c("Site")
+mouseID <- c("Sequencing_Run","Litter","Sex","Genotype","MouseID")
+order_vector <- c("Sequencing_Run","Litter","Sex","Site","Genotype")
+run_repeated_PERMANOVA(nohet_trios_muccol.dist,
+                       nohet_trios_muccol_meta,
+                       site,
+                       mouseID,
+                       order_vector)
+

@@ -330,3 +330,87 @@ make_genus_level_taxa_dotplot <- function(ASV_significant_results_dataset,
   baseline_DAT 
   
 }
+
+prevalence_filter <- function(counts_df, min_sample_number){
+  
+  lumcol_counts<-as.data.frame(counts_df)
+  t_df_input_data<-as.data.frame(t(lumcol_counts))
+  
+  ctr= 0
+  prevalence <- vector(mode="numeric")
+  
+  for(i in 1:ncol(t_df_input_data)){
+    v<-t_df_input_data %>% pull(i)
+    for(j in 1:length(v)){
+      if (t_df_input_data[j,i]>0){
+        ctr=1+ctr
+      }
+      else {
+        ctr=ctr
+      }
+    }
+    prevalence<-append(prevalence,ctr)
+    ctr=0
+  }
+  
+  lumcol_counts$prevalence<-prevalence 
+  lumcol_counts<- lumcol_counts%>% filter(prevalence>=min_sample_number) 
+  lumcol_counts <- lumcol_counts %>% select(-c(prevalence))
+  return(lumcol_counts)
+}
+
+run_repeated_PERMANOVA <- function(path_to_distance_matrix_tsv,path_to_metadata_csv,
+                                   permute_columns_vector, subject_metadata_vector,
+                                   order_vector){
+  # Test function ---
+  
+  #data <- nohet_trios_lumcol.dist
+  #metadata <- nohet_trios_lumcol_meta
+  #permute_columns_vector <- c("Site")
+  #subject_metadata_vector<-c("Sequencing_Run", "Sex", "Genotype", "MouseID")
+  
+  # Read in files ---
+  data<-as.data.frame(path_to_distance_matrix_tsv)
+  metadata <- as.data.frame(path_to_metadata_csv)
+  
+
+  # Ensure metadata matches sample order in distance matrix
+  data.dist <- as.dist(as(data, "matrix"))
+  target <- row.names(data)
+  metadata <- metadata[match(target, row.names(metadata)),]
+  target == row.names(metadata)
+  
+  # Fix metadata columns 
+  if("MouseID_Line" %in% names(metadata)){
+    metadata$MouseID <- metadata$MouseID_Line
+  }
+  
+  if("Site.1" %in% names(metadata)){
+    metadata$Site <- factor(metadata$Site.1)
+  }
+  if(class(metadata$MouseID)=="integer"){
+    metadata$MouseID <- paste("Mouse_",metadata$MouseID)
+  }
+  
+  # Read in relevant metadata, where permute_within (Timepoint, SampleType) and subject data (Age,Sex)
+  permute_within <- c(permute_columns_vector)
+  subject_data <- c(subject_metadata_vector)
+  # Wrangle metadata into appropriate formats 
+  general_metadata<- dplyr::select(metadata, c(permute_within))
+  metadata_subj <- dplyr::select(metadata, c(subject_data))
+  metadata_subj <-as.data.frame(metadata_subj[!duplicated(metadata$MouseID),]) #one of these columns is your SubjectID
+  row.names(metadata_subj) <- metadata_subj$MouseID
+  metadata_subj <- dplyr::select(metadata_subj, -MouseID)
+  
+  subjectvector <- c(metadata$MouseID)
+  #order_vector <- head(subject_data,-1)
+  #order_vector <- c(order_vector, permute_within)
+  
+  # Run repeat-measrues aware PERMANOVA (Lloyd-Price et al., 2019)
+  data.adonis <- PERMANOVA_repeat_measures(D = data.dist, permutations=10000,
+                                           permute_within= general_metadata, 
+                                           blocks= subjectvector, 
+                                           block_data=metadata_subj,
+                                           metadata_order = order_vector)
+  print(data.adonis$aov.tab)
+}

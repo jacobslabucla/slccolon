@@ -1,10 +1,10 @@
 ## Make a taxa summary plot --
-generate_L6_taxa_plots <- function(path_to_RDS, titlestring,greppattern, fillvector){
+generate_L6_taxa_plots <- function(path_to_csv, titlestring,greppattern, fillvector){
   #L2_lum<-readRDS("Long_Term/taxa_barplots/LuminalColon_level-6.RDS")
   #taxa <- gsub(".*g__","",taxa)
   #cols<-assign_cols
   titlestring<-c(titlestring)
-  L2_lum<-readRDS(path_to_RDS)
+  L2_lum<-read.csv(path_to_csv,header=TRUE,row.names=1)
   L2_lum<- as.matrix(L2_lum)
   L2_lum<-funrar::make_relative(L2_lum)
   L2_lum<-as.data.frame(t(L2_lum))
@@ -21,12 +21,16 @@ generate_L6_taxa_plots <- function(path_to_RDS, titlestring,greppattern, fillvec
   
   family<-gsub(".*f__","",taxa )
   genus <- gsub(".*g__","",taxa)
+  order <- gsub(".*o__","",taxa)
   
   L2_lum$Family<-gsub(".g__.*","",family)
   L2_lum$Genus <- genus
-  L2_lum <- L2_lum %>% mutate(annotation = ifelse(L2_lum$Genus=="", paste0(L2_lum$Family,"..f."), L2_lum$Genus))
+  L2_lum$Order<-gsub(".f__.*","",order)
   
-  L2_lum<- tidyr::pivot_longer(L2_lum, -c(Family, Genus, annotation), values_to ="Value", names_to ="Site")
+  L2_lum <- L2_lum %>% mutate(annotation = ifelse(L2_lum$Genus=="", paste0(L2_lum$Family,"..f."), L2_lum$Genus))
+  L2_lum <- L2_lum %>% mutate(annotation = ifelse(L2_lum$Family=="", paste0(L2_lum$Order,"..o."), L2_lum$annotation))
+  
+  L2_lum<- tidyr::pivot_longer(L2_lum, -c(Family, Genus, Order,annotation), values_to ="Value", names_to ="Site")
   L2_lum$Value <- L2_lum$Value * 100
   
   L2_lum$Site <- factor(L2_lum$Site, levels=c("WT", "HET","MUT"))

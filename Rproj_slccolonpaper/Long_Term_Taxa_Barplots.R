@@ -19,16 +19,16 @@ wrangle_genera_names("Long_Term/taxa_barplots/LumCol_level-6.csv", "Long_Term/ta
 wrangle_genera_names("Long_Term/taxa_barplots/MucCol_level-6.csv", "Long_Term/taxa_barplots/","MucosalColon_level-6.RDS")
 
 ## Plot the barplots --
-lt_lc_barplot <- generate_L6_taxa_plots("Long_Term/taxa_barplots/LuminalColon_level-6.RDS","Luminal Colon", ".*g__",global_genera_cols) +
+lt_lc_barplot <- generate_L6_taxa_plots("Long_Term/taxa_barplots/LumCol_level-6.csv","Luminal Colon", ".*g__",global_genera_cols) +
   theme(legend.position = "none")
 
-lt_mc_barplot <- generate_L6_taxa_plots("Long_Term/taxa_barplots/MucosalColon_level-6.RDS","Mucosal Colon", ".*g__",global_genera_cols) +
+lt_mc_barplot <- generate_L6_taxa_plots("Long_Term/taxa_barplots/MucCol_level-6.csv","Mucosal Colon", ".*g__",global_genera_cols) +
   theme(legend.position = "none")
 
 plot_grid(lt_lc_barplot, lt_mc_barplot)
 
 ## Draw the legend --
-L6_legend <- generate_L6_taxa_plots("Long_Term/taxa_barplots/MucosalColon_level-6.RDS","Mucosal Colon", ".*g__",global_genera_cols) +
+L6_legend <- generate_L6_taxa_plots("Long_Term/taxa_barplots/MucCol_level-6.csv","Mucosal Colon", ".*g__",global_genera_cols) +
   theme(legend.position = "right") +
   guides(fill=guide_legend(nrow=22, byrow=TRUE))+
   theme(legend.spacing.y = unit(0.1, 'cm')) +
@@ -40,7 +40,7 @@ grid::grid.draw(legend)
 ## Final Figures --
 plot_grid(trios_lc_barplot,trios_mc_barplot)
 ## Extract taxa >0.001 for use in legend ---
-L2_lum<-readRDS("Long_Term/taxa_barplots/LuminalColon_level-6.RDS")
+L2_lum<-read.csv("Long_Term/taxa_barplots/LumCol_level-6.csv",header=TRUE,row.names=1)
 L2_lum<- as.matrix(L2_lum)
 L2_lum<-funrar::make_relative(L2_lum)
 L2_lum<-as.data.frame(t(L2_lum))
@@ -54,9 +54,14 @@ print(taxa)
 L2_lum <- select(L2_lum,-keeptaxa)
 L2_lum <- as.matrix(sapply(L2_lum,as.numeric))
 L2_lum <- as.data.frame(prop.table(L2_lum,2))
+family<-gsub(".*f__","",taxa )
+genus <- gsub(".*g__","",taxa)
 
-L2_lum$Taxa <-taxa
-labels_lum <- unique(L2_lum$Taxa)
+L2_lum$Family<-gsub(".g__.*","",family)
+L2_lum$Genus <- genus
+L2_lum <- L2_lum %>% mutate(annotation = ifelse(L2_lum$Genus=="", paste0(L2_lum$Family,"..f."), L2_lum$Genus))
+
+labels_lum <- unique(L2_lum$annotation)
 print(labels_lum)
 ## Extract taxa >0.01 for use in legend ---
 L2_lum<-read.csv("Long_Term/taxa_barplots/MucCol_level-6.csv",header=TRUE,row.names=1)

@@ -185,4 +185,4 @@ ggplot(df, aes(x = Dataset, y = annotation, fill = coef)) +
   theme_cowplot(16)+
   ggtitle("Mucosal Enriched MUT (yellow) vs Enriched WT (purple): shared Genera")+
   geom_text(aes(x = 0.5, y = annotation, label = annotation, color = Phylum), 
-            size = 3, hjust = 1, fontface = "bold")# +
+            size = 3, hjust = 1, fontface = "bold")

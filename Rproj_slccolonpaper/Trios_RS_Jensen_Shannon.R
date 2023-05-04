@@ -16,15 +16,15 @@ counts <- counts[colSums(counts) >= 10000]
 ## Split counts into colon subsets -- 
 
 # Luminal Colon 
-lumcol_meta <- metadata %>% filter(Subset=="Luminal_Colon", SampleID %in% names(counts))
-row.names(lumcol_meta) <- lumcol_meta$SampleID
-lumcol <- lumcol_meta$SampleID
+trios_lumcol_meta <- metadata %>% filter(Subset=="Luminal_Colon", SampleID %in% names(counts))
+row.names(trios_lumcol_meta) <- trios_lumcol_meta$SampleID
+lumcol <- trios_lumcol_meta$SampleID
 lumcol_counts <- counts %>% select(all_of(lumcol))
 
 # Mucosal Colon
-muccol_meta <- metadata %>% filter(Subset=="Mucosal_Colon", SampleID %in% names(counts))
-row.names(muccol_meta) <- muccol_meta$SampleID
-muccol <- muccol_meta$SampleID
+trios_muccol_meta <- metadata %>% filter(Subset=="Mucosal_Colon", SampleID %in% names(counts))
+row.names(trios_muccol_meta) <- trios_muccol_meta$SampleID
+muccol <- trios_muccol_meta$SampleID
 muccol_counts <- counts %>% select(all_of(muccol))
 
 ## Prevalence filter datasets -- 
@@ -51,7 +51,7 @@ for(i in 1:ncol(t_df_input_data)){
 lumcol_counts$prevalence<-prevalence #features present in at least 13 samples our of 90
 lumcol_counts<- lumcol_counts%>% filter(prevalence>=13) #[Result: 383 features, 90 samples]
 
-lumcol_counts <- lumcol_counts %>% select(-c(prevalence))
+trios_lumcol_counts <- lumcol_counts %>% select(-c(prevalence))
 
 # Mucosal Colon 
 t_df_input_data<-as.data.frame(t(muccol_counts))
@@ -76,13 +76,13 @@ for(i in 1:ncol(t_df_input_data)){
 muccol_counts$prevalence<-prevalence #features present in at least 15 samples our of 100
 muccol_counts <- muccol_counts %>% filter(prevalence>=12) #[Result: 450 features, 83 samples]
 
-muccol_counts <- muccol_counts %>% select(-c(prevalence))
+trios_muccol_counts <- muccol_counts %>% select(-c(prevalence))
 
 ## Calculate RS Jensen Shannon distance matrix -- 
 
 
-muccol.dist <- calculate_rsjensen(muccol_counts)
-lumcol.dist <- calculate_rsjensen(lumcol_counts)
+trios_muccol.dist <- calculate_rsjensen(trios_muccol_counts)
+trios_lumcol.dist <- calculate_rsjensen(trios_lumcol_counts)
 
 
 
@@ -91,16 +91,16 @@ lumcol.dist <- calculate_rsjensen(lumcol_counts)
 cols <- c("WT"="black", "HET"= "blue", "MUT"="red")
 
 trios_lc_pcoa <- generate_pcoA_plots(distance_matrix=lumcol.dist,
-                    counts = lumcol_counts,
-                    metadata = lumcol_meta,
+                    counts = trios_lumcol_counts,
+                    metadata = trios_lumcol_meta,
                     title="Trios - Luminal Colon RS Jensen",
                     colorvariable = Genotype,
                     colorvector = cols,
                     wa_scores_filepath = "Trios/beta_diversity/LumCol_Top_Taxa_PcoA.csv")
 
 trios_mc_pcoa <- generate_pcoA_plots(distance_matrix=muccol.dist,
-                                     counts = muccol_counts,
-                                     metadata = muccol_meta,
+                                     counts = trios_muccol_counts,
+                                     metadata = trios_muccol_meta,
                                      title="Trios - Mucosal Colon RS Jensen",
                                      colorvariable = Genotype,
                                      colorvector = cols,

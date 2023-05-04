@@ -14,11 +14,6 @@ setwd("../") # CHANGE to the directory containing the fastq files
 
 here::i_am("Rproj_slccolonpaper/Trios_Taxa_Barplots.R")
 
-metadata <- read.table("Trios/SLC_TOTAL_OCT2020_FULL_Metadata.tsv", header=TRUE)
-lumcol_counts <- read.csv("Trios/LumCol_level-6_trios.csv", header = TRUE, row.names=1)
-
-muccol_counts <- read.csv("Trios/MucCol_level-6.csv", header = TRUE, row.names=1)
-
 ## Replace genera names with legible ones --
 wrangle_genera_names("Trios/LumCol_level-6_trios.csv", "Trios/","LuminalColon_level-6.RDS")
 wrangle_genera_names("Trios/MucCol_level-6.csv", "Trios/","MucosalColon_level-6.RDS")
@@ -44,6 +39,7 @@ grid::grid.draw(legend)
 
 ## Final Figures --
 plot_grid(trios_lc_barplot,trios_mc_barplot)
+
 ## Extract taxa >0.001 for use in legend ---
 L2_lum<-read.csv("Trios/taxa_barplots/LumCol_level-6_trios.csv",header=TRUE,row.names=1)
 L2_lum<- as.matrix(L2_lum)

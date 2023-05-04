@@ -17,6 +17,8 @@ here::i_am("Rproj_slccolonpaper/Baseline_Taxa_Barplots.R")
 ## Replace genera names with legible ones --
 wrangle_genera_names("Baseline/taxa_barplots/JAX_Baseline_level-6.csv", "Baseline/taxa_barplots/","JAX_level-6.RDS")
 
+## Read in the color legend 
+global_genera_cols <- readRDS("Global_Genera_Cols.RDS")
 
 ## Plot the barplots --
 jax_lc_barplot <- generate_L6_taxa_plots("Baseline/taxa_barplots/JAX_Baseline_level-6.csv","Fecal Pellet", ".*g__",global_genera_cols) +
@@ -64,9 +66,7 @@ L2_lum$Order<-gsub(".f__.*","",order)
 L2_lum <- L2_lum %>% mutate(annotation = ifelse(L2_lum$Genus=="", paste0(L2_lum$Family,"..f."), L2_lum$Genus))
 L2_lum <- L2_lum %>% mutate(annotation = ifelse(L2_lum$Family=="", paste0(L2_lum$Order,"..o."), L2_lum$annotation))
 
-labels_muc <- unique(L2_lum$annotation)
-print(taxa)
-jax_global <- union(labels_lum,labels_muc)
+jax_global <- unique(L2_lum$annotation)
 length(jax_global)
 
 ## Generate a color key using paletteer colors ---
@@ -77,7 +77,7 @@ add_cols2 <- paletteer_d("ggthemes::Classic_20",20)
 add_cols4 <- paletteer_d("ggthemes::calc",8)
 global_genera_cols <- c(add_cols2, add_cols4) 
 global_genera_cols <- unique(global_genera_cols)
-
+names(global_genera_cols) <- lt_trios_jax_global
 saveRDS(global_genera_cols,"Global_Genera_Cols.RDS")
 
 

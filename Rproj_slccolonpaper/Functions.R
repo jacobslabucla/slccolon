@@ -254,7 +254,7 @@ generate_pcoA_plots <- function(distance_matrix, counts, metadata, title, colorv
     theme_cowplot(16)+
     theme(legend.position="top",legend.justification = "center") +
     labs(title= paste0({{title}})) 
-  return(p)
+p
 }
 
 

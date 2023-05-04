@@ -37,8 +37,6 @@ legend <- cowplot::get_legend(L6_legend)
 grid::grid.newpage()
 grid::grid.draw(legend)
 
-## Final Figures --
-plot_grid(trios_lc_barplot,trios_mc_barplot)
 ## Extract taxa >0.001 for use in legend ---
 L2_lum<-read.csv("Long_Term/taxa_barplots/LumCol_level-6.csv",header=TRUE,row.names=1)
 L2_lum<- as.matrix(L2_lum)

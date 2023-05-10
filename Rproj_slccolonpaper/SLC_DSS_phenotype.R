@@ -24,7 +24,7 @@ histo_plot <- histology %>%
   scale_fill_manual(values = c("WT" ="black","MUT" = "red", "HET" = "blue")) +
   geom_beeswarm(size=3)+
   theme_cowplot(20)+
-  ggtitle("Histology Score") +
+  ggtitle("DSS Histology Score") +
   theme(plot.title = element_text(hjust = 0.5)) +
   theme(legend.background = element_rect(fill="lightblue", size=0.5, linetype="solid")) +
   theme(legend.position = "top",legend.title = element_text(hjust = 0.5), legend.justification = "center")
@@ -93,7 +93,7 @@ clin_score <- make_longitudinal_graph(data_long,"Clinical_Score", "Clinical Scor
 stool_consist <- make_longitudinal_graph(data_long,"Stool_Consistency", "Stool Consistency")
 occult_score <- make_longitudinal_graph(data_long, "Occult_Score", "Fecal Occult")
 weight_raw <- make_longitudinal_graph(weight_long,"Body_Weight", "Body Weight (g)")
-percent_weight<- make_longitudinal_graph(pct_weight_long,"Percent_Change_Weight", "Body Weight (% Baseline)")
+percent_weight<- make_longitudinal_graph(pct_weight_long,"Percent_Change_Weight", "DSS Body Weight (% Baseline)")
 
 plot_grid(weight_raw, percent_weight,histo_plot,clin_score, stool_consist, occult_score, labels=c("A","B","C","D", "E", "F"), ncol=3,nrow=2, label_size = 22)
 

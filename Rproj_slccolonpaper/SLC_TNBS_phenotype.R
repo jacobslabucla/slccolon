@@ -13,7 +13,7 @@ weight <- read.csv("TNBS/Weight.csv")
 pct_weight <- read.csv("TNBS/PCT_Body_Weight.csv")
 
 ## Wrangle longitudinal data into long formats --
-
+weight <- weight %>% filter(Batch!="Three")
 weight_long <- pivot_longer(weight, 
                             cols = starts_with("D"), 
                             names_to = "Day", 
@@ -24,6 +24,7 @@ weight_long$Day <- factor(weight_long$Day)
 weight_long$Genotype <- factor(weight_long$Genotype, levels=c("WT", "HET", "MUT"))
 weight_long <- remove_missing(weight_long)
 
+pct_weight_long <- pct_weight %>% filter(Batch!="Three")
 pct_weight_long <- pivot_longer(pct_weight, 
                                 cols = starts_with("D"), 
                                 names_to = "Day", 
@@ -42,7 +43,7 @@ pct_weight_long <- remove_missing(pct_weight_long)
 make_longitudinal_graph_TNBS <- function(dataframe,ylab) {
   data_long<- as.data.frame(dataframe)
   df_summary <- data_long %>% 
-    group_by(Genotype, Day) %>%
+    group_by(Batch, Genotype, Day) %>%
     summarise(mean = mean(Score), 
               sd = sd(Score),
               se = sd / sqrt(n()))
@@ -66,6 +67,8 @@ percent_weight_tnbs<- make_longitudinal_graph_TNBS(pct_weight_long,"Body Weight 
 
 plot_grid(weight_raw_tnbs, percent_weight_tnbs,labels=c("A","B"), label_size = 22)
 
+weight_raw_tnbs_batch <- make_longitudinal_graph_TNBS(weight_long, "Body Weight (g)") + facet_grid(~Batch)
+percent_weight_tnbs_batch<- make_longitudinal_graph_TNBS(pct_weight_long,"Body Weight (% Baseline)") + facet_grid(~Batch)
 
 ### Stats ---
 

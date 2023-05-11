@@ -76,14 +76,13 @@ generate_violin_plots <- function (input_data, X, titlestring) {
     geom_boxplot(alpha=0.25,position=position_dodge(width=.75),size=1,color="black")+
     #scale_shape_manual(values=c(16,10))+
     scale_fill_viridis_d()+
-    geom_point(size=1,position=position_jitter(width=0.25),alpha=0.8)+
+    geom_point(size=1,position=position_jitter(width=0.25, height=0),alpha=0.8)+
     theme_cowplot(16) +
     theme(legend.position = "none") +
     theme(plot.title = element_text(hjust = 0.5)) +
     ggtitle(titlestring)+
     ylab("ug/g") +
-    xlab("")+
-    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) 
+    xlab("")
   #ylim(min,max) +
   
 }
@@ -155,20 +154,31 @@ for (int in 1:7){
 }
 
 ## Assemble Multi-Panel Figure
-plot_grid(fp_col_plots[[1]],fp_col_plots[[2]],
+top_half <- plot_grid(fp_col_plots[[1]],fp_col_plots[[2]],
           fp_col_plots[[3]],fp_col_plots[[4]],
-          fp_col_plots[[5]],fp_col_plots[[6]],muc_col_plots[[1]],muc_col_plots[[2]],
-          muc_col_plots[[3]],muc_col_plots[[4]],
-          muc_col_plots[[5]],muc_col_plots[[6]],
-          nrow = 4, ncol=3,
-          labels=c("A", "","","","","",
-                   "B","","","","",""),label_size = 20) 
+          fp_col_plots[[5]],fp_col_plots[[6]],
+          nrow = 1, ncol=6,
+          labels=c("A", "","","","",""
+                   ),label_size = 20) 
+middle <- plot_grid(muc_col_plots[[1]],muc_col_plots[[2]],
+                      muc_col_plots[[3]],muc_col_plots[[4]],
+                      muc_col_plots[[5]],muc_col_plots[[6]],
+                      nrow = 1, ncol=6,
+                      labels=c(
+                               "B","","","","",""),label_size = 20) 
+
+#MUC COL
+plot.new()
+bottom_half <- plot_grid(ts_col_plots[[1]],ts_col_plots[[2]],
+          ts_col_plots[[3]],ts_col_plots[[4]],
+          ts_col_plots[[5]],ts_col_plots[[6]],
+          nrow = 1, ncol=6, label_size = 20,
+          labels=c("C", "","","","",""))
 
 #MUC COL
 bottom_half <- plot_grid(muc_col_plots[[1]],muc_col_plots[[2]],
-          muc_col_plots[[3]],muc_col_plots[[4]],
-          muc_col_plots[[5]],muc_col_plots[[6]],
-          nrow = 2, ncol=3)
-
+                         muc_col_plots[[3]],muc_col_plots[[4]],
+                         muc_col_plots[[5]],muc_col_plots[[6]],
+                         nrow = 2, ncol=3, title)
 
 plot_grid(top_half, bottom_half, nrow=2,labels = "A", "B")

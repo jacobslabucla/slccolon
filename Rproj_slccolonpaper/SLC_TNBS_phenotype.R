@@ -117,7 +117,7 @@ write_lme_summary_to_md(output, "TNBS/DayANDGenotype_PCT_Weight_LMEM_summary.md"
 output <- lme(fixed= Score ~ Sex + Day + Genotype, random = ~1|MouseID, data=pct_weight_long)
 write_lme_summary_to_md(output, "TNBS/Genotype_PCT_Weight_LMEM_summary.md")
 
-## Histo Stats --
+## Colon Length Stats --
 df_het <- colon_length %>% filter(Genotype!="MUT")
 wilcox.test(Colon_Length~Genotype, df_het)
 

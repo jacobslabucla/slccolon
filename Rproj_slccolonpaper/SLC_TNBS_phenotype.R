@@ -98,7 +98,7 @@ make_longitudinal_graph_TNBS_batch <- function(dataframe,ylab) {
 } 
 
 weight_raw_tnbs <- make_longitudinal_graph_TNBS(weight_long, "Body Weight (g)")
-percent_weight_tnbs<- make_longitudinal_graph_TNBS(pct_weight_long,"Body Weight (% Baseline)")
+percent_weight_tnbs<- make_longitudinal_graph_TNBS(pct_weight_long,"TNBS Body Weight (% Baseline)")
 
 plot_grid(weight_raw_tnbs, percent_weight_tnbs,labels=c("A","B"), label_size = 22)
 

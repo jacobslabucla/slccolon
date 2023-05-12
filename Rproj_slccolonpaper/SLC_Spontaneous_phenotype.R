@@ -38,7 +38,7 @@ mucin_plot <- mucin %>%
   theme(legend.background = element_rect(fill="lightblue", size=0.5, linetype="solid")) +
   theme(legend.position = "top",legend.title = element_text(hjust = 0.5), legend.justification = "center")
 
-plot_grid(histo_plot, NULL, 
-          mucin_plot, NULL, 
+plot_grid(NULL, histo_plot, 
+          NULL, mucin_plot, 
           labels=c("A", "B", "C", "D"),
           label_size=20)

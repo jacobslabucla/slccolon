@@ -18,7 +18,7 @@ histology <- read.csv("SLC_DSS/Histology.csv")
 histology <- remove_missing(histology)
 histology$Genotype <- factor(histology$Genotype, levels=c("WT","HET","MUT"))
 
-histo_plot <- histology %>%
+DSS_histo_plot <- histology %>%
   ggplot( aes(x=Genotype, y=Score, fill=Genotype)) +
   geom_boxplot(alpha=0.6) +
   scale_fill_manual(values = c("WT" ="black","MUT" = "red", "HET" = "blue")) +

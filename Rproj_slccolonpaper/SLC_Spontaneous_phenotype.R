@@ -42,3 +42,14 @@ plot_grid(NULL, histo_plot,
           NULL, mucin_plot, 
           labels=c("A", "B", "C", "D"),
           label_size=20)
+
+
+## Statistics -- 
+df_het <- mucin %>% filter(Genotype!="MUT")
+wilcox.test(Mucin_Thickness~Genotype, df_het)
+
+df_mut <- mucin %>% filter(Genotype!="HET")
+wilcox.test(Mucin_Thickness~Genotype,df_mut)
+
+df_mut <- mucin %>% filter(Genotype!="WT")
+wilcox.test(Mucin_Thickness~Genotype,df_mut)

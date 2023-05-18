@@ -414,3 +414,48 @@ run_repeated_PERMANOVA <- function(path_to_distance_matrix_tsv,path_to_metadata_
                                            metadata_order = order_vector)
   print(data.adonis$aov.tab)
 }
+
+wilcox_test_to_markdown <- function(df, file_path) {
+  # Splitting the dataframe by Day
+  df_list <- split(df, df$Day)
+  
+  # Defining the function to perform Wilcoxon rank sum test
+  wilcox_test <- function(df) {
+    wt_mut <- wilcox.test(Score ~ Genotype, data = df[df$Genotype %in% c("WT", "MUT"),])
+    wt_het <- wilcox.test(Score ~ Genotype, data = df[df$Genotype %in% c("WT", "HET"),])
+    return(list(wt_mut, wt_het))
+  }
+  
+  # Applying the function to each split dataframe
+  results <- lapply(df_list, wilcox_test)
+  
+  # Combining the results into a data frame
+  results_df <- do.call(rbind, lapply(seq_along(df_list), function(i) {
+    day <- names(df_list)[i]
+    res <- results[[i]]
+    data.frame(Day = rep(day, 4),
+               Genotype = rep(c("WT-MUT", "MUT-WT", "WT-HET", "HET-WT"), each = 1),
+               W = c(res[[1]]$statistic, res[[1]]$statistic, res[[2]]$statistic, res[[2]]$statistic),
+               p.value = c(res[[1]]$p.value, res[[1]]$p.value, res[[2]]$p.value, res[[2]]$p.value))
+  }))
+  
+  # Convert the data frame to a markdown table
+  md_table <- knitr::kable(results_df, format = "markdown", align = c("c", "c", "c", "c"))
+  
+  # Write the markdown table to a file
+  writeLines(md_table, file_path)
+}
+
+write_lme_summary_to_md <- function(output, file_path) {
+  # Extracting the coefficients and related statistics
+  coef_table <- summary(output)$tTable[,c("Value", "Std.Error", "t-value", "p-value")]
+  
+  # Adding row names for the coefficients
+  rownames(coef_table) <- rownames(summary(output)$tTable)
+  
+  # Creating the markdown table
+  md_table <- knitr::kable(coef_table, format = "markdown", align = c("l", "r", "r", "r", "r"))
+  
+  # Writing the markdown table to a file
+  writeLines(md_table, file_path)
+}

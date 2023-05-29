@@ -2,7 +2,7 @@ library(ggplot2)
 library(dplyr)
 library(cowplot)
 library(nlme)
-library(tidyr)
+#library(tidyr)
 library(knitr)
 library(ggbeeswarm)
 

@@ -7,6 +7,7 @@ library(knitr)
 library(ggbeeswarm)
 
 setwd("/home/julianne/Documents/slccolonpaper/slccolon/") # CHANGE to the directory containing the fastq files
+setwd("C:/Users/Jacobs Laboratory/Documents/JCYang/slccolonpaper/slccolon/") 
 here::i_am("Rproj_slccolonpaper/SLC_Spontaneous_Phenotype.R")
 
 mucin <- read.csv("Spontaneous/Mucin.csv")
@@ -53,3 +54,5 @@ wilcox.test(Mucin_Thickness~Genotype,df_mut)
 
 df_mut <- mucin %>% filter(Genotype!="WT")
 wilcox.test(Mucin_Thickness~Genotype,df_mut)
+
+

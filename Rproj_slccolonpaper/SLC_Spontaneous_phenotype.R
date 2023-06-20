@@ -39,6 +39,18 @@ mucin_plot <- mucin %>%
   theme(legend.background = element_rect(fill="lightblue", size=0.5, linetype="solid")) +
   theme(legend.position = "top",legend.title = element_text(hjust = 0.5), legend.justification = "center")
 
+mucin_plot <- mucin %>%
+  ggplot( aes(x=Genotype, y=Mucin_Thickness, fill=Genotype)) +
+  geom_boxplot(alpha=0.6) +
+  scale_fill_manual(values = c("WT" ="black","MUT" = "red", "HET" = "blue")) +
+  geom_beeswarm(size=3)+
+  theme_cowplot(20)+
+  ggtitle("Mucin Thickness") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(legend.background = element_rect(fill="lightblue", size=0.5, linetype="solid")) +
+  theme(legend.position = "top",legend.title = element_text(hjust = 0.5), legend.justification = "center")+
+  facet_wrap(~Sex)
+
 plot_grid(NULL, histo_plot, 
           NULL, mucin_plot, 
           labels=c("A", "B", "C", "D"),

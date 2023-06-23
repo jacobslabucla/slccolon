@@ -175,6 +175,8 @@ bottom_half <- plot_grid(ts_col_plots[[1]],ts_col_plots[[2]],
           nrow = 1, ncol=6, label_size = 20,
           labels=c("C", "","","","",""))
 
+
+
 #MUC COL
 bottom_half <- plot_grid(muc_col_plots[[1]],muc_col_plots[[2]],
                          muc_col_plots[[3]],muc_col_plots[[4]],
@@ -182,3 +184,9 @@ bottom_half <- plot_grid(muc_col_plots[[1]],muc_col_plots[[2]],
                          nrow = 2, ncol=3, title)
 
 plot_grid(top_half, bottom_half, nrow=2,labels = "A", "B")
+
+#Small Intestine '
+plot_grid(fp_si_plots[[7]],muc_si_plots[[7]],ts_si_plots[[7]], ncol=1)
+plot_grid(fp_si_plots[[7]],labels=c("A"))
+plot_grid(muc_si_plots[[7]],labels=c("B"))
+plot_grid(ts_si_plots[[7]],labels=c("C"))

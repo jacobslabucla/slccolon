@@ -1,0 +1,132 @@
+2023-06-27 11:52:20 INFO::Writing function arguments to log file
+2023-06-27 11:52:20 DEBUG::Function arguments
+2023-06-27 11:52:20 DEBUG::Output folder: Trios/Trios_OMIXER/GMM/PICRUST2_PWY_Luminal_SI_Maaslin2_SequencingRun_Site_Sex_Genotype_1-MouseID
+2023-06-27 11:52:20 DEBUG::Min Abundance: 0.000000
+2023-06-27 11:52:20 DEBUG::Min Prevalence: 0.150000
+2023-06-27 11:52:20 DEBUG::Normalization: TSS
+2023-06-27 11:52:20 DEBUG::Transform: LOG
+2023-06-27 11:52:20 DEBUG::Analysis method: LM
+2023-06-27 11:52:20 DEBUG::Max significance: 0.250000
+2023-06-27 11:52:20 DEBUG::Random effects: MouseID
+2023-06-27 11:52:20 DEBUG::Fixed effects: Sequencing_Run,Site,Sex,Genotype
+2023-06-27 11:52:20 DEBUG::Correction method: BH
+2023-06-27 11:52:20 DEBUG::Standardize: TRUE
+2023-06-27 11:52:20 DEBUG::Cores: 1
+2023-06-27 11:52:20 INFO::Verifying options selected are valid
+2023-06-27 11:52:20 INFO::Determining format of input files
+2023-06-27 11:52:20 INFO::Input format is data samples as columns and metadata samples as rows
+2023-06-27 11:52:20 DEBUG::Transformed data so samples are rows
+2023-06-27 11:52:20 DEBUG::A total of 88 samples were found in both the data and metadata
+2023-06-27 11:52:20 DEBUG::Reordering data/metadata to use same sample ordering
+2023-06-27 11:52:20 INFO::Formula for random effects: expr ~ (1 | MouseID)
+2023-06-27 11:52:20 INFO::Formula for fixed effects: expr ~  Sequencing_Run + Site + Sex + Genotype
+2023-06-27 11:52:20 INFO::Running selected normalization method: TSS
+2023-06-27 11:52:20 INFO::Filter data based on min abundance and min prevalence
+2023-06-27 11:52:20 INFO::Total samples in data: 88
+2023-06-27 11:52:20 INFO::Min samples required with min abundance for a feature not to be filtered: 13.200000
+2023-06-27 11:52:20 INFO::Total filtered features: 5
+2023-06-27 11:52:20 INFO::Filtered feature names: MF0032, MF0081, MF0003, MF0099, MF0100
+2023-06-27 11:52:20 INFO::Applying z-score to standardize continuous metadata
+2023-06-27 11:52:20 INFO::Running selected transform method: LOG
+2023-06-27 11:52:20 INFO::Running selected analysis method: LM
+2023-06-27 11:52:20 INFO::Fitting model to feature number 1, MF0020
+2023-06-27 11:52:20 INFO::Fitting model to feature number 2, MF0027
+2023-06-27 11:52:20 INFO::Fitting model to feature number 3, MF0028
+2023-06-27 11:52:20 INFO::Fitting model to feature number 4, MF0025
+2023-06-27 11:52:20 INFO::Fitting model to feature number 5, MF0026
+2023-06-27 11:52:20 INFO::Fitting model to feature number 6, MF0023
+2023-06-27 11:52:20 INFO::Fitting model to feature number 7, MF0024
+2023-06-27 11:52:20 INFO::Fitting model to feature number 8, MF0021
+2023-06-27 11:52:21 INFO::Fitting model to feature number 9, MF0022
+2023-06-27 11:52:21 INFO::Fitting model to feature number 10, MF0018
+2023-06-27 11:52:21 INFO::Fitting model to feature number 11, MF0019
+2023-06-27 11:52:21 INFO::Fitting model to feature number 12, MF0030
+2023-06-27 11:52:21 INFO::Fitting model to feature number 13, MF0031
+2023-06-27 11:52:21 INFO::Fitting model to feature number 14, MF0038
+2023-06-27 11:52:21 INFO::Fitting model to feature number 15, MF0039
+2023-06-27 11:52:21 INFO::Fitting model to feature number 16, MF0036
+2023-06-27 11:52:21 INFO::Fitting model to feature number 17, MF0037
+2023-06-27 11:52:21 INFO::Fitting model to feature number 18, MF0034
+2023-06-27 11:52:21 INFO::Fitting model to feature number 19, MF0035
+2023-06-27 11:52:21 INFO::Fitting model to feature number 20, MF0033
+2023-06-27 11:52:21 INFO::Fitting model to feature number 21, MF0029
+2023-06-27 11:52:21 INFO::Fitting model to feature number 22, MF0085
+2023-06-27 11:52:21 INFO::Fitting model to feature number 23, MF0086
+2023-06-27 11:52:21 INFO::Fitting model to feature number 24, MF0083
+2023-06-27 11:52:21 INFO::Fitting model to feature number 25, MF0084
+2023-06-27 11:52:21 INFO::Fitting model to feature number 26, MF0082
+2023-06-27 11:52:21 INFO::Fitting model to feature number 27, MF0080
+2023-06-27 11:52:21 INFO::Fitting model to feature number 28, MF0005
+2023-06-27 11:52:21 INFO::Fitting model to feature number 29, MF0006
+2023-06-27 11:52:21 INFO::Fitting model to feature number 30, MF0004
+2023-06-27 11:52:22 INFO::Fitting model to feature number 31, MF0001
+2023-06-27 11:52:22 INFO::Fitting model to feature number 32, MF0089
+2023-06-27 11:52:22 INFO::Fitting model to feature number 33, MF0002
+2023-06-27 11:52:22 INFO::Fitting model to feature number 34, MF0087
+2023-06-27 11:52:22 INFO::Fitting model to feature number 35, MF0088
+2023-06-27 11:52:22 INFO::Fitting model to feature number 36, MF0096
+2023-06-27 11:52:22 INFO::Fitting model to feature number 37, MF0097
+2023-06-27 11:52:22 INFO::Fitting model to feature number 38, MF0094
+2023-06-27 11:52:22 INFO::Fitting model to feature number 39, MF0095
+2023-06-27 11:52:22 INFO::Fitting model to feature number 40, MF0092
+2023-06-27 11:52:22 INFO::Fitting model to feature number 41, MF0093
+2023-06-27 11:52:22 INFO::Fitting model to feature number 42, MF0090
+2023-06-27 11:52:22 INFO::Fitting model to feature number 43, MF0016
+2023-06-27 11:52:22 INFO::Fitting model to feature number 44, MF0017
+2023-06-27 11:52:22 INFO::Fitting model to feature number 45, MF0014
+2023-06-27 11:52:22 INFO::Fitting model to feature number 46, MF0015
+2023-06-27 11:52:22 INFO::Fitting model to feature number 47, MF0012
+2023-06-27 11:52:22 INFO::Fitting model to feature number 48, MF0013
+2023-06-27 11:52:22 INFO::Fitting model to feature number 49, MF0010
+2023-06-27 11:52:22 INFO::Fitting model to feature number 50, MF0098
+2023-06-27 11:52:22 INFO::Fitting model to feature number 51, MF0011
+2023-06-27 11:52:22 INFO::Fitting model to feature number 52, MF0009
+2023-06-27 11:52:23 INFO::Fitting model to feature number 53, MF0007
+2023-06-27 11:52:23 INFO::Fitting model to feature number 54, MF0008
+2023-06-27 11:52:23 INFO::Fitting model to feature number 55, MF0063
+2023-06-27 11:52:23 INFO::Fitting model to feature number 56, MF0061
+2023-06-27 11:52:23 INFO::Fitting model to feature number 57, MF0062
+2023-06-27 11:52:23 INFO::Fitting model to feature number 58, MF0060
+2023-06-27 11:52:23 INFO::Fitting model to feature number 59, MF0069
+2023-06-27 11:52:23 INFO::Fitting model to feature number 60, MF0102
+2023-06-27 11:52:23 INFO::Fitting model to feature number 61, MF0103
+2023-06-27 11:52:23 INFO::Fitting model to feature number 62, MF0067
+2023-06-27 11:52:23 INFO::Fitting model to feature number 63, MF0068
+2023-06-27 11:52:23 INFO::Fitting model to feature number 64, MF0101
+2023-06-27 11:52:23 INFO::Fitting model to feature number 65, MF0065
+2023-06-27 11:52:23 INFO::Fitting model to feature number 66, MF0066
+2023-06-27 11:52:23 INFO::Fitting model to feature number 67, MF0074
+2023-06-27 11:52:23 INFO::Fitting model to feature number 68, MF0075
+2023-06-27 11:52:23 INFO::Fitting model to feature number 69, MF0072
+2023-06-27 11:52:23 INFO::Fitting model to feature number 70, MF0073
+2023-06-27 11:52:23 INFO::Fitting model to feature number 71, MF0070
+2023-06-27 11:52:23 INFO::Fitting model to feature number 72, MF0071
+2023-06-27 11:52:23 INFO::Fitting model to feature number 73, MF0078
+2023-06-27 11:52:24 INFO::Fitting model to feature number 74, MF0079
+2023-06-27 11:52:24 INFO::Fitting model to feature number 75, MF0076
+2023-06-27 11:52:24 INFO::Fitting model to feature number 76, MF0077
+2023-06-27 11:52:24 INFO::Fitting model to feature number 77, MF0041
+2023-06-27 11:52:24 INFO::Fitting model to feature number 78, MF0042
+2023-06-27 11:52:24 INFO::Fitting model to feature number 79, MF0040
+2023-06-27 11:52:24 INFO::Fitting model to feature number 80, MF0049
+2023-06-27 11:52:24 INFO::Fitting model to feature number 81, MF0047
+2023-06-27 11:52:24 INFO::Fitting model to feature number 82, MF0048
+2023-06-27 11:52:24 INFO::Fitting model to feature number 83, MF0045
+2023-06-27 11:52:24 INFO::Fitting model to feature number 84, MF0046
+2023-06-27 11:52:24 INFO::Fitting model to feature number 85, MF0043
+2023-06-27 11:52:24 INFO::Fitting model to feature number 86, MF0044
+2023-06-27 11:52:24 INFO::Fitting model to feature number 87, MF0052
+2023-06-27 11:52:24 INFO::Fitting model to feature number 88, MF0053
+2023-06-27 11:52:24 INFO::Fitting model to feature number 89, MF0050
+2023-06-27 11:52:24 INFO::Fitting model to feature number 90, MF0051
+2023-06-27 11:52:24 INFO::Fitting model to feature number 91, MF0058
+2023-06-27 11:52:24 INFO::Fitting model to feature number 92, MF0059
+2023-06-27 11:52:24 INFO::Fitting model to feature number 93, MF0056
+2023-06-27 11:52:24 INFO::Fitting model to feature number 94, MF0057
+2023-06-27 11:52:24 INFO::Fitting model to feature number 95, MF0054
+2023-06-27 11:52:25 INFO::Fitting model to feature number 96, MF0055
+2023-06-27 11:52:25 INFO::Counting total values for each feature
+2023-06-27 11:52:25 WARNING::Deleting existing residuals file: Trios/Trios_OMIXER/GMM/PICRUST2_PWY_Luminal_SI_Maaslin2_SequencingRun_Site_Sex_Genotype_1-MouseID/residuals.rds
+2023-06-27 11:52:25 INFO::Writing residuals to file Trios/Trios_OMIXER/GMM/PICRUST2_PWY_Luminal_SI_Maaslin2_SequencingRun_Site_Sex_Genotype_1-MouseID/residuals.rds
+2023-06-27 11:52:25 INFO::Writing all results to file (ordered by increasing q-values): Trios/Trios_OMIXER/GMM/PICRUST2_PWY_Luminal_SI_Maaslin2_SequencingRun_Site_Sex_Genotype_1-MouseID/all_results.tsv
+2023-06-27 11:52:25 INFO::Writing the significant results (those which are less than or equal to the threshold of 0.250000 ) to file (ordered by increasing q-values): Trios/Trios_OMIXER/GMM/PICRUST2_PWY_Luminal_SI_Maaslin2_SequencingRun_Site_Sex_Genotype_1-MouseID/significant_results.tsv

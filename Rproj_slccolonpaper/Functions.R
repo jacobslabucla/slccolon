@@ -139,6 +139,8 @@ data$Family<- gsub(".*f__","",data$Taxon)
 data$Family <-  gsub(";.*","",data$Family)
 data$Order<- gsub(".*o__","",data$Taxon)
 data$Order <-  gsub(";.*","",data$Order)
+data$Class<- gsub(".*c__","",data$Taxon)
+data$Class <-  gsub(";.*","",data$Class)
 data$Genus<- gsub(".*g__","",data$Taxon)
 data$Genus <-  gsub(";.*","",data$Genus)
 data$Species <- gsub(".*s__","",data$Taxon)
@@ -146,6 +148,7 @@ data$annotation <- paste0(data$Genus," ", data$Species)
 #data$Genus <- gsub("\\..*","",data$Genus)
 data <- data %>% mutate(annotation = ifelse(data$Genus=="", paste0(data$Family," (f)"), data$annotation))
 data <- data %>% mutate(annotation = ifelse(data$Family=="", paste(data$Order,"(o)"), data$annotation))
+data <- data %>% mutate(annotation = ifelse(data$Order=="", paste(data$Class,"(c)"), data$annotation))
 
 #append relative abundance data 
 relA <- readRDS(Relative_Abundance_filepath_rds)
@@ -274,13 +277,15 @@ assign_letter <- function(x) {
 ## Make a taxonomy dotplot for genus level --
 
 make_genus_level_taxa_dotplot <- function(ASV_significant_results_dataset,
-                                          Relative_Abundance_filepath_rds,titlestring){
+                                          Relative_Abundance_filepath_rds,titlestring, phyla_colors){
   data <- as.data.frame(ASV_significant_results_dataset)
   data <- data %>% filter(qval <0.25)
   data <- data %>% filter(metadata=="Genotype")
   data$Taxon <- data$feature
   data$Phylum <- gsub(".*p__","",data$Taxon)
   data$Phylum <- gsub("\\..*","",data$Phylum)
+  data$Class<- gsub(".*c__","",data$Taxon)
+  data$Class <-  gsub("\\..*","",data$Class)
   data$Family<- gsub(".*f__","",data$Taxon)
   data$Family <-  gsub("\\..*","",data$Family)
   data$Order<- gsub(".*o__","",data$Taxon)
@@ -293,6 +298,7 @@ make_genus_level_taxa_dotplot <- function(ASV_significant_results_dataset,
   #data$Genus <- gsub("\\..*","",data$Genus)
   data <- data %>% mutate(annotation = ifelse(data$Genus=="", paste0(data$Family," (f)"), data$annotation))
   data <- data %>% mutate(annotation = ifelse(data$Family=="", paste(data$Order,"(o)"), data$annotation))
+  data <- data %>% mutate(annotation = ifelse(data$Order=="", paste(data$Class,"(c)"), data$annotation))
   
   #append relative abundance data 
   #relA <- readRDS("Trios/differential_taxa/L6_Luminal_ColonRelative_Abundance-ASV.RDS")
@@ -320,7 +326,7 @@ make_genus_level_taxa_dotplot <- function(ASV_significant_results_dataset,
                           limits=c(sqrt(0.000001),sqrt(0.6)),
                           breaks=c(sqrt(0.0001),sqrt(0.001),sqrt(0.01),sqrt(0.1)),
                           labels=c("0.0001","0.001","0.01","0.1")) + 
-    #scale_color_manual(name="Phylum", values = phyla_colors)+
+    scale_color_manual(name="Phylum", values = phyla_colors)+
     geom_vline(xintercept = 0) + 
     xlab(label="Log2 Fold Change")+
     ylab(label=NULL)+
@@ -414,49 +420,4 @@ run_repeated_PERMANOVA <- function(path_to_distance_matrix_tsv,path_to_metadata_
                                            block_data=metadata_subj,
                                            metadata_order = order_vector)
   print(data.adonis$aov.tab)
-}
-
-wilcox_test_to_markdown <- function(df, file_path) {
-  # Splitting the dataframe by Day
-  df_list <- split(df, df$Day)
-  
-  # Defining the function to perform Wilcoxon rank sum test
-  wilcox_test <- function(df) {
-    wt_mut <- wilcox.test(Score ~ Genotype, data = df[df$Genotype %in% c("WT", "MUT"),])
-    wt_het <- wilcox.test(Score ~ Genotype, data = df[df$Genotype %in% c("WT", "HET"),])
-    return(list(wt_mut, wt_het))
-  }
-  
-  # Applying the function to each split dataframe
-  results <- lapply(df_list, wilcox_test)
-  
-  # Combining the results into a data frame
-  results_df <- do.call(rbind, lapply(seq_along(df_list), function(i) {
-    day <- names(df_list)[i]
-    res <- results[[i]]
-    data.frame(Day = rep(day, 4),
-               Genotype = rep(c("WT-MUT", "MUT-WT", "WT-HET", "HET-WT"), each = 1),
-               W = c(res[[1]]$statistic, res[[1]]$statistic, res[[2]]$statistic, res[[2]]$statistic),
-               p.value = c(res[[1]]$p.value, res[[1]]$p.value, res[[2]]$p.value, res[[2]]$p.value))
-  }))
-  
-  # Convert the data frame to a markdown table
-  md_table <- knitr::kable(results_df, format = "markdown", align = c("c", "c", "c", "c"))
-  
-  # Write the markdown table to a file
-  writeLines(md_table, file_path)
-}
-
-write_lme_summary_to_md <- function(output, file_path) {
-  # Extracting the coefficients and related statistics
-  coef_table <- summary(output)$tTable[,c("Value", "Std.Error", "t-value", "p-value")]
-  
-  # Adding row names for the coefficients
-  rownames(coef_table) <- rownames(summary(output)$tTable)
-  
-  # Creating the markdown table
-  md_table <- knitr::kable(coef_table, format = "markdown", align = c("l", "r", "r", "r", "r"))
-  
-  # Writing the markdown table to a file
-  writeLines(md_table, file_path)
 }

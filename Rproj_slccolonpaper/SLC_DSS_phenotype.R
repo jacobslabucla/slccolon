@@ -13,6 +13,7 @@ data <- read.csv("SLC_DSS/Stool_Phenotype.csv",header=TRUE)
 weight <- read.csv("SLC_DSS/Weight.csv")
 pct_weight <- read.csv("SLC_DSS/PCT_Body_Weight.csv")
 histology <- read.csv("SLC_DSS/Histology.csv")
+colon_length <- read.csv("SLC_DSS/Colon_and_Spleen.csv")
 
 ## Remove NA from histology data 
 histology <- remove_missing(histology)
@@ -29,6 +30,20 @@ dss_histo_plot <- histology %>%
   theme(legend.background = element_rect(fill="lightblue", size=0.5, linetype="solid")) +
   theme(legend.position = "top",legend.title = element_text(hjust = 0.5), legend.justification = "center")
 
+## Remove NA from colon length data 
+colon_length <- remove_missing(colon_length)
+colon_length$Genotype <- factor(colon_length$Genotype, levels=c("WT","HET","MUT"))
+
+dss_colon_plot <- colon_length %>%
+  ggplot( aes(x=Genotype, y=Colon.Length, fill=Genotype)) +
+  geom_boxplot(alpha=0.6) +
+  scale_fill_manual(values = c("WT" ="black","MUT" = "red", "HET" = "blue")) +
+  geom_beeswarm(size=3)+
+  theme_cowplot(20)+
+  ggtitle("DSS Colon Length") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  theme(legend.background = element_rect(fill="lightblue", size=0.5, linetype="solid")) +
+  theme(legend.position = "top",legend.title = element_text(hjust = 0.5), legend.justification = "center")
 
 ## Wrangle longitudinal data into long formats --
 

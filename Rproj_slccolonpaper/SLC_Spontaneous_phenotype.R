@@ -12,7 +12,7 @@ setwd("/home/julianne/Documents/slccolonpaper/slccolon/") # CHANGE to the direct
 here::i_am("Rproj_slccolonpaper/SLC_Spontaneous_phenotype.R")
 
 mucin <- read.csv("Spontaneous/Mucin.csv")
-histology <- read.csv("Spontaneous/Histology.csv")
+histology <- read.csv("Spontaneous/Histology_5month.csv")
 histo_old <- read.csv("Spontaneous/Histology_10month.csv")
 
 histology$Genotype <- factor(histology$Genotype, levels=c("WT","HET","MUT"))

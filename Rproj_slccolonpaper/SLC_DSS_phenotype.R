@@ -6,7 +6,7 @@ library(nlme)
 library(knitr)
 library(ggbeeswarm)
 
-setwd("../") # CHANGE to the directory containing the fastq files
+setwd("/home/julianne/Documents/slccolonpaper/slccolon/") # CHANGE to the directory containing the fastq files
 here::i_am("Rproj_slccolonpaper/SLC_DSS_phenotype.R")
 
 data <- read.csv("SLC_DSS/Stool_Phenotype.csv",header=TRUE)

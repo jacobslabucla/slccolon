@@ -6,14 +6,15 @@ library(ggpubr)
 library(dplyr)
 library(tidyr)
 
-setwd("C:/Users/Jacobs Laboratory/Documents/JCYang/SLC Spontaneous/ICPMS/")
-here::i_am("Rproj_slccolonpaper/Figure_ICP_MS.R")
+here::i_am("Rproj_slccolonpaper/Final_Figures_Paper/Figure_ICP_MS.R")
 
 ### Data Preprocessing ---
-df<- read.csv("ICPMS/Analysis_ICP_MS.csv", header=TRUE, row.names=1)
+df<- readr::read_csv(here("ICPMS/Analysis_ICP_MS.csv"))
+row.names(df) <- df$SampleID
+df <- df %>% select(-c("SampleID"))
 
 # replace all n/a and declare all element columns as numerical
-df[df=="n/a"]<-0
+df[df=="n/a"]<-"0"
 vector <- names(df)
 elements <- vector[1:7]
 df <- df %>% mutate_at(c(elements), as.numeric)
@@ -160,9 +161,11 @@ top_half <- plot_grid(fp_col_plots[[1]],fp_col_plots[[2]],
           nrow = 1, ncol=6,
           labels=c("A", "","","","",""
                    ),label_size = 20) 
+
+cadmium <- muc_col_plots[[5]] + ylim(0,0.05)
 middle <- plot_grid(muc_col_plots[[1]],muc_col_plots[[2]],
                       muc_col_plots[[3]],muc_col_plots[[4]],
-                      muc_col_plots[[5]],muc_col_plots[[6]],
+                      cadmium,muc_col_plots[[6]],
                       nrow = 1, ncol=6,
                       labels=c(
                                "B","","","","",""),label_size = 20) 

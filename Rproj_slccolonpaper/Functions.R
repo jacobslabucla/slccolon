@@ -43,7 +43,7 @@ generate_L6_taxa_plots <- function(path_to_csv, titlestring,greppattern, fillvec
     #scale_fill_paletteer_d("ggsci::category20_d3")+
     scale_fill_manual(values = cols)+
     theme(legend.position = "none")+
-    theme_cowplot(20) +
+    theme_cowplot(16) +
     ylab("% Relative Abundance") +
     xlab("")+
     labs(fill="") +
@@ -220,6 +220,7 @@ generate_pcoA_plots <- function(distance_matrix, counts, metadata, title, colorv
   lumcol.dist <- distance_matrix
   lumcol_counts <- counts 
   lumcol_meta <- metadata
+  lumcol_meta$Genotype <- factor(lumcol_meta$Genotype,levels=c("WT","HET","MUT"))
   
   mds <- cmdscale(lumcol.dist, eig = TRUE, x.ret = TRUE)
   

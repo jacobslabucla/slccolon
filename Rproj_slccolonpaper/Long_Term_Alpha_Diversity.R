@@ -6,24 +6,9 @@ library(cowplot)
 library(nlme)
 library(ggpubr)
 
-setwd("C:/Users/Jacobs Laboratory/Documents/JCYang/slccolon/")
+## Environment --
 
-otus<- readr::read_delim("Long_Term/alpha_diversity/alpha_Luminal_Colon_SLT_ASV_table_Silva_v138_1/otus_dir/alpha-diversity.tsv")
-row.names(otus) <- otus$...1
-shannon<-readr::read_delim("Long_Term/alpha_diversity/alpha_Luminal_Colon_SLT_ASV_table_Silva_v138_1/shannon_dir/alpha-diversity.tsv")
-row.names(shannon) <- shannon$...1
-chao1<-readr::read_delim("Long_Term/alpha_diversity/alpha_Luminal_Colon_SLT_ASV_table_Silva_v138_1/chao1_dir/alpha-diversity.tsv")
-row.names(chao1) <- chao1$...1
-
-
-data<- merge(otus,shannon, by="...1")
-data<- merge(data,chao1, by="...1")
-data$SampleID <- data$...1
-
-metadata<- read.delim("Long_Term/starting_files/SLC_LT_metadata.tsv", row.names=1)
-metadata$SampleID <- row.names(metadata)
-data_meta <- merge(data,metadata, by="SampleID")
-
+here::i_am("Rproj_slccolonpaper/Baseline_Alpha_Diversity.R")
 
 ### Function for plotting alpha diversity ---
 generate_adiv_plots <- function(input_data, X, Y, min, max){
@@ -44,52 +29,74 @@ generate_adiv_plots <- function(input_data, X, Y, min, max){
   
 }
 
+## Colon lumen --
+otus<- readr::read_delim(here("Long_Term/alpha_diversity/alpha_Luminal_Colon_SLT_ASV_table_Silva_v138_1/otus_dir/alpha-diversity.tsv"))
+row.names(otus) <- otus$...1
+shannon<-readr::read_delim(here("Long_Term/alpha_diversity/alpha_Luminal_Colon_SLT_ASV_table_Silva_v138_1/shannon_dir/alpha-diversity.tsv"))
+row.names(shannon) <- shannon$...1
+chao1<-readr::read_delim(here("Long_Term/alpha_diversity/alpha_Luminal_Colon_SLT_ASV_table_Silva_v138_1/chao1_dir/alpha-diversity.tsv"))
+row.names(chao1) <- chao1$...1
+
+
+data<- merge(otus,shannon, by="...1")
+data<- merge(data,chao1, by="...1")
+data$SampleID <- data$...1
+
+metadata<- readr::read_delim(here("Long_Term/starting_files/SLC_LT_metadata.tsv"))
+data_meta <- merge(data,metadata, by="SampleID")
+data_meta$Subset <- dplyr::recode(data_meta$Subset,Luminal_Colon = "Colon Lumen")
+
+## Colon mucosa
+otus<- readr::read_delim(here("Long_Term/alpha_diversity/alpha_Mucosal_Colon_SLT_ASV_table_Silva_v138_1/otus_dir/alpha-diversity.tsv"))
+row.names(otus) <- otus$...1
+shannon<-readr::read_delim(here("Long_Term/alpha_diversity/alpha_Mucosal_Colon_SLT_ASV_table_Silva_v138_1/shannon_dir/alpha-diversity.tsv"))
+row.names(shannon) <- shannon$...1
+chao1<-readr::read_delim(here("Long_Term/alpha_diversity/alpha_Mucosal_Colon_SLT_ASV_table_Silva_v138_1/chao1_dir/alpha-diversity.tsv"))
+row.names(chao1) <- chao1$...1
+
+data<- merge(otus,shannon, by="...1")
+data<- merge(data,chao1, by="...1")
+data$SampleID <- data$...1
+
+metadata<- readr::read_delim(here("Long_Term/starting_files/SLC_LT_metadata.tsv"))
+mucosal_data_meta <- merge(data,metadata, by="SampleID")
+mucosal_data_meta$Subset <- dplyr::recode(data_meta$Subset,Mucosal_Colon = "Colon Mucosa")
+
 ### Make and store plots ---
 compare <-c(c("WT","HET"), c("WT","MUT"))
 
 adiv_slt_shannon<- generate_adiv_plots(data_meta, Genotype, shannon_entropy, 2, 7) +
-  stat_compare_means(comparisons = compare,method="wilcox", vjust=0.3,label="p.signif",step.increase=0.05)+
-  ggtitle("Shannon")+
+  #stat_compare_means(comparisons = compare,method="wilcox", vjust=0.3,label="p.signif",step.increase=0.05)+
+  facet_wrap(~Subset)+
+  labs(x="",y="shannon")+
+  ggtitle("12 month-old")+
   theme(plot.title = element_text(hjust = 0.5))
 adiv_slt_shannon
 
 adiv_slt_otus<- generate_adiv_plots(data_meta, Genotype, observed_features, 0, 300) +
-  stat_compare_means(comparisons = compare,method="wilcox", vjust=0.3,label="p.signif",step.increase=0.05)+
-  ggtitle("# ASVs")+
+  #stat_compare_means(comparisons = compare,method="wilcox", vjust=0.3,label="p.signif",step.increase=0.05)+
+  facet_wrap(~Subset)+
+  labs(x="",y="# ASVs")+
+  ggtitle("12 month-old")+
   theme(plot.title = element_text(hjust = 0.5))
 adiv_slt_otus
 
-adiv_slt_chao1<- generate_adiv_plots(data_meta, Genotype, chao1, 0, 300) +
-  stat_compare_means(comparisons = compare,method="wilcox", vjust=0.3,label="p.signif",step.increase=0.05)+
-  ggtitle("chao1")+
+
+mc_adiv_slt_shannon<- generate_adiv_plots(mucosal_data_meta, Genotype, shannon_entropy, 2, 7) +
+  facet_wrap(~Subset)+
+  labs(x="",y="shannon")+
+  ggtitle("12 month-old")+
   theme(plot.title = element_text(hjust = 0.5))
-adiv_slt_chao1
+mc_adiv_slt_shannon
 
+mc_adiv_slt_otus<- generate_adiv_plots(mucosal_data_meta, Genotype, observed_features, 0, 300) +
+  facet_wrap(~Subset)+
+  labs(x="",y="# ASVs")+
+  ggtitle("12 month-old")+
+  theme(plot.title = element_text(hjust = 0.5))
+mc_adiv_slt_otus
 
-plot_grid(adiv_slt_shannon, adiv_slt_otus, adiv_slt_chao1, labels=c("A","B","C"),nrow=1)
-
-adiv_slt_shannon<- generate_adiv_plots(data_meta, Genotype, shannon_entropy, 2, 7) +
-  stat_compare_means(comparisons = compare,method="wilcox", vjust=0.3,label="p.signif",step.increase=0.05)+
-  ggtitle("Shannon")+
-  theme(plot.title = element_text(hjust = 0.5))+
-  facet_wrap(~Sex)
-adiv_slt_shannon
-
-adiv_slt_otus<- generate_adiv_plots(data_meta, Genotype, observed_features, 0, 300) +
-  stat_compare_means(comparisons = compare,method="wilcox", vjust=0.3,label="p.signif",step.increase=0.05)+
-  ggtitle("# ASVs")+
-  theme(plot.title = element_text(hjust = 0.5))+
-  facet_wrap(~Sex)
-adiv_slt_otus
-
-adiv_slt_chao1<- generate_adiv_plots(data_meta, Genotype, chao1, 0, 300) +
-  stat_compare_means(comparisons = compare,method="wilcox", vjust=0.3,label="p.signif",step.increase=0.05)+
-  ggtitle("chao1")+
-  theme(plot.title = element_text(hjust = 0.5))+
-  facet_wrap(~Sex)
-adiv_slt_chao1
-
-plot_grid(adiv_slt_shannon, adiv_slt_otus, adiv_slt_chao1, labels=c("A","B","C"), nrow=1)
+plot_grid(adiv_slt_shannon, adiv_slt_otus, mc_adiv_slt_shannon,mc_adiv_slt_otus, labels=c("A","B","C","D"), nrow=2)
 
 ### Alpha Diversity Stats ---
 data_meta$Genotype <-factor(data_meta$Genotype, levels=c("WT", "HET","MUT"))
@@ -100,17 +107,10 @@ summary(output)
 output <- lme(fixed= chao1 ~ Sex+ Site+ Genotype, random = ~1|MouseID, data=data_meta)
 summary(output)
 
-output <- lme(fixed= shannon_entropy ~ Site+ Sex*Genotype, random = ~1|MouseID, data=data_meta)
+mucosal_data_meta$Genotype <-factor(mucosal_data_meta$Genotype, levels=c("WT", "HET","MUT"))
+output <- lme(fixed= shannon_entropy ~ Sex + Site+ Genotype, random = ~1|MouseID, data=mucosal_data_meta)
 summary(output)
-output <- lme(fixed= observed_features ~ Site+ Sex*Genotype, random = ~1|MouseID, data=data_meta)
-summary(output)
-output <- lme(fixed= chao1 ~ Site+ Sex*Genotype, random = ~1|MouseID, data=data_meta)
+output <- lme(fixed= observed_features ~ Sex+ Site+ Genotype, random = ~1|MouseID, data=mucosal_data_meta)
 summary(output)
 
-output <- lme(fixed= shannon_entropy ~ Site+ Genotype, random = ~1|MouseID, data=subset(data_meta,Sex=="Female"))
-summary(output)
-output <- lme(fixed= observed_features ~ Site+ Genotype, random = ~1|MouseID, data=subset(data_meta,Sex=="Female"))
-summary(output)
-output <- lme(fixed= chao1 ~ Site+ Genotype, random = ~1|MouseID, data=subset(data_meta,Sex=="Female"))
-summary(output)
 

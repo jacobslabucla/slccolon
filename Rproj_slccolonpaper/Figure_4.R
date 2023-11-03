@@ -6,9 +6,15 @@ library(paletteer)
 setwd("C:/Users/Jacobs Laboratory/Documents/JCYang/slccolon/")
 here::i_am("Rproj_slccolonpaper/Figure_4.R")
 
+## generate phylum color vector 
+phyla_names <- c("Acidobacteriota", "Actinobacteriota", "Bacteroidota", "Deinococcota", "Firmicutes", "Proteobacteria", "Verrucomicrobiota", 
+                 "Deferribacterota", "Cyanobacteria")
+phyla_colors <- paletteer_d("ggthemes::calc",9)
+names(phyla_colors) <- phyla_names
+
 ## Luminal --
 # Trios
-data<-read.table("Trios/differential_taxa/L6_Luminal_Colon_L6_Maaslin2_Sequencing_Run_Site_Sex_Genotype_1-MouseID/significant_results.tsv", header=TRUE)
+data<-readr::read_delim(here("Trios/differential_taxa/L6_Luminal_Colon_L6_Maaslin2_Sequencing_Run_Site_Sex_Genotype_1-MouseID/significant_results.tsv"))
 data <- data %>% filter(qval <0.25)
 data <- data %>% filter(metadata=="Genotype")
 print(data$feature)
@@ -17,7 +23,7 @@ trios_l6_mut_significant <- data %>% filter(value=="MUT")
 
 tr_genus_mut <- make_genus_level_taxa_dotplot(trios_l6_mut_significant, 
                                               "Trios/differential_taxa/L6_Luminal_ColonRelative_Abundance-ASV.RDS",
-                                              "Luminal Colon",
+                                              "Colon Lumen",
                                               phyla_colors)+
   theme(legend.position = "none")
 
@@ -25,7 +31,7 @@ tr_genus_mut + theme(legend.position="right")
 
 
 # Long Term 
-data<-read.table("Long_Term/differential_taxa/L6_Luminal_Colon_L6_Maaslin2_Site_Sex_Genotype_1-MouseID/significant_results.tsv", header=TRUE)
+data<-readr::read_delim(here("Long_Term/differential_taxa/L6_Luminal_Colon_L6_Maaslin2_Site_Sex_Genotype_1-MouseID/significant_results.tsv"))
 data <- data %>% filter(qval <0.25)
 data <- data %>% filter(metadata=="Genotype")
 print(data$feature)
@@ -35,12 +41,12 @@ print(lt_l6_mut_significant$feature)
 
 lt_genus_mut <- make_genus_level_taxa_dotplot(lt_l6_mut_significant, 
                                               "Long_Term/differential_taxa/L6_Luminal_Colon-ASV.RDS",
-                                              "Luminal Colon",phyla_colors)+
+                                              "Colon Lumen",phyla_colors)+
   theme(legend.position = "none")
 lt_genus_mut + theme(legend.position = "right")
 
 # Baseline
-data<-read.table("Baseline/differential_taxa/JAX_L6_Maaslin2_Sex_Genotype/significant_results.tsv", header=TRUE)
+data<-readr::read_delim(here("Baseline/differential_taxa/JAX_L6_Maaslin2_Sex_Genotype/significant_results.tsv"))
 data <- data %>% filter(qval <0.25)
 data <- data %>% filter(metadata=="Genotype")
 
@@ -56,7 +62,7 @@ jax_mut_genus + theme(legend.position="right")
 
 ## Mucosal --
 # Trios
-data<-read.table("Trios/differential_taxa/L6_Mucosal_Colon_L6_Maaslin2_Sequencing_Run_Site_Sex_Genotype_1-MouseID/significant_results.tsv", header=TRUE)
+data<-readr::read_delim(here("Trios/differential_taxa/L6_Mucosal_Colon_L6_Maaslin2_Sequencing_Run_Site_Sex_Genotype_1-MouseID/significant_results.tsv"))
 data <- data %>% filter(qval <0.25)
 data <- data %>% filter(metadata=="Genotype")
 print(data$feature)
@@ -71,7 +77,7 @@ muc_tr_genus_mut <- make_genus_level_taxa_dotplot(trios_l6_mut_significant,
   
 muc_tr_genus_mut + theme(legend.position = "right")
 # Long Term - Fig 4D
-data<-read.table("Long_Term/differential_taxa/L6_Mucosal_Colon_L6_Maaslin2_Site_Sex_Genotype_1-MouseID/significant_results.tsv", header=TRUE)
+data<-readr::read_delim(here("Long_Term/differential_taxa/L6_Mucosal_Colon_L6_Maaslin2_Site_Sex_Genotype_1-MouseID/significant_results.tsv"))
 data <- data %>% filter(qval <0.25)
 data <- data %>% filter(metadata=="Genotype")
 print(data$feature) 
@@ -112,8 +118,3 @@ right_half <- plot_grid(muc_tr_genus_mut, muc_lt_genus_mut,
                         label_size=20,
                         rel_heights = c(0.5,1))
 
-## generate phylum color vector 
-phyla_names <- c("Acidobacteriota", "Actinobacteriota", "Bacteroidota", "Deinococcota", "Firmicutes", "Proteobacteria", "Verrucomicrobiota", 
-                 "Deferribacterota", "Cyanobacteria")
-phyla_colors <- paletteer_d("ggthemes::calc",9)
-names(phyla_colors) <- phyla_names

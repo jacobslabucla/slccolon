@@ -114,7 +114,7 @@ left_half <- plot_grid(tr_genus_mut, lt_genus_mut, jax_mut_genus,
 
 right_half <- plot_grid(muc_tr_genus_mut, muc_lt_genus_mut,
                         nrow=2, 
-                        labels=c("C", "D"),
+                        labels=c("D", "E"),
                         label_size=20,
                         rel_heights = c(0.5,1))
 

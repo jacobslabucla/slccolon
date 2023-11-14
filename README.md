@@ -6,9 +6,11 @@ This repository contains the original count data and analysis files used to prod
 ```bash
 git clone https://github.com/jacobslabucla/slccolon
 ```
-2. Then, open the `Rproj_slccolonpaper` folder. Go to `Final_Figures_for_Paper`.
+2. Then, open the `Rproj_slccolonpaper` folder. Go to `Final_Figures_Paper`.
 
-3. 
+3. Run everything in `Functions.R` first. 
+
+4. Now, by running each Figure script (matches the Figures in the paper) you should be able to reproduce the figures in the paper.
 
 ## Microbiome Data
 - SLC Long Term / 12-month old mice (WT, HET, MUT) - n= 7, 16, 7 

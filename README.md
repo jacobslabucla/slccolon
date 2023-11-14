@@ -6,7 +6,9 @@ This repository contains the original count data and analysis files used to prod
 ```bash
 git clone https://github.com/jacobslabucla/slccolon
 ```
-2. Then, open the Rproj
+2. Then, open the `Rproj_slccolonpaper` folder. Go to `Final_Figures_for_Paper`.
+
+3. 
 
 ## Microbiome Data
 - SLC Long Term / 12-month old mice (WT, HET, MUT) - n= 7, 16, 7 

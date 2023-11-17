@@ -5,6 +5,7 @@ library(cowplot)
 library(ggpubr)
 library(dplyr)
 library(tidyr)
+#install.packages("gridGraphics")
 
 here::i_am("Rproj_slccolonpaper/Final_Figures_Paper/Figure_2_ICP_MS.R")
 
@@ -171,7 +172,6 @@ middle <- plot_grid(muc_col_plots[[1]],muc_col_plots[[2]],
                                "B","","","","",""),label_size = 20) 
 
 #MUC COL
-plot.new()
 bottom_half <- plot_grid(ts_col_plots[[1]],ts_col_plots[[2]],
           ts_col_plots[[3]],ts_col_plots[[4]],
           ts_col_plots[[5]],ts_col_plots[[6]],
@@ -181,15 +181,19 @@ bottom_half <- plot_grid(ts_col_plots[[1]],ts_col_plots[[2]],
 
 
 #MUC COL
-bottom_half <- plot_grid(muc_col_plots[[1]],muc_col_plots[[2]],
-                         muc_col_plots[[3]],muc_col_plots[[4]],
-                         muc_col_plots[[5]],muc_col_plots[[6]],
-                         nrow = 2, ncol=3, title)
+middle_half <- plot_grid(muc_col_plots[[1]],muc_col_plots[[2]],
+                    muc_col_plots[[3]],muc_col_plots[[4]],
+                    cadmium,muc_col_plots[[6]],
+                    nrow = 1, ncol=6,
+                    labels=c(
+                      "B","","","","",""),label_size = 20) 
 
-plot_grid(top_half, bottom_half, nrow=2,labels = "A", "B")
 
-#Small Intestine '
-plot_grid(fp_si_plots[[7]],muc_si_plots[[7]],ts_si_plots[[7]], ncol=1)
-plot_grid(fp_si_plots[[7]],labels=c("A"))
-plot_grid(muc_si_plots[[7]],labels=c("B"))
-plot_grid(ts_si_plots[[7]],labels=c("C"))
+#Plot arranged figures
+plot_grid(plotlist = list(top_half, middle_half, bottom_half), nrow = 3)
+
+#Small Intestine
+# plot_grid(fp_si_plots[[7]],muc_si_plots[[7]],ts_si_plots[[7]], ncol=1)
+# plot_grid(fp_si_plots[[7]],labels=c("A"))
+# plot_grid(muc_si_plots[[7]],labels=c("B"))
+# plot_grid(ts_si_plots[[7]],labels=c("C"))

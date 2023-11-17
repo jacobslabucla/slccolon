@@ -3,8 +3,9 @@ library(cowplot)
 library(dplyr)
 library(paletteer)
 
-setwd("C:/Users/Jacobs Laboratory/Documents/JCYang/slccolon/")
-here::i_am("Rproj_slccolonpaper/Figure_4.R")
+# rm(list = ls())
+#setwd("C:/Users/Jacobs Laboratory/Documents/JCYang/slccolon/")
+here::i_am("Rproj_slccolonpaper/Final_Figures_Paper/Figure_4.R")
 
 ## generate phylum color vector 
 phyla_names <- c("Acidobacteriota", "Actinobacteriota", "Bacteroidota", "Deinococcota", "Firmicutes", "Proteobacteria", "Verrucomicrobiota", 
@@ -27,7 +28,7 @@ tr_genus_mut <- make_genus_level_taxa_dotplot(trios_l6_mut_significant,
                                               phyla_colors)+
   theme(legend.position = "none")
 
-tr_genus_mut + theme(legend.position="right")
+# tr_genus_mut + theme(legend.position="right")
 
 
 # Long Term 
@@ -43,7 +44,7 @@ lt_genus_mut <- make_genus_level_taxa_dotplot(lt_l6_mut_significant,
                                               "Long_Term/differential_taxa/L6_Luminal_Colon-ASV.RDS",
                                               "Colon Lumen",phyla_colors)+
   theme(legend.position = "none")
-lt_genus_mut + theme(legend.position = "right")
+# lt_genus_mut + theme(legend.position = "right")
 
 # Baseline
 data<-readr::read_delim(here("Baseline/differential_taxa/JAX_L6_Maaslin2_Sex_Genotype/significant_results.tsv"))
@@ -58,7 +59,7 @@ jax_mut_genus <- make_genus_level_taxa_dotplot(jax_mut,
                                                "Fecal Pellet",phyla_colors)+
   theme(legend.position = "none")
 
-jax_mut_genus + theme(legend.position="right")
+# jax_mut_genus + theme(legend.position="right")
 
 ## Mucosal --
 # Trios
@@ -75,7 +76,7 @@ muc_tr_genus_mut <- make_genus_level_taxa_dotplot(trios_l6_mut_significant,
                                               "Colon Mucosa", phyla_colors) + 
                     theme(legend.position = "none") 
   
-muc_tr_genus_mut + theme(legend.position = "right")
+# muc_tr_genus_mut + theme(legend.position = "right")
 # Long Term - Fig 4D
 data<-readr::read_delim(here("Long_Term/differential_taxa/L6_Mucosal_Colon_L6_Maaslin2_Site_Sex_Genotype_1-MouseID/significant_results.tsv"))
 data <- data %>% filter(qval <0.25)
@@ -91,7 +92,7 @@ muc_lt_genus_mut <- make_genus_level_taxa_dotplot(lt_l6_mut_significant,
                                               "Long_Term/differential_taxa/L6_Mucosal_Colon-ASV.RDS",
                                               "Colon Mucosa", phyla_colors)+
                     theme(legend.position="none")
-muc_lt_genus_mut + theme(legend.position="bottom") guides(fill=guide_legend(nrow=22, byrow=TRUE))+
+# muc_lt_genus_mut + theme(legend.position="bottom") + guides(fill=guide_legend(nrow=22, byrow=TRUE))
 
 ## Get legend 
 L2_legend <- make_genus_level_taxa_dotplot(lt_l6_mut_significant, 
@@ -102,10 +103,8 @@ L2_legend <- make_genus_level_taxa_dotplot(lt_l6_mut_significant,
   theme(legend.spacing.y = unit(0.1, 'cm')) +
   theme(legend.background = element_rect(fill="lightblue", size=1, linetype="solid"), legend.margin = margin(0, 11, 0, 1)) 
 legend <- cowplot::get_legend(L2_legend)
-grid::grid.newpage()
-grid::grid.draw(legend)
 
-## Final Figure --
+## Final Plots --
 left_half <- plot_grid(tr_genus_mut, lt_genus_mut, jax_mut_genus,
                        nrow=3, 
                        labels=c("A", "B", "C"),
@@ -118,3 +117,9 @@ right_half <- plot_grid(muc_tr_genus_mut, muc_lt_genus_mut,
                         label_size=20,
                         rel_heights = c(0.5,1))
 
+# Arranged plots
+plot_grid(plotlist = list(left_half, right_half))
+
+# Legend
+grid::grid.newpage()
+grid::grid.draw(legend)

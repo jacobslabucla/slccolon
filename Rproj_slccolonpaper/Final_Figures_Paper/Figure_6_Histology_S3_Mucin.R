@@ -7,7 +7,7 @@ library(knitr)
 library(ggbeeswarm)
 library(here)
 
-here::i_am("Rproj_slccolonpaper/SLC_Spontaneous_phenotype.R")
+here::i_am("Rproj_slccolonpaper/Final_Figures_Paper/Figure_6_Histology_S3_Mucin.R")
 
 mucin <- readr::read_csv(here("Spontaneous/Mucin.csv"))
 histology <- readr::read_csv(here("Spontaneous/Histology_5month.csv"))
@@ -70,7 +70,6 @@ plot_grid(histo_plot,histo_old_plot,
           label_size=12)
 
 
-
 ## Statistics -- 
 df_mut <- histo_old %>% filter(Genotype!="HET")
 wilcox.test(Score~Genotype, df_mut)
@@ -88,4 +87,3 @@ summary(output)
 
 df_mut <- mucin %>% filter(Genotype!="WT")
 wilcox.test(Mucin_Thickness~Genotype,df_mut)
-

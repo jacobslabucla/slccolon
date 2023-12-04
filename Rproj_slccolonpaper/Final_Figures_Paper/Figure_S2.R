@@ -10,7 +10,7 @@ library(ggpubr)
 
 ## Environment --
 
-here::i_am("Rproj_slccolonpaper/Trios_Alpha_Diversity.R")
+here::i_am("Rproj_slccolonpaper/Archived_Scripts/Trios_Alpha_Diversity.R")
 
 ### Function for plotting alpha diversity ---
 generate_adiv_plots <- function(input_data, X, Y, min, max){

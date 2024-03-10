@@ -46,3 +46,38 @@ git clone https://github.com/jacobslabucla/slccolon
 |Male   |MUT      |      17|
 |Male   |WT       |      11|
   
+## Histology Data 
+
+- 5 months 
+
+|Sex    |Genotype | Score|
+|:------|:--------|-----:|
+|Female |MUT      |     4|
+|Female |WT       |     7|
+|Male   |MUT      |     9|
+|Male   |WT       |     9|
+
+
+- 10 months 
+
+|Sex    |Genotype | Score|
+|:------|:--------|-----:|
+|Female |HET      |     7|
+|Female |MUT      |     5|
+|Female |WT       |     4|
+|Male   |HET      |     6|
+|Male   |MUT      |    10|
+|Male   |WT       |     4|
+
+- Mucin 
+
+|Sex    |Genotype | MouseID|
+|:------|:--------|-------:|
+|Female |HET      |       5|
+|Female |MUT      |       7|
+|Female |WT       |       6|
+|Male   |HET      |       6|
+|Male   |MUT      |       4|
+|Male   |WT       |       6|
+
+

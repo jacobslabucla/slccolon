@@ -29,7 +29,7 @@ trios_summary %>% kable
 
 # Feed in Metadata for the 3 cohorts --
 
-metadata <- read.csv("Baseline/starting_files/Baseline_Metadata.csv", header=TRUE)
+metadata <- read.csv(here("Baseline/starting_files/Baseline_Metadata.csv"), header=TRUE)
 sapply(metadata,levels)
 
 # Make a pivot table 

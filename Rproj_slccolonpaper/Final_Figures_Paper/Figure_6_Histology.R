@@ -13,6 +13,29 @@ mucin <- readr::read_csv(here("Spontaneous/Mucin.csv"))
 histology <- readr::read_csv(here("Spontaneous/Histology_5month.csv"))
 histo_old <- readr::read_csv(here("Spontaneous/Histology_10month.csv"))
 
+
+## Make summary tables --
+histo_summary <- histology %>%
+  group_by(Sex, Genotype) %>%
+  summarize(Score = length(Score))
+
+histo_summary %>% kable
+
+histo_old_summary <- histo_old %>%
+  filter(Tg=="Negative") %>%
+  group_by(Sex, Genotype) %>%
+  summarize(Score = length(Score))
+
+histo_old_summary %>% kable
+
+mucin_summary <- mucin %>%
+  group_by(Sex, Genotype) %>%
+  summarize(MouseID = n_distinct(MouseID))
+
+mucin_summary %>% kable
+
+# Make plots --
+
 histology$Genotype <- factor(histology$Genotype, levels=c("WT","HET","MUT"))
 
 histo_plot <- histology %>%

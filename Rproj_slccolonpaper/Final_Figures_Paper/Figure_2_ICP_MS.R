@@ -112,7 +112,7 @@ for (int in 1:7){
                  names_to="Element",
                  values_to="Concentration") %>%
     filter(Element==element) %>%
-    generate_violin_plots(X=Genotype, titlestring=element)
+    generate_violin_plots(X=Genotype, titlestring=element) 
   fp_si <- df_fp_si %>% 
     remove_outlier(element) %>%
     pivot_longer(cols=all_of(elementvector),
@@ -359,4 +359,66 @@ element_stats_nonpara[[6]]
 # Selenium
 element_stats_para[[7]]
 element_stats_nonpara[[7]]
+
+# Males
+df_fp_col <- df %>% filter(SampleType=="FP-COL" & Sex=="Male")
+df_fp_si <- df %>% filter(SampleType=="FP-SI" & Sex=="Male")
+df_muc_col <- df %>% filter(SampleType=="MUC-COL" & Sex=="Male")
+df_muc_si <- df %>% filter(SampleType=="MUC-SI"& Sex=="Male")
+df_ts_col <- df %>% filter(SampleType=="TS-COL"& Sex=="Male")
+df_ts_si <- df %>% filter(SampleType=="TS-SI"& Sex=="Male")
+
+
+element_stats_para <- list()
+element_stats_nonpara <-list()
+
+
+for (int in 1:7){
+  print(int)
+  ts_si_para <- t.test(df_ts_si[,int]~Genotype,df_ts_si)
+  ts_si_nonpara <- wilcox.test(df_ts_si[,int]~Genotype,df_ts_si)
+  ts_col_para <- t.test(df_ts_col[,int]~Genotype,df_ts_col)
+  muc_si_para <- t.test(df_muc_si[,int]~Genotype,df_muc_si)
+  muc_si_nonpara <- wilcox.test(df_muc_si[,int]~Genotype,df_muc_si)
+  ts_col_nonpara <- wilcox.test(df_ts_col[,int]~Genotype,df_ts_col)
+  muc_col_para <- t.test(df_muc_col[,int]~Genotype,df_muc_col)
+  muc_col_nonpara <- wilcox.test(df_muc_col[,int]~Genotype,df_muc_col)
+  fp_si_para <- t.test(df_fp_si[,int]~Genotype,df_fp_si)
+  fp_si_nonpara <- wilcox.test(df_fp_si[,int]~Genotype,df_fp_si)
+  fp_col_para <- t.test(df_fp_col[,int]~Genotype,df_fp_col)
+  fp_col_nonpara <- wilcox.test(df_fp_col[,int]~Genotype,df_fp_col)
+  
+  element_stats_para[[int]] <-list(print(fp_col_para), print(fp_si_para),print(muc_col_para),print(muc_si_para), print(ts_col_para),print(ts_si_para))
+  element_stats_nonpara[[int]] <-list(print(fp_col_nonpara), print(fp_si_nonpara),print(muc_col_nonpara),print(muc_si_nonpara), print(ts_col_nonpara),print(ts_si_nonpara))
+  
+}
+
+# Iron 
+element_stats_para[[1]]
+element_stats_nonpara[[1]]
+
+# Cobalt 
+element_stats_para[[2]]
+element_stats_nonpara[[2]]
+
+# Copper
+element_stats_para[[3]]
+element_stats_nonpara[[3]]
+
+# Zinc
+element_stats_para[[4]]
+element_stats_nonpara[[4]]
+
+# Cadmium
+element_stats_para[[5]]
+element_stats_nonpara[[5]]
+
+# Manganese
+element_stats_para[[6]]
+element_stats_nonpara[[6]]
+
+# Selenium
+element_stats_para[[7]]
+element_stats_nonpara[[7]]
+
 

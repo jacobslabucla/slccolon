@@ -56,16 +56,10 @@ L6_legend <- ggplot(fake_df, aes(x=var2, y=var1, color=taxa,fill=taxa)) +
 legend <- cowplot::get_legend(L6_legend)
 
 ### From archived script Trios_RS_Jensen_Shannon.R
-<<<<<<< HEAD
-setwd("../../")
-getwd()
-here::i_am("Rproj_slccolonpaper/Archived_Scripts/Trios_RS_Jensen_Shannon.R")
-=======
-here::i_am("slccolon/Rproj_slccolonpaper/Archived_Scripts/Trios_RS_Jensen_Shannon.R")
->>>>>>> 645fce6fe7e67969c068771726a5847f5a3c204b
+here::i_am("Rproj_slccolonpaper/Final_Figures_Paper/Figure_3.R")
 
-metadata <- read.table("slccolon/Trios/starting_files/SLC_TOTAL_OCT2020_FULL_Metadata.tsv", header=TRUE)
-counts <- read.table("slccolon/Trios/starting_files/Trios_ASV_table_Silva_v138_1.tsv", header = TRUE, row.names=1)
+metadata <- read.table(here("Trios/starting_files/SLC_TOTAL_OCT2020_FULL_Metadata.tsv"), header=TRUE)
+counts <- read.table(here("Trios/starting_files/Trios_ASV_table_Silva_v138_1.tsv"), header = TRUE, row.names=1)
 
 ## Store taxonomy in an annotation file --
 annotation <- tibble::rownames_to_column(counts, "feature") %>% select(c("feature", "taxonomy"))

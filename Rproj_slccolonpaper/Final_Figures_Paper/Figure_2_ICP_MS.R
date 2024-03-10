@@ -10,7 +10,7 @@ library(tidyr)
 here::i_am("Rproj_slccolonpaper/Final_Figures_Paper/Figure_2_ICP_MS.R")
 
 ### Data Preprocessing ---
-df<- readr::read_csv(here("ICPMS/Analysis_ICP_MS.csv"))
+df<- as.data.frame(readr::read_csv(here("ICPMS/Analysis_ICP_MS.csv")))
 row.names(df) <- df$SampleID
 df <- df %>% select(-c("SampleID"))
 
@@ -71,8 +71,11 @@ generate_violin_plots <- function (input_data, X, titlestring) {
   
   #Ensure correct ordering of levels 
   data$Genotype <- factor(data$Genotype, levels = c("WT","MUT"))
-  data$Genotype_Batch <- factor(data$Genotype_Batch, levels=c("WT_One","WT_Two", "WT_Three", "MUT_One", "MUT_Two", "MUT_Three"))
-  data$Genotype_Sex <- factor(data$Genotype_Sex, levels=c("WT_Male","WT_Female", "MUT_Male", "MUT_Female"))
+  data$Genotype_Sex <- plyr::revalue(data$Genotype_Sex,c("WT_Male"="WT_M" ,
+                                                         "WT_Female"="WT_F",
+                                                         "MUT_Female"="MUT_F",
+                                                         "MUT_Male"="MUT_M"))
+  data$Genotype_Sex <- factor(data$Genotype_Sex, levels=c("WT_M","MUT_M", "WT_F", "MUT_F"))
   
   ggplot(data=data,aes(x={{X}},y=Concentration, fill=Genotype)) + 
     geom_boxplot(alpha=0.25,position=position_dodge(width=.75),size=1,color="black")+
@@ -192,8 +195,168 @@ middle_half <- plot_grid(muc_col_plots[[1]],muc_col_plots[[2]],
 #Plot arranged figures
 plot_grid(plotlist = list(top_half, middle_half, bottom_half), nrow = 3)
 
-#Small Intestine
-# plot_grid(fp_si_plots[[7]],muc_si_plots[[7]],ts_si_plots[[7]], ncol=1)
-# plot_grid(fp_si_plots[[7]],labels=c("A"))
-# plot_grid(muc_si_plots[[7]],labels=c("B"))
-# plot_grid(ts_si_plots[[7]],labels=c("C"))
+### Add breakdown by genotype_sex variable ---
+
+fp_col_plots <- list()
+fp_si_plots <- list()
+muc_col_plots <- list()
+muc_si_plots <- list()
+ts_col_plots <- list()
+ts_si_plots <- list()
+
+
+elementvector <- c("Iron", "Cobalt", "Copper", "Zinc", "Cadmium", "Manganese", "Selenium")
+
+for (int in 1:7){
+  print(int)
+  element <- elementvector[int]
+  fp_col <- df_fp_col %>% 
+    remove_outlier(element) %>%
+    pivot_longer(cols=all_of(elementvector),
+                 names_to="Element",
+                 values_to="Concentration") %>%
+    filter(Element==element) %>%
+    generate_violin_plots(X=Genotype_Sex, titlestring=element)+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+  fp_si <- df_fp_si %>% 
+    remove_outlier(element) %>%
+    pivot_longer(cols=all_of(elementvector),
+                 names_to="Element",
+                 values_to="Concentration") %>%
+    filter(Element==element) %>%
+    generate_violin_plots(X=Genotype_Sex, titlestring=element)+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+  muc_col <- df_muc_col %>% 
+    remove_outlier(element) %>%
+    pivot_longer(cols=all_of(elementvector),
+                 names_to="Element",
+                 values_to="Concentration") %>%
+    filter(Element==element) %>%
+    generate_violin_plots(X=Genotype_Sex, titlestring=element)+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+  muc_si <- df_muc_si %>% 
+    remove_outlier(element) %>%
+    pivot_longer(cols=all_of(elementvector),
+                 names_to="Element",
+                 values_to="Concentration") %>%
+    filter(Element==element) %>%
+    generate_violin_plots(X=Genotype_Sex, titlestring=element)+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+  ts_col <- df_ts_col  %>%
+    remove_outlier(element) %>%
+    pivot_longer(cols=all_of(elementvector),
+                 names_to="Element",
+                 values_to="Concentration") %>%
+    filter(Element==element) %>%
+    generate_violin_plots(X=Genotype_Sex, titlestring=element)+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+  ts_si <- df_ts_si %>%
+    remove_outlier(element) %>%
+    pivot_longer(cols=all_of(elementvector),
+                 names_to="Element",
+                 values_to="Concentration") %>%
+    filter(Element==element) %>%
+    generate_violin_plots(X=Genotype_Sex, titlestring=element)+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+  
+  fp_col_plots[[int]] <- fp_col
+  fp_si_plots[[int]] <- fp_si
+  muc_col_plots[[int]] <- muc_col
+  muc_si_plots[[int]] <- muc_si
+  ts_col_plots[[int]] <- ts_col
+  ts_si_plots[[int]] <- ts_si
+  
+}
+
+## Assemble Multi-Panel Figure
+top_half <- plot_grid(fp_col_plots[[1]],fp_col_plots[[2]],
+                      fp_col_plots[[3]],fp_col_plots[[4]],
+                      fp_col_plots[[5]],fp_col_plots[[6]],
+                      nrow = 1, ncol=6,
+                      labels=c("A", "","","","",""
+                      ),label_size = 20) 
+
+cadmium <- muc_col_plots[[5]] + ylim(0,0.05)
+middle <- plot_grid(muc_col_plots[[1]],muc_col_plots[[2]],
+                    muc_col_plots[[3]],muc_col_plots[[4]],
+                    cadmium,muc_col_plots[[6]],
+                    nrow = 1, ncol=6,
+                    labels=c(
+                      "B","","","","",""),label_size = 20) 
+
+bottom_half <- plot_grid(ts_col_plots[[1]],ts_col_plots[[2]],
+                         ts_col_plots[[3]],ts_col_plots[[4]],
+                         ts_col_plots[[5]],ts_col_plots[[6]],
+                         nrow = 1, ncol=6, label_size = 20,
+                         labels=c("C", "","","","",""))
+
+
+### Statistics On Full Dataset--- 
+df<- as.data.frame(readr::read_csv(here("ICPMS/Analysis_ICP_MS.csv")))
+row.names(df) <- df$SampleID
+df <- df %>% select(-c("SampleID"))
+
+# replace all n/a and declare all element columns as numerical
+df[df=="n/a"]<-"0"
+vector <- names(df)
+elements <- vector[1:7]
+df <- df %>% mutate_at(c(elements), as.numeric)
+str(df)
+df$Genotype_Batch <- paste0(df$Genotype, "_",df$Batch)
+df$Genotype_Sex <- paste0(df$Genotype,"_",df$Sex)
+
+#Females 
+df_fp_col <- df %>% filter(SampleType=="FP-COL" & Sex=="Female")
+df_fp_si <- df %>% filter(SampleType=="FP-SI" & Sex=="Female")
+df_muc_col <- df %>% filter(SampleType=="MUC-COL" & Sex=="Female")
+df_muc_si <- df %>% filter(SampleType=="MUC-SI"& Sex=="Female")
+df_ts_col <- df %>% filter(SampleType=="TS-COL"& Sex=="Female")
+df_ts_si <- df %>% filter(SampleType=="TS-SI"& Sex=="Female")
+
+
+element_stats_para <- list()
+element_stats_nonpara <-list()
+
+
+for (int in 1:7){
+  print(int)
+  ts_si_para <- t.test(df_ts_si[,int]~Genotype,df_ts_si)
+  ts_si_nonpara <- wilcox.test(df_ts_si[,int]~Genotype,df_ts_si)
+  ts_col_para <- t.test(df_ts_col[,int]~Genotype,df_ts_col)
+  muc_si_para <- t.test(df_muc_si[,int]~Genotype,df_muc_si)
+  muc_si_nonpara <- wilcox.test(df_muc_si[,int]~Genotype,df_muc_si)
+  ts_col_nonpara <- wilcox.test(df_ts_col[,int]~Genotype,df_ts_col)
+  muc_col_para <- t.test(df_muc_col[,int]~Genotype,df_muc_col)
+  muc_col_nonpara <- wilcox.test(df_muc_col[,int]~Genotype,df_muc_col)
+  fp_si_para <- t.test(df_fp_si[,int]~Genotype,df_fp_si)
+  fp_si_nonpara <- wilcox.test(df_fp_si[,int]~Genotype,df_fp_si)
+  fp_col_para <- t.test(df_fp_col[,int]~Genotype,df_fp_col)
+  fp_col_nonpara <- wilcox.test(df_fp_col[,int]~Genotype,df_fp_col)
+  
+  element_stats_para[[int]] <-list(print(fp_col_para), print(fp_si_para),print(muc_col_para),print(muc_si_para), print(ts_col_para),print(ts_si_para))
+  element_stats_nonpara[[int]] <-list(print(fp_col_nonpara), print(fp_si_nonpara),print(muc_col_nonpara),print(muc_si_nonpara), print(ts_col_nonpara),print(ts_si_nonpara))
+  
+}
+
+# Iron 
+element_stats_para[[1]]
+element_stats_nonpara[[1]]
+
+# Cobalt 
+element_stats_para[[2]]
+element_stats_nonpara[[2]]
+
+# Copper
+element_stats_para[[3]]
+element_stats_nonpara[[3]]
+
+# Zinc
+element_stats_para[[4]]
+element_stats_nonpara[[4]]
+
+# Cadmium
+element_stats_para[[5]]
+element_stats_nonpara[[5]]
+
+# Manganese
+element_stats_para[[6]]
+element_stats_nonpara[[6]]
+
+# Selenium
+element_stats_para[[7]]
+element_stats_nonpara[[7]]
+

@@ -56,6 +56,8 @@ L6_legend <- ggplot(fake_df, aes(x=var2, y=var1, color=taxa,fill=taxa)) +
 legend <- cowplot::get_legend(L6_legend)
 
 ### From archived script Trios_RS_Jensen_Shannon.R
+setwd("../../")
+getwd()
 here::i_am("Rproj_slccolonpaper/Archived_Scripts/Trios_RS_Jensen_Shannon.R")
 
 metadata <- read.table("Trios/starting_files/SLC_TOTAL_OCT2020_FULL_Metadata.tsv", header=TRUE)

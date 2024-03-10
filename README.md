@@ -13,7 +13,8 @@ git clone https://github.com/jacobslabucla/slccolon
 4. Now, by running each Figure script (matches the Figures in the paper) you should be able to reproduce the figures in the paper.
 
 ## Microbiome Data
-- SLC Long Term / 12-month old mice (WT, HET, MUT) - n= 7, 16, 7 
+- SLC Long Term / 12-month old mice (WT, HET, MUT) - n= 7, 16, 7
+
 |Sex    |Genotype | MouseID|
 |:------|:--------|-------:|
 |Female |HET      |      10|
@@ -22,7 +23,9 @@ git clone https://github.com/jacobslabucla/slccolon
 |Male   |HET      |       6|
 |Male   |MUT      |       1|
 |Male   |WT       |       3|
-- SLC Trios / 2-month old mice (WT, HET, MUT) - n = 10, 10, 10 
+
+- SLC Trios / 2-month old mice (WT, HET, MUT) - n = 10, 10, 10
+  
 |Sex    |Genotype | MouseID|
 |:------|:--------|-------:|
 |Female |HET      |       4|
@@ -31,7 +34,9 @@ git clone https://github.com/jacobslabucla/slccolon
 |Male   |HET      |       6|
 |Male   |MUT      |       6|
 |Male   |WT       |       6|
+
 - Baseline / 3-4 month old mice (WT, HET, MUT) - n = 26, 30, 31
+
 |Sex    |Genotype | MouseID|
 |:------|:--------|-------:|
 |Female |HET      |      10|

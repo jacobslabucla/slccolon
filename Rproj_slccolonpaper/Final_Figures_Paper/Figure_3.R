@@ -76,27 +76,36 @@ row.names(trios_lumcol_meta) <- trios_lumcol_meta$SampleID
 lumcol <- trios_lumcol_meta$SampleID
 lumcol_counts <- counts %>% select(all_of(lumcol))
 
+# Luminal Colon F
+f_trios_lumcol_meta <- metadata %>% filter(Subset=="Luminal_Colon", Sex=="Female",SampleID %in% names(counts))
+row.names(f_trios_lumcol_meta) <- f_trios_lumcol_meta$SampleID
+f_lumcol <- f_trios_lumcol_meta$SampleID
+f_lumcol_counts <- counts %>% select(all_of(f_lumcol))
+
+# Luminal Colon M
+m_trios_lumcol_meta <- metadata %>% filter(Subset=="Luminal_Colon", Sex=="Male",SampleID %in% names(counts))
+row.names(m_trios_lumcol_meta) <- m_trios_lumcol_meta$SampleID
+m_lumcol <- m_trios_lumcol_meta$SampleID
+m_lumcol_counts <- counts %>% select(all_of(m_lumcol))
+
 # Mucosal Colon
 trios_muccol_meta <- metadata %>% filter(Subset=="Mucosal_Colon", SampleID %in% names(counts))
 row.names(trios_muccol_meta) <- trios_muccol_meta$SampleID
 muccol <- trios_muccol_meta$SampleID
 muccol_counts <- counts %>% select(all_of(muccol))
 
-# Luminal Colon no HET 
-nohet_trios_lumcol_meta <- metadata %>%
-  filter(Genotype!="HET")%>%
-  filter(Subset=="Luminal_Colon", SampleID %in% names(counts))
-row.names(nohet_trios_lumcol_meta) <- nohet_trios_lumcol_meta$SampleID
-lumcol <- nohet_trios_lumcol_meta$SampleID
-nohet_lumcol_counts <- counts %>% select(all_of(lumcol))
+# Mucosal Colon F
+f_trios_muccol_meta <- metadata %>% filter(Subset=="Mucosal_Colon", Sex=="Female",SampleID %in% names(counts))
+row.names(f_trios_muccol_meta) <- f_trios_muccol_meta$SampleID
+f_muccol <- f_trios_muccol_meta$SampleID
+f_muccol_counts <- counts %>% select(all_of(f_muccol))
 
-# Mucosal Colon no HET
-nohet_trios_muccol_meta <- metadata %>% 
-  filter(Genotype!="HET")%>%
-  filter(Subset=="Mucosal_Colon", SampleID %in% names(counts))
-row.names(nohet_trios_muccol_meta) <- nohet_trios_muccol_meta$SampleID
-muccol <- nohet_trios_muccol_meta$SampleID
-nohet_muccol_counts <- counts %>% select(all_of(muccol))
+# Mucosal Colon M
+m_trios_muccol_meta <- metadata %>% filter(Subset=="Mucosal_Colon", Sex=="Male",SampleID %in% names(counts))
+row.names(m_trios_muccol_meta) <- m_trios_muccol_meta$SampleID
+m_muccol <- m_trios_muccol_meta$SampleID
+m_muccol_counts <- counts %>% select(all_of(m_muccol))
+
 
 ## Prevalence filter datasets -- 
 # Luminal Colon
@@ -105,13 +114,16 @@ trios_lumcol_counts <- prevalence_filter(lumcol_counts,13)
 # Mucosal Colon 
 trios_muccol_counts <- prevalence_filter(muccol_counts,12)
 
-# Luminal Colon - no HET 
-0.15*60 #9 samples
-nohet_trios_lumcol_counts <- prevalence_filter(nohet_lumcol_counts,9)
+# Luminal Colon F
+36*0.15
+f_trios_lumcol_counts <- prevalence_filter(f_lumcol_counts,5)
 
-# Mucosal Colon - no HET 
-0.15*52 #8 samples
-nohet_trios_muccol_counts <- prevalence_filter(nohet_muccol_counts,8)
+# Luminal Colon M
+53*0.15
+m_trios_lumcol_counts <- prevalence_filter(m_lumcol_counts,8)
+
+# Mucosal Colon 
+trios_muccol_counts <- prevalence_filter(muccol_counts,12)
 
 ## Calculate RS Jensen Shannon distance matrix -- 
 trios_muccol.dist <- calculate_rsjensen(trios_muccol_counts)

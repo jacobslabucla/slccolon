@@ -80,4 +80,27 @@ git clone https://github.com/jacobslabucla/slccolon
 |Male   |MUT      |       4|
 |Male   |WT       |       6|
 
+## Disease model Data 
+
+- DSS 
+
+|Sex    |Genotype | MouseID|
+|:------|:--------|-------:|
+|Female |WT       |       4|
+|Female |HET      |       4|
+|Female |MUT      |       3|
+|Male   |WT       |       9|
+|Male   |HET      |       9|
+|Male   |MUT      |      12|
+
+- TNBS
+
+|Sex    |Genotype | MouseID|
+|:------|:--------|-------:|
+|Female |WT       |      10|
+|Female |HET      |      10|
+|Female |MUT      |       9|
+|Male   |WT       |      18|
+|Male   |HET      |      17|
+|Male   |MUT      |      15|
 

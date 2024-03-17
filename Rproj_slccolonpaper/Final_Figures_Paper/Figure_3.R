@@ -8,7 +8,7 @@ library(rlang)
 library(wakefield)
 library(vegan)
 
-here::i_am("slccolon/Rproj_slccolonpaper/Final_Figures_Paper/Figure_3.R")
+here::i_am("Rproj_slccolonpaper/Final_Figures_Paper/Figure_3.R")
 
 ### Figure 3 left half ---
 
@@ -76,35 +76,11 @@ row.names(trios_lumcol_meta) <- trios_lumcol_meta$SampleID
 lumcol <- trios_lumcol_meta$SampleID
 lumcol_counts <- counts %>% select(all_of(lumcol))
 
-# Luminal Colon F
-f_trios_lumcol_meta <- metadata %>% filter(Subset=="Luminal_Colon", Sex=="Female",SampleID %in% names(counts))
-row.names(f_trios_lumcol_meta) <- f_trios_lumcol_meta$SampleID
-f_lumcol <- f_trios_lumcol_meta$SampleID
-f_lumcol_counts <- counts %>% select(all_of(f_lumcol))
-
-# Luminal Colon M
-m_trios_lumcol_meta <- metadata %>% filter(Subset=="Luminal_Colon", Sex=="Male",SampleID %in% names(counts))
-row.names(m_trios_lumcol_meta) <- m_trios_lumcol_meta$SampleID
-m_lumcol <- m_trios_lumcol_meta$SampleID
-m_lumcol_counts <- counts %>% select(all_of(m_lumcol))
-
 # Mucosal Colon
 trios_muccol_meta <- metadata %>% filter(Subset=="Mucosal_Colon", SampleID %in% names(counts))
 row.names(trios_muccol_meta) <- trios_muccol_meta$SampleID
 muccol <- trios_muccol_meta$SampleID
 muccol_counts <- counts %>% select(all_of(muccol))
-
-# Mucosal Colon F
-f_trios_muccol_meta <- metadata %>% filter(Subset=="Mucosal_Colon", Sex=="Female",SampleID %in% names(counts))
-row.names(f_trios_muccol_meta) <- f_trios_muccol_meta$SampleID
-f_muccol <- f_trios_muccol_meta$SampleID
-f_muccol_counts <- counts %>% select(all_of(f_muccol))
-
-# Mucosal Colon M
-m_trios_muccol_meta <- metadata %>% filter(Subset=="Mucosal_Colon", Sex=="Male",SampleID %in% names(counts))
-row.names(m_trios_muccol_meta) <- m_trios_muccol_meta$SampleID
-m_muccol <- m_trios_muccol_meta$SampleID
-m_muccol_counts <- counts %>% select(all_of(m_muccol))
 
 
 ## Prevalence filter datasets -- 
@@ -115,29 +91,10 @@ trios_lumcol_counts <- prevalence_filter(lumcol_counts,13)
 82*0.15
 trios_muccol_counts <- prevalence_filter(muccol_counts,12)
 
-# Luminal Colon F
-36*0.15
-f_trios_lumcol_counts <- prevalence_filter(f_lumcol_counts,5)
-
-# Luminal Colon M
-53*0.15
-m_trios_lumcol_counts <- prevalence_filter(m_lumcol_counts,8)
-
-# Mucosal Colon M
-51*0.15
-m_trios_muccol_counts <- prevalence_filter(m_muccol_counts,8)
-
-# Mucosal Colon F
-53*0.15
-f_trios_muccol_counts <- prevalence_filter(f_muccol_counts,8)
 
 ## Calculate RS Jensen Shannon distance matrix -- 
 trios_muccol.dist <- calculate_rsjensen(trios_muccol_counts)
 trios_lumcol.dist <- calculate_rsjensen(trios_lumcol_counts)
-f_trios_muccol.dist <- calculate_rsjensen(f_trios_muccol_counts)
-m_trios_muccol.dist <- calculate_rsjensen(m_trios_muccol_counts)
-f_trios_lumcol.dist <- calculate_rsjensen(f_trios_lumcol_counts)
-m_trios_lumcol.dist <- calculate_rsjensen(m_trios_lumcol_counts)
 
 ### Baseline ---
 metadata <- read.table(here("Baseline/starting_files/Baseline_Metadata.tsv"), header=TRUE)
@@ -157,14 +114,6 @@ m_JAX_meta <- metadata %>% filter(Background=="JAX", SampleID %in% names(counts)
 JAX_counts <- counts %>% select(all_of(JAX_meta$SampleID))
 JAX_counts_prev <- prevalence_filter(JAX_counts,13)
 JAX.dist <- calculate_rsjensen(JAX_counts_prev)
-
-f_JAX_counts <- counts %>% select(all_of(f_JAX_meta$SampleID))
-f_JAX_counts_prev <- prevalence_filter(f_JAX_counts,6)
-f_JAX.dist <- calculate_rsjensen(f_JAX_counts_prev)
-
-m_JAX_counts <- counts %>% select(all_of(m_JAX_meta$SampleID))
-m_JAX_counts_prev <- prevalence_filter(m_JAX_counts,7)
-m_JAX.dist <- calculate_rsjensen(m_JAX_counts_prev)
 
 ### From archived script Long_Term_RS_Jensen_Shannon.R ---
 metadata <- read.table("Long_Term/starting_files/SLC_LT_metadata.tsv", header=TRUE)

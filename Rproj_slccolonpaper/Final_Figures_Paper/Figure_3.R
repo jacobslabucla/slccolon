@@ -111,7 +111,8 @@ m_muccol_counts <- counts %>% select(all_of(m_muccol))
 # Luminal Colon
 trios_lumcol_counts <- prevalence_filter(lumcol_counts,13)
 
-# Mucosal Colon 
+# Mucosal Colon
+82*0.15
 trios_muccol_counts <- prevalence_filter(muccol_counts,12)
 
 # Luminal Colon F
@@ -122,17 +123,25 @@ f_trios_lumcol_counts <- prevalence_filter(f_lumcol_counts,5)
 53*0.15
 m_trios_lumcol_counts <- prevalence_filter(m_lumcol_counts,8)
 
-# Mucosal Colon 
-trios_muccol_counts <- prevalence_filter(muccol_counts,12)
+# Mucosal Colon M
+51*0.15
+m_trios_muccol_counts <- prevalence_filter(m_muccol_counts,8)
+
+# Mucosal Colon F
+53*0.15
+f_trios_muccol_counts <- prevalence_filter(f_muccol_counts,8)
 
 ## Calculate RS Jensen Shannon distance matrix -- 
 trios_muccol.dist <- calculate_rsjensen(trios_muccol_counts)
 trios_lumcol.dist <- calculate_rsjensen(trios_lumcol_counts)
-nohet_trios_muccol.dist <- calculate_rsjensen(nohet_trios_muccol_counts)
-nohet_trios_lumcol.dist <- calculate_rsjensen(nohet_trios_lumcol_counts)
+f_trios_muccol.dist <- calculate_rsjensen(f_trios_muccol_counts)
+m_trios_muccol.dist <- calculate_rsjensen(m_trios_muccol_counts)
+f_trios_lumcol.dist <- calculate_rsjensen(f_trios_lumcol_counts)
+m_trios_lumcol.dist <- calculate_rsjensen(m_trios_lumcol_counts)
 
-metadata <- read.table("slccolon/Baseline/starting_files/Baseline_Metadata.tsv", header=TRUE)
-counts <- read.table("slccolon/Baseline/starting_files/Baseline_ASV_table_Silva_v138_1.tsv", header = TRUE, row.names=1)
+### Baseline ---
+metadata <- read.table(here("Baseline/starting_files/Baseline_Metadata.tsv"), header=TRUE)
+counts <- read.table(here("Baseline/starting_files/Baseline_ASV_table_Silva_v138_1.tsv"), header = TRUE, row.names=1)
 
 ## Store taxonomy in an annotation file --
 annotation <- tibble::rownames_to_column(counts, "feature") %>% select(c("feature", "taxonomy"))
@@ -142,10 +151,54 @@ counts <- counts %>% select(-c("taxonomy"))
 counts <- counts[colSums(counts) >= 10000]
 JAX_meta <- metadata %>% filter(Background=="JAX", SampleID %in% names(counts))
 row.names(JAX_meta) <- JAX_meta$SampleID
-JAX <- JAX_meta$SampleID
-JAX_counts <- counts %>% select(all_of(JAX))
+f_JAX_meta <- metadata %>% filter(Background=="JAX", SampleID %in% names(counts),Sex=="Female")
+m_JAX_meta <- metadata %>% filter(Background=="JAX", SampleID %in% names(counts),Sex=="Male")
+
+JAX_counts <- counts %>% select(all_of(JAX_meta$SampleID))
 JAX_counts_prev <- prevalence_filter(JAX_counts,13)
 JAX.dist <- calculate_rsjensen(JAX_counts_prev)
+
+f_JAX_counts <- counts %>% select(all_of(f_JAX_meta$SampleID))
+f_JAX_counts_prev <- prevalence_filter(f_JAX_counts,6)
+f_JAX.dist <- calculate_rsjensen(f_JAX_counts_prev)
+
+m_JAX_counts <- counts %>% select(all_of(m_JAX_meta$SampleID))
+m_JAX_counts_prev <- prevalence_filter(m_JAX_counts,7)
+m_JAX.dist <- calculate_rsjensen(m_JAX_counts_prev)
+
+### From archived script Long_Term_RS_Jensen_Shannon.R ---
+metadata <- read.table("Long_Term/starting_files/SLC_LT_metadata.tsv", header=TRUE)
+counts <- read.table("Long_Term/starting_files/SLT_ASV_table_Silva_v138_1.tsv", header = TRUE, row.names=1)
+
+## Apply minimum sequencing depth threshold --
+counts <- counts[colSums(counts) >= 10000]
+
+## Split counts into colon subsets -- 
+
+# Luminal Colon 
+lumcol_meta <- metadata %>% filter(Subset=="Luminal_Colon", SampleID %in% names(counts))
+row.names(lumcol_meta) <- lumcol_meta$SampleID
+lumcol <- lumcol_meta$SampleID
+lumcol_counts <- counts %>% select(all_of(lumcol))
+
+# Mucosal Colon
+muccol_meta <- metadata %>% filter(Subset=="Mucosal_Colon", SampleID %in% names(counts))
+row.names(muccol_meta) <- muccol_meta$SampleID
+muccol <- muccol_meta$SampleID
+muccol_counts <- counts %>% select(all_of(muccol))
+
+## Prevalence filter datasets -- 
+# Luminal Colon
+0.15*90 #13 samples
+lumcol_counts <- prevalence_filter(lumcol_counts,13)
+
+# Mucosal Colon 
+0.15*89
+muccol_counts <- prevalence_filter(muccol_counts,13)
+
+## Calculate RS Jensen Shannon 
+muccol.dist <- calculate_rsjensen(muccol_counts)
+lumcol.dist <- calculate_rsjensen(lumcol_counts)
 
 ### Figure 3 right half ---
 
@@ -157,7 +210,7 @@ trios_lc_pcoa <- generate_pcoA_plots(distance_matrix=trios_lumcol.dist,
                                      title="Colon Lumen",
                                      colorvariable = Genotype,
                                      colorvector = cols,
-                                     wa_scores_filepath = "slccolon/Trios/beta_diversity/LumCol_Top_Taxa_PcoA.csv")
+                                     wa_scores_filepath = here("Trios/beta_diversity/LumCol_Top_Taxa_PcoA.csv"))
 
 trios_mc_pcoa <- generate_pcoA_plots(distance_matrix=trios_muccol.dist,
                                      counts = trios_muccol_counts,
@@ -165,7 +218,7 @@ trios_mc_pcoa <- generate_pcoA_plots(distance_matrix=trios_muccol.dist,
                                      title="Colon Mucosa",
                                      colorvariable = Genotype,
                                      colorvector = cols,
-                                     wa_scores_filepath = "slccolon/Trios/beta_diversity/MucCol_Top_Taxa_PcoA.csv")
+                                     wa_scores_filepath = here("Trios/beta_diversity/MucCol_Top_Taxa_PcoA.csv"))
 
 jax_baseline_pcoa <- generate_pcoA_plots(distance_matrix=JAX.dist,
                                          counts = JAX_counts_prev,
@@ -173,22 +226,22 @@ jax_baseline_pcoa <- generate_pcoA_plots(distance_matrix=JAX.dist,
                                          title="Fecal Pellet",
                                          colorvariable = Genotype,
                                          colorvector = cols,
-                                         wa_scores_filepath = "slccolon/Baseline/beta_diversity/JAX_Top_Taxa_PcoA.csv")
-slt_lc_pcoa <- generate_pcoA_plots(distance_matrix=trios_lumcol.dist,
-                                   counts = trios_lumcol_counts,
-                                   metadata = trios_lumcol_meta,
+                                         wa_scores_filepath = here("Baseline/beta_diversity/JAX_Top_Taxa_PcoA.csv"))
+slt_lc_pcoa <- generate_pcoA_plots(distance_matrix=lumcol.dist,
+                                   counts = lumcol_counts,
+                                   metadata = lumcol_meta,
                                    title="Colon Lumen",
                                    colorvariable = Genotype,
                                    colorvector = cols,
-                                   wa_scores_filepath = "slccolon/Long_Term/LumCol_Top_Taxa_PcoA.csv")
+                                   wa_scores_filepath = here("Long_Term/LumCol_Top_Taxa_PcoA.csv"))
 
-slt_mc_pcoa <- generate_pcoA_plots(distance_matrix=trios_muccol.dist,
-                                   counts = trios_muccol_counts,
-                                   metadata = trios_muccol_meta,
+slt_mc_pcoa <- generate_pcoA_plots(distance_matrix=muccol.dist,
+                                   counts = muccol_counts,
+                                   metadata = muccol_meta,
                                    title="Colon Mucosa",
                                    colorvariable = Genotype,
                                    colorvector = cols,
-                                   wa_scores_filepath = "slccolon/Long_Term/MucCol_Top_Taxa_PcoA.csv")
+                                   wa_scores_filepath = here("Long_Term/MucCol_Top_Taxa_PcoA.csv"))
 class(slt_mc_pcoa)
 class(trios_lc_pcoa)
 class(trios_mc_pcoa)
@@ -202,6 +255,8 @@ right_half <- plot_grid(trios_lc_pcoa, trios_mc_pcoa,
           labels=c("F","G","H","I","","J"),
           label_size = 16)
 
+dev.new(width=10,height=10)
+right_half
 #Generate each segment as individual plot
 left_half
 grid::grid.newpage()

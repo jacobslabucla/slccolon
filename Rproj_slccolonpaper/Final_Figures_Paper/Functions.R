@@ -324,7 +324,7 @@ make_genus_level_taxa_dotplot <- function(ASV_significant_results_dataset,
     geom_point(aes(color=Phylum,size = sqrt(Relative_Abundance))) +
     geom_point(aes(size=sqrt(Relative_Abundance)),shape = 1,colour = "black")+
     scale_size_continuous(name="Relative Abundance",range = c(0.5,8),
-                          limits=c(sqrt(0.000001),sqrt(0.6)),
+                          limits=c(sqrt(0.0000001),sqrt(0.6)),
                           breaks=c(sqrt(0.0001),sqrt(0.001),sqrt(0.01),sqrt(0.1)),
                           labels=c("0.0001","0.001","0.01","0.1")) + 
     scale_color_manual(name="Phylum", values = phyla_colors)+

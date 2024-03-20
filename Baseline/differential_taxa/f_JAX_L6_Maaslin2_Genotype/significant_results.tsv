@@ -1,0 +1,5 @@
+feature	metadata	value	coef	stderr	N	N.not.0	pval	qval
+k__Bacteria.p__Bacteroidota.c__Bacteroidia.o__Bacteroidales.f__Bacteroidaceae.g__Bacteroides	Genotype	MUT	0.948206974253829	0.281766182832483	40	40	0.00179290873928987	0.149148597136522
+k__Bacteria.p__Bacteroidota.c__Bacteroidia.o__Bacteroidales.f__Rikenellaceae.g__Rikenella	Genotype	MUT	1.43443689712038	0.441872016619678	40	39	0.00248580995227537	0.149148597136522
+k__Bacteria.p__Firmicutes.c__Clostridia.o__Oscillospirales.f__Butyricicoccaceae.g__Butyricicoccus	Genotype	HET	1.29023435624181	0.455412695360445	40	34	0.00741967418004374	0.222590225401312
+k__Bacteria.p__Firmicutes.c__Clostridia.o__Oscillospirales.f__Oscillospiraceae.g__Colidextribacter	Genotype	HET	1.26245466208853	0.44429573990702	40	37	0.00726227924569351	0.222590225401312

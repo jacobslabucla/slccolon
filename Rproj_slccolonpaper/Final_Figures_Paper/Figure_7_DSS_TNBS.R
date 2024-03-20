@@ -50,6 +50,31 @@ dss_summary <- pct_weight_long %>%
 
 dss_summary %>% kable
 
+## TNBS Body Weight Curve --
+pct_weight <- read.csv("TNBS/PCT_Body_Weight.csv")
+
+pct_weight_long <- pct_weight %>% filter(Batch!="Three")
+pct_weight_long <- pivot_longer(pct_weight, 
+                                cols = starts_with("D"), 
+                                names_to = "Day", 
+                                values_to = "Score")
+
+pct_weight_long$Day <- as.integer(stringr::str_extract(pct_weight_long$Day, "\\d+"))
+pct_weight_long$Day <- factor(pct_weight_long$Day)
+pct_weight_long$Score <- as.numeric(pct_weight_long$Score)*100
+pct_weight_long$Score <- as.numeric(pct_weight_long$Score)
+pct_weight_long$Genotype <- factor(pct_weight_long$Genotype, levels=c("WT", "HET", "MUT"))
+pct_weight_long <- remove_missing(pct_weight_long)
+
+percent_weight_tnbs<- make_longitudinal_graph(pct_weight_long,"TNBS Body Weight (% Baseline)", "Day of TNBS")
+
+tnbs_summary <- pct_weight_long %>%
+  group_by(Sex, Genotype) %>%
+  summarize(MouseID = n_distinct(MouseID)) 
+
+tnbs_summary %>% kable
+
+
 # Read / clean data
 histology <- read.csv("SLC_DSS/Histology.csv")
 histology <- remove_missing(histology)

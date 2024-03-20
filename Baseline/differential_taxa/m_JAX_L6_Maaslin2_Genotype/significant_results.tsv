@@ -1,0 +1,7 @@
+feature	metadata	value	coef	stderr	N	N.not.0	pval	qval
+k__Bacteria.p__Firmicutes.c__Clostridia.o__Clostridia.vadinBB60.group.f__.g__	Genotype	HET	2.86255980362216	0.501513654203288	47	41	9.05440868663046e-07	0.000121329076400848
+k__Bacteria.p__Firmicutes.c__Clostridia.o__Clostridia.vadinBB60.group.f__.g__	Genotype	MUT	2.25918385935336	0.523285623469979	47	41	8.83605914155117e-05	0.00592015962483928
+k__Bacteria.p__Firmicutes.c__Clostridia.o__Oscillospirales.f__.Eubacterium..coprostanoligenes.group.g__	Genotype	HET	-2.19621932337396	0.548900445286601	47	34	0.000238161703934354	0.0106378894424011
+k__Bacteria.p__Actinobacteriota.c__Coriobacteriia.o__Coriobacteriales.f__Atopobiaceae.g__Coriobacteriaceae.UCG.002	Genotype	HET	-2.38470982745036	0.748743631837627	47	43	0.00266063368374832	0.0713049827244551
+k__Bacteria.p__Bacteroidota.c__Bacteroidia.o__Bacteroidales.f__Muribaculaceae.g__	Genotype	HET	-0.429375533355107	0.134427338323245	47	47	0.00259318910511398	0.0713049827244551
+k__Bacteria.p__Firmicutes.c__Clostridia.o__Oscillospirales.f__Ruminococcaceae.g__Ruminococcus	Genotype	MUT	-2.36755052884338	0.780290107159192	47	15	0.00403830296115574	0.0901887661324782

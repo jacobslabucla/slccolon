@@ -179,7 +179,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Fig S7 Sex- stratified Spont Histo & Mucin.md",
+                "file": "Fig. S5 Sex-stratified Alpha Diversity.md",
                 "mode": "source",
                 "source": false
               }
@@ -260,7 +260,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Fig S7 Sex- stratified Spont Histo & Mucin.md",
+                "file": "Fig. S5 Sex-stratified Alpha Diversity.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -277,7 +277,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Fig S7 Sex- stratified Spont Histo & Mucin.md",
+                "file": "Fig. S5 Sex-stratified Alpha Diversity.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -300,7 +300,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Fig S7 Sex- stratified Spont Histo & Mucin.md"
+                "file": "Fig. S5 Sex-stratified Alpha Diversity.md"
               }
             }
           }
@@ -323,8 +323,8 @@
   },
   "active": "0c2cea6413e47d31",
   "lastOpenFiles": [
-    "Fig. S5 Sex-stratified Alpha Diversity.md",
     "Fig S7 Sex- stratified Spont Histo & Mucin.md",
+    "Fig. S5 Sex-stratified Alpha Diversity.md",
     "Trios Beta Diversity - without Repeat Measures.md",
     "Trios Beta Diversity - Repeat Measures.md",
     "Fig. S4 Sex-stratified Beta Diversity.md",

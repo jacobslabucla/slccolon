@@ -5,7 +5,6 @@ library(dplyr) #v 1.0.7
 library(Maaslin2) #v 1.2.0
 library(funrar)
 
-setwd("C:/Users/Jacobs Laboratory/Documents/JCYang/slccolonpaper/slccolon/") # CHANGE to the directory containing the fastq files
 here::i_am("Rproj_slccolonpaper/Trios_ASV_level_Maaslin2.R")
 
 metadata <- read.table("Trios/starting_files/SLC_TOTAL_OCT2020_FULL_Metadata.tsv", header=TRUE)

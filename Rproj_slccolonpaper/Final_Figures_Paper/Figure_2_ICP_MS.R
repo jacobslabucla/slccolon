@@ -23,6 +23,11 @@ str(df)
 df$Genotype_Batch <- paste0(df$Genotype, "_",df$Batch)
 df$Genotype_Sex <- paste0(df$Genotype,"_",df$Sex)
 
+icpms_summary <- df %>%
+  group_by(Sex, Genotype) %>%
+  summarize(MouseID = n_distinct(MouseID)) 
+
+icpms_summary %>% kable
 # Generate a version of a df without outlier samples 
 # create detect outlier function
 
@@ -216,42 +221,42 @@ for (int in 1:7){
                  names_to="Element",
                  values_to="Concentration") %>%
     filter(Element==element) %>%
-    generate_violin_plots(X=Genotype_Sex, titlestring=element)+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+    generate_violin_plots(X=Genotype, titlestring=element)+ facet_wrap(~Sex)
   fp_si <- df_fp_si %>% 
     remove_outlier(element) %>%
     pivot_longer(cols=all_of(elementvector),
                  names_to="Element",
                  values_to="Concentration") %>%
     filter(Element==element) %>%
-    generate_violin_plots(X=Genotype_Sex, titlestring=element)+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+    generate_violin_plots(X=Genotype, titlestring=element)+ facet_wrap(~Sex)
   muc_col <- df_muc_col %>% 
     remove_outlier(element) %>%
     pivot_longer(cols=all_of(elementvector),
                  names_to="Element",
                  values_to="Concentration") %>%
     filter(Element==element) %>%
-    generate_violin_plots(X=Genotype_Sex, titlestring=element)+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+    generate_violin_plots(X=Genotype, titlestring=element)+ facet_wrap(~Sex)
   muc_si <- df_muc_si %>% 
     remove_outlier(element) %>%
     pivot_longer(cols=all_of(elementvector),
                  names_to="Element",
                  values_to="Concentration") %>%
     filter(Element==element) %>%
-    generate_violin_plots(X=Genotype_Sex, titlestring=element)+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+    generate_violin_plots(X=Genotype, titlestring=element)+ facet_wrap(~Sex)
   ts_col <- df_ts_col  %>%
     remove_outlier(element) %>%
     pivot_longer(cols=all_of(elementvector),
                  names_to="Element",
                  values_to="Concentration") %>%
     filter(Element==element) %>%
-    generate_violin_plots(X=Genotype_Sex, titlestring=element)+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+    generate_violin_plots(X=Genotype, titlestring=element)+ facet_wrap(~Sex)
   ts_si <- df_ts_si %>%
     remove_outlier(element) %>%
     pivot_longer(cols=all_of(elementvector),
                  names_to="Element",
                  values_to="Concentration") %>%
     filter(Element==element) %>%
-    generate_violin_plots(X=Genotype_Sex, titlestring=element)+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+    generate_violin_plots(X=Genotype, titlestring=element)+ facet_wrap(~Sex)
   
   fp_col_plots[[int]] <- fp_col
   fp_si_plots[[int]] <- fp_si
@@ -269,6 +274,8 @@ top_half <- plot_grid(fp_col_plots[[1]],fp_col_plots[[2]],
                       nrow = 1, ncol=6,
                       labels=c("A", "","","","",""
                       ),label_size = 20) 
+dev.new(width=10,height=10)
+top_half
 
 cadmium <- muc_col_plots[[5]] + ylim(0,0.05)
 middle <- plot_grid(muc_col_plots[[1]],muc_col_plots[[2]],
@@ -277,6 +284,8 @@ middle <- plot_grid(muc_col_plots[[1]],muc_col_plots[[2]],
                     nrow = 1, ncol=6,
                     labels=c(
                       "B","","","","",""),label_size = 20) 
+dev.new(width=10,height=10)
+middle
 
 bottom_half <- plot_grid(ts_col_plots[[1]],ts_col_plots[[2]],
                          ts_col_plots[[3]],ts_col_plots[[4]],
@@ -284,7 +293,8 @@ bottom_half <- plot_grid(ts_col_plots[[1]],ts_col_plots[[2]],
                          nrow = 1, ncol=6, label_size = 20,
                          labels=c("C", "","","","",""))
 
-
+dev.new(width=10,height=10)
+bottom_half
 ### Statistics On Full Dataset--- 
 df<- as.data.frame(readr::read_csv(here("ICPMS/Analysis_ICP_MS.csv")))
 row.names(df) <- df$SampleID

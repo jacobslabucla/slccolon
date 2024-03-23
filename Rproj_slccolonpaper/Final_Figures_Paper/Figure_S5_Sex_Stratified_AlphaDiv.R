@@ -142,44 +142,44 @@ plot_grid(mc_adiv_trios_shannon,mc_adiv_trios_otus,
 ## Trios --
 f_t_data_meta <- t_data_meta %>% filter(Sex=="Female")
 f_t_data_meta$Genotype <-factor(f_t_data_meta$Genotype, levels=c("WT", "HET","MUT"))
-output <- lme(fixed= shannon_entropy ~ Litter + Site+ Genotype, random = ~1|MouseID, data=f_t_data_meta)
+output <- lme(fixed= shannon_entropy ~ Site+ Genotype, random = ~1|MouseID, data=f_t_data_meta)
 summary(output)
 
 f_t_data_meta <- t_data_meta %>% filter(Sex=="Female")
 f_t_data_meta$Genotype <-factor(f_t_data_meta$Genotype, levels=c("WT", "HET","MUT"))
-output <- lme(fixed= observed_features ~ Litter + Site+ Genotype, random = ~1|MouseID, data=f_t_data_meta)
+output <- lme(fixed= observed_features ~ Site+ Genotype, random = ~1|MouseID, data=f_t_data_meta)
 summary(output)
 
 m_t_data_meta <- t_data_meta %>% filter(Sex=="Male")
 m_t_data_meta$Genotype <-factor(m_t_data_meta$Genotype, levels=c("WT", "HET","MUT"))
-output <- lme(fixed= shannon_entropy ~ Litter + Site+ Genotype, random = ~1|MouseID, data=m_t_data_meta)
+output <- lme(fixed= shannon_entropy ~ Sequencing_Run + Site+ Genotype, random = ~1|MouseID, data=m_t_data_meta)
 summary(output)
 
 m_t_data_meta <- t_data_meta %>% filter(Sex=="Male")
 m_t_data_meta$Genotype <-factor(m_t_data_meta$Genotype, levels=c("WT", "HET","MUT"))
-output <- lme(fixed= observed_features ~ Litter + Site+ Genotype, random = ~1|MouseID, data=m_t_data_meta)
+output <- lme(fixed= observed_features ~ Sequencing_Run +Site+ Genotype, random = ~1|MouseID, data=m_t_data_meta)
 summary(output)
 
 
 f_t_mucosal_data_meta <- t_mucosal_data_meta %>% filter(Sex=="Female")
 f_t_mucosal_data_meta$Genotype <-factor(f_t_mucosal_data_meta$Genotype, levels=c("WT", "HET","MUT"))
-output <- lme(fixed= shannon_entropy ~ Litter + Site+ Genotype, random = ~1|MouseID, data=f_t_mucosal_data_meta)
+output <- lme(fixed= shannon_entropy ~ Site+ Genotype, random = ~1|MouseID, data=f_t_mucosal_data_meta)
 summary(output)
 
 f_t_mucosal_data_meta <- t_mucosal_data_meta %>% filter(Sex=="Female")
 f_t_mucosal_data_meta$Genotype <-factor(f_t_mucosal_data_meta$Genotype, levels=c("WT", "HET","MUT"))
-output <- lme(fixed= observed_features ~ Litter + Site+ Genotype, random = ~1|MouseID, data=f_t_mucosal_data_meta)
+output <- lme(fixed= observed_features ~ Site+ Genotype, random = ~1|MouseID, data=f_t_mucosal_data_meta)
 summary(output)
 
 
 m_t_mucosal_data_meta <- t_mucosal_data_meta %>% filter(Sex=="Male")
 m_t_mucosal_data_meta$Genotype <-factor(m_t_mucosal_data_meta$Genotype, levels=c("WT", "HET","MUT"))
-output <- lme(fixed= shannon_entropy ~ Litter + Site+ Genotype, random = ~1|MouseID, data=m_t_mucosal_data_meta)
+output <- lme(fixed= shannon_entropy ~ Sequencing_Run + Site+ Genotype, random = ~1|MouseID, data=m_t_mucosal_data_meta)
 summary(output)
 
 m_t_mucosal_data_meta <- t_mucosal_data_meta %>% filter(Sex=="Male")
 m_t_mucosal_data_meta$Genotype <-factor(m_t_mucosal_data_meta$Genotype, levels=c("WT", "HET","MUT"))
-output <- lme(fixed= observed_features ~ Litter + Site+ Genotype, random = ~1|MouseID, data=m_t_mucosal_data_meta)
+output <- lme(fixed= observed_features ~ Sequencing_Run +Site+ Genotype, random = ~1|MouseID, data=m_t_mucosal_data_meta)
 summary(output)
 
 ## Baseline --

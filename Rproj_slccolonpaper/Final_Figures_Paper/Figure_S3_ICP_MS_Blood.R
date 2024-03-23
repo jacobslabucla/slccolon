@@ -114,13 +114,14 @@ plot_grid(blood_plots[[1]],blood_plots[[2]],
                       labels=c("A", "","","","",""
                       ),label_size = 20) 
 
-fig_s3_top <- plot_grid(blood_plots[[1]],blood_plots[[2]],
+fig_2_bottom <- plot_grid(blood_plots[[1]],blood_plots[[2]],
           blood_plots[[3]],blood_plots[[4]],
           cd_blood,blood_plots[[6]],
           nrow = 1, ncol=6,
-          labels=c("A", "","","","",""
+          labels=c("D", "","","","",""
           ),label_size = 20) 
-
+dev.new(width=10,height=10)
+fig_2_bottom
 ### Figures by Sex_Genotype---
 
 
@@ -138,7 +139,7 @@ for (int in 1:7){
                  names_to="Element",
                  values_to="Concentration") %>%
     filter(Element==element) %>%
-    generate_violin_plots(X=Genotype_Sex, titlestring=element)+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+    generate_violin_plots(X=Genotype, titlestring=element)+ facet_wrap(~Sex)
   
   blood_plots[[int]] <- blood
   
@@ -158,9 +159,11 @@ fig_s3_bottom <- plot_grid(blood_plots[[1]],blood_plots[[2]],
                         blood_plots[[3]],blood_plots[[4]],
                         cd_blood,blood_plots[[6]],
                         nrow = 1, ncol=6,
-                        labels=c("B", "","","","",""
+                        labels=c("D", "","","","",""
                         ),label_size = 20) 
 
+dev.new(width=10,height=10)
+fig_s3_bottom
 
 ### Statistics On Full Dataset--- 
 

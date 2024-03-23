@@ -5,6 +5,7 @@ library(nlme)
 library(tidyr)
 library(knitr)
 library(ggbeeswarm)
+library(here)
 
 here::i_am("Rproj_slccolonpaper/Final_Figures_Paper/Figure_S8_Sex_Stratified_DSS_TNBS.R")
 
@@ -21,6 +22,16 @@ pct_weight_long$Score <- gsub("%","",pct_weight_long$Score)
 pct_weight_long$Score <- as.numeric(pct_weight_long$Score)
 pct_weight_long$Genotype <- factor(pct_weight_long$Genotype, levels=c("WT", "HET", "MUT"))
 pct_weight_long <- remove_missing(pct_weight_long)
+
+pct_weight_males<- pct_weight_long %>% filter(Sex=="Male")
+pct_weight_males$Genotype <-factor(pct_weight_males$Genotype, levels=c("WT", "HET","MUT"))
+output <- lme(fixed= Score ~ Genotype, random = ~1|MouseID, data=pct_weight_males)
+summary(output)
+
+pct_weight_females <- pct_weight_long %>% filter(Sex=="Female")
+pct_weight_females$Genotype <-factor(pct_weight_females$Genotype, levels=c("WT", "HET","MUT"))
+output <- lme(fixed= Score ~ Genotype, random = ~1|MouseID, data=pct_weight_females)
+summary(output)
 
 # Create plot
 make_longitudinal_graph<- function(dataframe,ylab,xlab) {
@@ -45,7 +56,11 @@ make_longitudinal_graph<- function(dataframe,ylab,xlab) {
 percent_weight_dss <- make_longitudinal_graph(pct_weight_long,"DSS Body Weight (% Baseline)", "Day of DSS")+
 facet_grid(~Sex)
 
+dss_summary <- pct_weight_long %>%
+  group_by(Sex, Genotype) %>%
+  summarize(MouseID = n_distinct(MouseID)) 
 
+dss_summary %>% kable
 
 ## TNBS Body Weight Curve --
 pct_weight <- read.csv("TNBS/PCT_Body_Weight.csv")
@@ -66,6 +81,23 @@ pct_weight_long <- remove_missing(pct_weight_long)
 percent_weight_tnbs<- make_longitudinal_graph(pct_weight_long,"TNBS Body Weight (% Baseline)", "Day of TNBS")+
   facet_wrap(~Sex)
 
+pct_weight_males<- pct_weight_long %>% filter(Sex=="Male")
+pct_weight_males$Genotype <-factor(pct_weight_males$Genotype, levels=c("WT", "HET","MUT"))
+output <- lme(fixed= Score ~ Genotype, random = ~1|MouseID, data=pct_weight_males)
+summary(output)
+
+pct_weight_females <- pct_weight_long %>% filter(Sex=="Female")
+pct_weight_females$Genotype <-factor(pct_weight_females$Genotype, levels=c("WT", "HET","MUT"))
+output <- lme(fixed= Score ~ Genotype, random = ~1|MouseID, data=pct_weight_females)
+summary(output)
+
+pct_weight_day3 <- pct_weight_long %>% filter(Sex=="Female" & Day=="3" & Genotype!="HET")
+t.test(Score~Genotype,pct_weight_day3)
+pct_weight_day6 <- pct_weight_long %>% filter(Sex=="Female" & Day=="6" & Genotype!="HET")
+t.test(Score~Genotype,pct_weight_day6)
+pct_weight_day7 <- pct_weight_long %>% filter(Sex=="Female" & Day=="7" & Genotype!="HET")
+t.test(Score~Genotype,pct_weight_day7)
+
 tnbs_summary <- pct_weight_long %>%
   group_by(Sex, Genotype) %>%
   summarize(MouseID = n_distinct(MouseID)) 
@@ -76,6 +108,12 @@ tnbs_summary %>% kable
 histology <- read.csv("SLC_DSS/Histology.csv")
 histology <- remove_missing(histology)
 histology$Genotype <- factor(histology$Genotype, levels=c("WT","HET","MUT"))
+
+histo_wm_f <- histology %>% filter(Genotype != "HET" & Sex=="Female")
+wilcox.test(Score~Genotype, histo_wm_f)
+
+histo_wh_f <- histology %>% filter(Genotype != "MUT" & Sex=="Female")
+wilcox.test(Score~Genotype, histo_wh_f)
 
 # Create plot
 dss_histo_plot <- histology %>%
@@ -94,6 +132,12 @@ dss_histo_plot <- histology %>%
 colon_length <- read.csv("TNBS/Colon_Length.csv")
 colon_length <- remove_missing(colon_length)
 colon_length$Genotype <- factor(colon_length$Genotype, levels=c("WT","HET","MUT"))
+
+colon_wm_f <- histology %>% filter(Genotype != "HET" & Sex=="Female")
+t.test(Score~Genotype, histo_wm_f)
+
+colon_wh_f <- histology %>% filter(Genotype != "MUT" & Sex=="Female")
+t.test(Score~Genotype, histo_wh_f)
 
 # Create plot
 tnbs_colon_plot <- colon_length %>%

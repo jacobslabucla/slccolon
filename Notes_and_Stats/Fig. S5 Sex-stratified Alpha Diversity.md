@@ -17,6 +17,16 @@ Genotype2   -0.122626 0.15503678  5 -0.79095  0.4648
 ```
 
 ```R
+Fixed effects:  shannon_entropy ~ Site + Genotype 
+                       Value Std.Error DF   t-value p-value
+(Intercept)         5.346468 0.2757518 22 19.388697  0.0000
+SiteDistal_Colon   -0.620658 0.1591236 22 -3.900480  0.0008
+SiteProximal_Colon -0.203685 0.1591236 22 -1.280043  0.2139
+GenotypeHET        -0.146338 0.3676926  9 -0.397989  0.6999
+GenotypeMUT         0.011755 0.3676926  9  0.031969  0.9752
+```
+
+```R
 Fixed effects:  observed_features ~ Litter + Site + Genotype 
                 Value Std.Error DF  t-value p-value
 (Intercept) 204.50370  5.453553 22 37.49917  0.0000
@@ -28,6 +38,16 @@ Site1         6.72222  5.535000 22  1.21449  0.2374
 Site2       -15.69444  5.535000 22 -2.83549  0.0096
 Genotype1     1.65741  7.247902  5  0.22867  0.8282
 Genotype2    -6.84259  7.247902  5 -0.94408  0.3885
+```
+
+```R
+Fixed effects:  observed_features ~ Site + Genotype 
+                       Value Std.Error DF   t-value p-value
+(Intercept)        214.22222 16.230629 22 13.198640  0.0000
+SiteDistal_Colon   -22.41667  9.586887 22 -2.338263  0.0289
+SiteProximal_Colon   2.25000  9.586887 22  0.234696  0.8166
+GenotypeHET         -8.50000 21.577635  9 -0.393926  0.7028
+GenotypeMUT          6.08333 21.577635  9  0.281928  0.7844
 ```
 ### Males 
 ```R
@@ -44,7 +64,16 @@ Site2       -0.502847 0.06811585 33 -7.38223  0.0000
 Genotype1    0.090050 0.14884067 10  0.60501  0.5587
 Genotype2    0.015929 0.14947858 10  0.10656  0.9172
 ```
-
+```R
+Fixed effects:  shannon_entropy ~ Sequencing_Run + Site + Genotype 
+                                Value Std.Error DF   t-value p-value
+(Intercept)                  5.658412 0.2096941 33 26.984118  0.0000
+Sequencing_RunSLCMicrobiome  0.011444 0.2242720 14  0.051028  0.9600
+SiteDistal_Colon            -0.908322 0.1194772 33 -7.602477  0.0000
+SiteProximal_Colon          -0.312450 0.1194772 33 -2.615143  0.0133
+GenotypeHET                 -0.078467 0.2596824 14 -0.302165  0.7670
+GenotypeMUT                 -0.196028 0.2586086 14 -0.758012  0.4610
+```
 ```R
 Fixed effects:  observed_features ~ Litter + Site + Genotype 
                 Value Std.Error DF  t-value p-value
@@ -58,6 +87,16 @@ Site1        18.34186  5.404661 33  3.39371  0.0018
 Site2       -24.94871  5.311016 33 -4.69754  0.0000
 Genotype1    15.77351  6.058214 10  2.60366  0.0263
 Genotype2   -12.43592  6.140475 10 -2.02524  0.0704
+```
+```R
+Fixed effects:  observed_features ~ Sequencing_Run + Site + Genotype 
+                                Value Std.Error DF   t-value p-value
+(Intercept)                 236.18551 10.870638 33 21.726923  0.0000
+Sequencing_RunSLCMicrobiome  91.78869 10.684682 14  8.590681  0.0000
+SiteDistal_Colon            -43.53373  9.308075 33 -4.676985  0.0000
+SiteProximal_Colon          -11.97817  9.308075 33 -1.286858  0.2071
+GenotypeHET                 -27.96627 12.418024 14 -2.252071  0.0409
+GenotypeMUT                 -19.11111 12.297202 14 -1.554102  0.1425
 ```
 ## Mucosal Colon
 
@@ -75,7 +114,15 @@ Site2       -0.756197 0.3297112 17 -2.293515  0.0348
 Genotype1    0.089831 0.3861087  5  0.232658  0.8253
 Genotype2   -0.051301 0.3806723  5 -0.134764  0.8981
 ```
-
+```R
+Fixed effects:  shannon_entropy ~ Site + Genotype 
+                       Value Std.Error DF   t-value p-value
+(Intercept)         4.991247 0.4903890 17 10.178139  0.0000
+SiteDistal_Colon   -1.131238 0.5331015 17 -2.121993  0.0488
+SiteProximal_Colon  0.244930 0.5174904 17  0.473304  0.6420
+GenotypeHET        -0.109940 0.5561675  9 -0.197674  0.8477
+GenotypeMUT        -0.095639 0.6130681  9 -0.156001  0.8795
+```
 ```R
 Fixed effects:  observed_features ~ Litter + Site + Genotype 
                 Value Std.Error DF   t-value p-value
@@ -89,7 +136,15 @@ Site2       -16.99314  16.06457 17 -1.057802  0.3049
 Genotype1    -1.86053  15.78538  5 -0.117864  0.9108
 Genotype2    -8.77355  15.51997  5 -0.565307  0.5963
 ```
-
+```R
+Fixed effects:  observed_features ~ Site + Genotype 
+                       Value Std.Error DF   t-value p-value
+(Intercept)        240.45329  21.95189 17 10.953650  0.0000
+SiteDistal_Colon   -26.33407  25.39567 17 -1.036951  0.3143
+SiteProximal_Colon   3.75400  24.69817 17  0.151995  0.8810
+GenotypeHET         -6.67660  23.91961  9 -0.279127  0.7865
+GenotypeMUT         25.81673  26.76335  9  0.964630  0.3599
+```
 ### Males
 ```R
 Fixed effects:  shannon_entropy ~ Litter + Site + Genotype 
@@ -105,7 +160,16 @@ Site2       -0.530979 0.1353887 31 -3.92189  0.0005
 Genotype1    0.196450 0.1938818 10  1.01324  0.3348
 Genotype2    0.057797 0.1909538 10  0.30267  0.7683
 ```
-
+```R
+Fixed effects:  shannon_entropy ~ Sequencing_Run + Site + Genotype 
+                                Value Std.Error DF   t-value p-value
+(Intercept)                  5.003386 0.2744844 31 18.228308  0.0000
+Sequencing_RunSLCMicrobiome  0.703228 0.2737052 14  2.569291  0.0223
+SiteDistal_Colon            -0.415194 0.2296688 31 -1.807796  0.0804
+SiteProximal_Colon           0.708922 0.2163604 31  3.276581  0.0026
+GenotypeHET                 -0.150780 0.3189067 14 -0.472803  0.6436
+GenotypeMUT                 -0.448137 0.3209567 14 -1.396254  0.1844
+```
 ```R
 Fixed effects:  observed_features ~ Litter + Site + Genotype 
                 Value Std.Error DF   t-value p-value
@@ -120,7 +184,16 @@ Site2        11.07226  7.195696 31  1.538733  0.1340
 Genotype1     9.58453 12.277336 10  0.780669  0.4531
 Genotype2    -5.17502 12.142218 10 -0.426200  0.6790
 ```
-
+```R
+Fixed effects:  observed_features ~ Sequencing_Run + Site + Genotype 
+                                Value Std.Error DF   t-value p-value
+(Intercept)                 222.21292  17.56769 31 12.648958  0.0000
+Sequencing_RunSLCMicrobiome 124.06254  18.31714 14  6.773029  0.0000
+SiteDistal_Colon             20.04159  12.15005 31  1.649507  0.1091
+SiteProximal_Colon            9.50000  11.40563 31  0.832922  0.4113
+GenotypeHET                 -14.19207  21.27586 14 -0.667050  0.5156
+GenotypeMUT                 -14.17589  21.36691 14 -0.663451  0.5178
+```
 # _Baseline_
 ### Females
 ```R

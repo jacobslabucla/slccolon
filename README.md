@@ -13,7 +13,7 @@ git clone https://github.com/jacobslabucla/slccolon
 4. Now, by running each Figure script (matches the Figures in the paper) you should be able to reproduce the figures in the paper.
 
 ## ICP MS Data 
-- ICP-MS / 5-month old mice (WT, MUT) - n = 25, 23
+- ICP-MS / Colon samples from 5-month old mice (WT, MUT) - n = 25, 23
 
 |Sex    |Genotype | MouseID|
 |:------|:--------|-------:|
@@ -21,6 +21,15 @@ git clone https://github.com/jacobslabucla/slccolon
 |Female |WT       |      13|
 |Male   |MUT      |      11|
 |Male   |WT       |      12|
+
+- ICP-MS / Blood - n = 20,20 
+
+|Sex    |Genotype | SampleID|
+|:------|:--------|--------:|
+|Female |MUT      |       10|
+|Female |WT       |       10|
+|Male   |MUT      |       10|
+|Male   |WT       |       10|
 
 ## Microbiome Data
 - SLC Long Term / 12-month old mice (WT, HET, MUT) - n= 7, 16, 7

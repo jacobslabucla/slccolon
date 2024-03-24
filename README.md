@@ -116,10 +116,9 @@ git clone https://github.com/jacobslabucla/slccolon
 
 |Sex    |Genotype | MouseID|
 |:------|:--------|-------:|
-|Female |WT       |      10|
-|Female |HET      |      10|
-|Female |MUT      |       9|
-|Male   |WT       |      18|
-|Male   |HET      |      17|
-|Male   |MUT      |      15|
-
+|Female |WT       |       8|
+|Female |HET      |       8|
+|Female |MUT      |       5|
+|Male   |WT       |      12|
+|Male   |HET      |      14|
+|Male   |MUT      |      12|

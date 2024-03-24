@@ -203,7 +203,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "ICP-MS Stats, stratified by Sex.md",
+                "file": "Fig S7 Sex- stratified Spont Histo & Mucin.md",
                 "mode": "source",
                 "source": false
               }
@@ -284,7 +284,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "ICP-MS Stats, stratified by Sex.md",
+                "file": "Fig S7 Sex- stratified Spont Histo & Mucin.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -301,7 +301,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "ICP-MS Stats, stratified by Sex.md",
+                "file": "Fig S7 Sex- stratified Spont Histo & Mucin.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -324,7 +324,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "ICP-MS Stats, stratified by Sex.md"
+                "file": "Fig S7 Sex- stratified Spont Histo & Mucin.md"
               }
             }
           }
@@ -347,16 +347,16 @@
   },
   "active": "b9723eebe66b8b82",
   "lastOpenFiles": [
+    "Fig. S4 Sex-stratified Beta Diversity.md",
+    "ICP-MS Stats, stratified by Sex.md",
     "Fig S8 Sex Stratified DSS TNBS.md",
     "Figure S2 Alpha Diversity.md",
     "Fig. S5 Sex-stratified Alpha Diversity.md",
-    "Fig. S4 Sex-stratified Beta Diversity.md",
     "Long Term Beta Diversity - without Repeat Measures.md",
     "Trios Beta Diversity - without Repeat Measures.md",
     "Long Term Beta Diversity - Repeat Measures.md",
     "Fig S7 Sex- stratified Spont Histo & Mucin.md",
     "Trios Beta Diversity - Repeat Measures.md",
-    "ICP-MS Stats, stratified by Sex.md",
     "Baseline JAX Beta Diversity.md",
     "Trios Pathway Maaslin2 log TSS.md",
     "SLC DSS Stats.md",

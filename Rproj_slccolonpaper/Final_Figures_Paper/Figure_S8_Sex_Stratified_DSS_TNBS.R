@@ -63,10 +63,10 @@ dss_summary <- pct_weight_long %>%
 dss_summary %>% kable
 
 ## TNBS Body Weight Curve --
-pct_weight <- read.csv("TNBS/PCT_Body_Weight.csv")
+pct_weight <- read.csv(here("TNBS/PCT_Body_Weight.csv"))
 
 pct_weight_long <- pct_weight %>% filter(Batch!="Three")
-pct_weight_long <- pivot_longer(pct_weight, 
+pct_weight_long <- pivot_longer(pct_weight_long, 
                                 cols = starts_with("D"), 
                                 names_to = "Day", 
                                 values_to = "Score")

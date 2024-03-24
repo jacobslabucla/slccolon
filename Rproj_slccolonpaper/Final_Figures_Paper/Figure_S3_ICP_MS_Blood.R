@@ -12,15 +12,24 @@ here::i_am("Rproj_slccolonpaper/Final_Figures_Paper/Figure_S3_ICP_MS_Blood.R")
 ### Data Preprocessing ---
 df<- readr::read_csv(here("ICPMS/ICP_MS_Blood.csv"))
 row.names(df) <- df$SampleID
+
+icpms_summary <- df %>%
+  group_by(Sex, Genotype) %>%
+  summarize(SampleID = n_distinct(SampleID)) 
+
+icpms_summary %>% kable
+
 df <- df %>% select(-c("SampleID"))
 
 # replace all n/a and declare all element columns as numerical
 df[df=="n/a"]<-"0"
 vector <- names(df)
+
 elements <- vector[1:7]
 df <- df %>% mutate_at(c(elements), as.numeric)
 str(df)
 df$Genotype_Sex <- paste0(df$Genotype,"_",df$Sex)
+
 
 # Generate a version of a df without outlier samples 
 # create detect outlier function

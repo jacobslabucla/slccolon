@@ -208,9 +208,21 @@
                 "source": false
               }
             }
+          },
+          {
+            "id": "8dd0c86590545f03",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Fig S7 Sex- stratified Spont Histo & Mucin.md",
+                "mode": "source",
+                "source": false
+              }
+            }
           }
         ],
-        "currentTab": 16
+        "currentTab": 17
       }
     ],
     "direction": "vertical"
@@ -345,25 +357,25 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "b9723eebe66b8b82",
+  "active": "8dd0c86590545f03",
   "lastOpenFiles": [
-    "Fig. S4 Sex-stratified Beta Diversity.md",
-    "ICP-MS Stats, stratified by Sex.md",
-    "Fig S8 Sex Stratified DSS TNBS.md",
-    "Figure S2 Alpha Diversity.md",
-    "Fig. S5 Sex-stratified Alpha Diversity.md",
+    "Long Term DAT with Maaslin2 log TSS.md",
     "Long Term Beta Diversity - without Repeat Measures.md",
+    "Pasted image 20230427113812.png",
+    "SLC Colon Paper Microbiome Figures.md",
+    "SLC DSS Stats.md",
     "Trios Beta Diversity - without Repeat Measures.md",
-    "Long Term Beta Diversity - Repeat Measures.md",
-    "Fig S7 Sex- stratified Spont Histo & Mucin.md",
     "Trios Beta Diversity - Repeat Measures.md",
+    "Fig. S5 Sex-stratified Alpha Diversity.md",
+    "Figure S2 Alpha Diversity.md",
+    "ICP-MS Stats, stratified by Sex.md",
+    "Long Term Beta Diversity - Repeat Measures.md",
+    "Fig. S4 Sex-stratified Beta Diversity.md",
+    "Fig S8 Sex Stratified DSS TNBS.md",
+    "Fig S7 Sex- stratified Spont Histo & Mucin.md",
     "Baseline JAX Beta Diversity.md",
     "Trios Pathway Maaslin2 log TSS.md",
-    "SLC DSS Stats.md",
     "Untitled",
-    "Pasted image 20230427113812.png",
-    "DAT with Maaslin2 log TSS for Trios.md",
-    "SLC Colon Paper Microbiome Figures.md",
-    "Long Term DAT with Maaslin2 log TSS.md"
+    "DAT with Maaslin2 log TSS for Trios.md"
   ]
 }

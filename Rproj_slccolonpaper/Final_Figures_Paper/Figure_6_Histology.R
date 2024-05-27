@@ -12,7 +12,9 @@ here::i_am("Rproj_slccolonpaper/SLC_Spontaneous_phenotype.R")
 mucin <- readr::read_csv(here("Spontaneous/Mucin.csv"))
 histology <- readr::read_csv(here("Spontaneous/Histology_5month.csv"))
 histo_old <- readr::read_csv(here("Spontaneous/Histology_10month.csv"))
-
+histo_10mo<- histo_old %>%
+  filter(Tg=="Negative")
+write.csv(histo_10mo, here("Spontaneous/Histology_10mo.csv"))
 
 ## Make summary tables --
 histo_summary <- histology %>%

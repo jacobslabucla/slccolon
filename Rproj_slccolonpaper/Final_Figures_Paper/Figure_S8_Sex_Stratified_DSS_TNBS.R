@@ -105,7 +105,7 @@ tnbs_summary <- pct_weight_long %>%
 tnbs_summary %>% kable
 
 # Read / clean data
-histology <- read.csv("SLC_DSS/Histology.csv")
+histology <- read.csv(here("SLC_DSS/Histology.csv"))
 histology <- remove_missing(histology)
 histology$Genotype <- factor(histology$Genotype, levels=c("WT","HET","MUT"))
 
@@ -129,7 +129,7 @@ dss_histo_plot <- histology %>%
   facet_wrap(~Sex)
 
 # Read / clean data
-colon_length <- read.csv("TNBS/Colon_Length.csv")
+colon_length <- read.csv(here("TNBS/Colon_Length.csv"))
 colon_length <- remove_missing(colon_length)
 colon_length$Genotype <- factor(colon_length$Genotype, levels=c("WT","HET","MUT"))
 
@@ -153,7 +153,7 @@ tnbs_colon_plot <- colon_length %>%
   facet_wrap(~Sex)
 
 # Read / clean data
-colon_length <- read.csv("SLC_DSS/Colon_and_Spleen.csv")
+colon_length <- read.csv(here("SLC_DSS/Colon_and_Spleen.csv"))
 colon_length <- remove_missing(colon_length)
 colon_length$Genotype <- factor(colon_length$Genotype, levels=c("WT","HET","MUT"))
 

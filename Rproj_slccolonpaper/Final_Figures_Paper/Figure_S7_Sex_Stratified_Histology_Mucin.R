@@ -86,27 +86,36 @@ wilcox.test(Score~Genotype, m_df_mut)
 # Mucin 
 df_het <- mucin %>% filter(Genotype!="MUT")
 wilcox.test(Mucin_Thickness~Genotype, df_het)
+t.test(Mucin_Thickness~Genotype, df_het)
 
 f_df_het <- mucin %>% filter(Genotype!="MUT" & Sex =="Female")
 wilcox.test(Mucin_Thickness~Genotype, f_df_het)
+t.test(Mucin_Thickness~Genotype, f_df_het)
 
 m_df_het <- mucin %>% filter(Genotype!="MUT" & Sex =="Male")
 wilcox.test(Mucin_Thickness~Genotype, m_df_het)
+t.test(Mucin_Thickness~Genotype, m_df_het)
 
 df_mut <- mucin %>% filter(Genotype!="HET")
 wilcox.test(Mucin_Thickness~Genotype,df_mut)
+t.test(Mucin_Thickness~Genotype,df_mut)
 
 f_df_mut <- mucin %>% filter(Genotype!="HET" & Sex=="Female")
 wilcox.test(Mucin_Thickness~Genotype,f_df_mut)
+t.test(Mucin_Thickness~Genotype,f_df_mut)
 
 m_df_mut <- mucin %>% filter(Genotype!="HET" & Sex=="Male")
 wilcox.test(Mucin_Thickness~Genotype,m_df_mut)
+t.test(Mucin_Thickness~Genotype,m_df_mut)
 
 df_mut <- mucin %>% filter(Genotype!="WT")
 wilcox.test(Mucin_Thickness~Genotype,df_mut)
+t.test(Mucin_Thickness~Genotype,df_mut)
 
 f_df_mut <- mucin %>% filter(Genotype!="WT")
 wilcox.test(Mucin_Thickness~Genotype,f_df_mut)
+t.test(Mucin_Thickness~Genotype,f_df_mut)
 
 m_df_mut <- mucin %>% filter(Genotype!="WT")
 wilcox.test(Mucin_Thickness~Genotype,m_df_mut)
+t.test(Mucin_Thickness~Genotype,m_df_mut)

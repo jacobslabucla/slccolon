@@ -2,32 +2,107 @@ library(here)
 library(ggplot2)
 library(rlang)
 library(cowplot)
-library(ggpubr)
 library(dplyr)
 library(tidyr)
+library(knitr)
+library(kableExtra)
 #install.packages("gridGraphics")
 
 here::i_am("Rproj_slccolonpaper/Final_Figures_Paper/Figure_2_ICP_MS.R")
 
 ### Data Preprocessing ---
 df<- as.data.frame(readr::read_csv(here("ICPMS/Analysis_ICP_MS.csv")))
-row.names(df) <- df$SampleID
-df <- df %>% select(-c("SampleID"))
+#df <- df %>% select(-c("Batch"))
+#df <- df %>% filter(SampleType!="MUC-SI" & SampleType!="TS-SI" & SampleType!="FP-SI") %>% select(-c("Selenium"))
+#write.csv(df, here("Rproj_slccolonpaper/Supplementary_Files/ICP-MS.csv"))
+row.names(df) <- df[,1]
+df <- df[,-1]
 
 # replace all n/a and declare all element columns as numerical
 df[df=="n/a"]<-"0"
 vector <- names(df)
-elements <- vector[1:7]
+elements <- vector[1:6]
 df <- df %>% mutate_at(c(elements), as.numeric)
 str(df)
 df$Genotype_Batch <- paste0(df$Genotype, "_",df$Batch)
 df$Genotype_Sex <- paste0(df$Genotype,"_",df$Sex)
 
-icpms_summary <- df %>%
+# report numbers of mice for colon
+df_intestines <- df %>% filter(SampleType !="Blood")
+icpms_summary <- df_intestines %>%
   group_by(Sex, Genotype) %>%
   summarize(MouseID = n_distinct(MouseID)) 
 
 icpms_summary %>% kable
+
+### Generate large table ---
+df_long <- df %>% pivot_longer(cols=1:6,names_to = "Metal", values_to = "Abundance")
+df_long$Genotype <- factor(df_long$Genotype, levels=c("WT","MUT"))
+df_long$SampleType <- factor(df_long$SampleType, levels=c("FP-COL","MUC-COL","TS-COL","Blood"))
+df_long$Metal <- factor(df_long$Metal, levels=c("Iron", "Cobalt","Copper","Zinc","Cadmium","Manganese"))
+summary_df <- df_long %>%
+  group_by(SampleType, Genotype,Sex,Metal) %>%
+  summarise(
+    Mean = mean(Abundance),
+    SEM = sd(Abundance) / sqrt(n())
+  )
+
+# Unite Mean and SEM for display
+summary_df <- summary_df %>%
+  mutate(`Mean ± SEM` = paste0(round(Mean, 2), " ± ", round(SEM, 2))) %>%
+  select(-Mean, -SEM)
+
+# Reshape data for better readability
+summary_table <- summary_df %>%
+  pivot_wider(
+    names_from = Metal,
+    values_from = `Mean ± SEM`
+  )
+
+# Print the summary table using kable and style with kableExtra
+kable(summary_table, format = "html", caption = "Summary Table of Metal Abundance") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"), 
+                full_width = F, 
+                position = "left") %>%
+  column_spec(1, bold = TRUE, color = "white", background = "black") %>%
+  column_spec(1, border_right = TRUE) %>%
+  column_spec(2, border_right = TRUE) %>%
+  column_spec(3, border_right = TRUE) %>%
+  column_spec(4, border_right = TRUE) %>%
+  column_spec(5, border_right = TRUE) %>%
+  column_spec(6, border_right = TRUE) %>%
+  column_spec(7, border_right = TRUE) %>%
+  column_spec(8, border_right = TRUE) %>%
+  column_spec(9, border_right = TRUE) %>%
+  row_spec(0, bold = TRUE, background = "grey") 
+
+write.csv(summary_table, here("ICPMS/Summary_Table_Sex_Stratified.csv"))
+
+
+# Calculate mean and SEM
+summary_df <- df_long %>%
+  group_by(SampleType, Genotype, Metal) %>%
+  summarise(
+    Mean = mean(Abundance),
+    SEM = sd(Abundance) / sqrt(n()),
+    .groups = 'drop'
+  ) %>%
+  mutate(`Mean ± SEM` = paste0(round(Mean, 2), " ± ", round(SEM, 2))) %>%
+  select(-Mean, -SEM)
+
+# Arrange for better readability
+summary_table_aggregated <- summary_df %>%
+  pivot_wider(
+    names_from = Metal,
+    values_from = `Mean ± SEM`
+  )
+
+# Print the summary table
+print(summary_table_aggregated)
+
+
+write.csv(summary_table_aggregated, here("ICPMS/Summary_Table_Whole.csv"))
+
 # Generate a version of a df without outlier samples 
 # create detect outlier function
 
@@ -63,11 +138,9 @@ remove_outlier <- function(dataframe,
 
 # Subset by SampleType - without outliers
 df_fp_col <- df %>% filter(SampleType=="FP-COL") 
-df_fp_si <- df %>% filter(SampleType=="FP-SI") 
 df_muc_col <- df %>% filter(SampleType=="MUC-COL") 
-df_muc_si <- df %>% filter(SampleType=="MUC-SI") 
 df_ts_col <- df %>% filter(SampleType=="TS-COL") 
-df_ts_si <- df %>% filter(SampleType=="TS-SI") 
+df_blood <- df %>% filter(SampleType=="Blood") 
 
 ### Figures ---
 generate_violin_plots <- function (input_data, X, titlestring) {
@@ -91,6 +164,7 @@ generate_violin_plots <- function (input_data, X, titlestring) {
     theme(legend.position = "none") +
     theme(plot.title = element_text(hjust = 0.5)) +
     ggtitle(titlestring)+
+    #facet_wrap(~Batch)+
     ylab("ug/g") +
     xlab("")
   #ylim(min,max) +
@@ -99,16 +173,14 @@ generate_violin_plots <- function (input_data, X, titlestring) {
 
 
 fp_col_plots <- list()
-fp_si_plots <- list()
 muc_col_plots <- list()
-muc_si_plots <- list()
 ts_col_plots <- list()
-ts_si_plots <- list()
+blood_plots <- list()
 
 
-elementvector <- c("Iron", "Cobalt", "Copper", "Zinc", "Cadmium", "Manganese", "Selenium")
+elementvector <- c("Iron", "Cobalt", "Copper", "Zinc", "Cadmium", "Manganese")
 
-for (int in 1:7){
+for (int in 1:6){
   print(int)
   element <- elementvector[int]
   fp_col <- df_fp_col %>% 
@@ -118,21 +190,7 @@ for (int in 1:7){
                  values_to="Concentration") %>%
     filter(Element==element) %>%
     generate_violin_plots(X=Genotype, titlestring=element) 
-  fp_si <- df_fp_si %>% 
-    remove_outlier(element) %>%
-    pivot_longer(cols=all_of(elementvector),
-                 names_to="Element",
-                 values_to="Concentration") %>%
-    filter(Element==element) %>%
-    generate_violin_plots(X=Genotype, titlestring=element)
-  muc_col <- df_muc_col %>% 
-    remove_outlier(element) %>%
-    pivot_longer(cols=all_of(elementvector),
-                 names_to="Element",
-                 values_to="Concentration") %>%
-    filter(Element==element) %>%
-    generate_violin_plots(X=Genotype, titlestring=element)
-  muc_si <- df_muc_si %>% 
+   muc_col <- df_muc_col %>% 
     remove_outlier(element) %>%
     pivot_longer(cols=all_of(elementvector),
                  names_to="Element",
@@ -146,7 +204,7 @@ for (int in 1:7){
                  values_to="Concentration") %>%
     filter(Element==element) %>%
     generate_violin_plots(X=Genotype, titlestring=element)
-  ts_si <- df_ts_si %>%
+  bld <- df_blood %>% 
     remove_outlier(element) %>%
     pivot_longer(cols=all_of(elementvector),
                  names_to="Element",
@@ -154,12 +212,11 @@ for (int in 1:7){
     filter(Element==element) %>%
     generate_violin_plots(X=Genotype, titlestring=element)
   
+  
   fp_col_plots[[int]] <- fp_col
-  fp_si_plots[[int]] <- fp_si
   muc_col_plots[[int]] <- muc_col
-  muc_si_plots[[int]] <- muc_si
   ts_col_plots[[int]] <- ts_col
-  ts_si_plots[[int]] <- ts_si
+  blood_plots[[int]] <- bld
   
 }
 

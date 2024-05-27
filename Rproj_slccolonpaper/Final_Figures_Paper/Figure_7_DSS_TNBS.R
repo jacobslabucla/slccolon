@@ -21,6 +21,7 @@ pct_weight_long$Score <- gsub("%","",pct_weight_long$Score)
 pct_weight_long$Score <- as.numeric(pct_weight_long$Score)
 pct_weight_long$Genotype <- factor(pct_weight_long$Genotype, levels=c("WT", "HET", "MUT"))
 pct_weight_long <- remove_missing(pct_weight_long)
+write.csv(pct_weight_long, here("Rproj_slccolonpaper/Supplementary_Files/DSS_Body_Weight.csv"))
 
 # Create plot
 make_longitudinal_graph<- function(dataframe,ylab,xlab) {
@@ -51,7 +52,7 @@ dss_summary <- pct_weight_long %>%
 dss_summary %>% kable
 
 ## TNBS Body Weight Curve --
-pct_weight <- read.csv("TNBS/PCT_Body_Weight.csv")
+pct_weight <- read.csv(here("TNBS/PCT_Body_Weight.csv"))
 
 pct_weight_long <- pct_weight %>% filter(Batch!="Three")
 pct_weight_long <- pivot_longer(pct_weight, 
@@ -67,7 +68,7 @@ pct_weight_long$Genotype <- factor(pct_weight_long$Genotype, levels=c("WT", "HET
 pct_weight_long <- remove_missing(pct_weight_long)
 
 percent_weight_tnbs<- make_longitudinal_graph(pct_weight_long,"TNBS Body Weight (% Baseline)", "Day of TNBS")
-
+write.csv(pct_weight_long, here("Rproj_slccolonpaper/Supplementary_Files/TNBS_Body_Weight.csv"))
 tnbs_summary <- pct_weight_long %>%
   group_by(Sex, Genotype) %>%
   summarize(MouseID = n_distinct(MouseID)) 
@@ -76,8 +77,9 @@ tnbs_summary %>% kable
 
 
 # Read / clean data
-histology <- read.csv("SLC_DSS/Histology.csv")
+histology <- read.csv(here("SLC_DSS/Histology.csv"))
 histology <- remove_missing(histology)
+write.csv(histology,here("Rproj_slccolonpaper/Supplementary_Files/DSS_Histology.csv"))
 histology$Genotype <- factor(histology$Genotype, levels=c("WT","HET","MUT"))
 
 # Create plot
@@ -95,6 +97,7 @@ dss_histo_plot <- histology %>%
 # Read / clean data
 colon_length <- read.csv("TNBS/Colon_Length.csv")
 colon_length <- remove_missing(colon_length)
+write.csv(colon_length, here("Rproj_slccolonpaper/Supplementary_Files/TNBS_Colon_Length.csv"))
 colon_length$Genotype <- factor(colon_length$Genotype, levels=c("WT","HET","MUT"))
 
 # Create plot
@@ -112,6 +115,7 @@ tnbs_colon_plot <- colon_length %>%
 # Read / clean data
 colon_length <- read.csv("SLC_DSS/Colon_and_Spleen.csv")
 colon_length <- remove_missing(colon_length)
+write.csv(colon_length,here("Rproj_slccolonpaper/Supplementary_Files/DSS_Colon_Length.csv"))
 colon_length$Genotype <- factor(colon_length$Genotype, levels=c("WT","HET","MUT"))
 
 # Create plot

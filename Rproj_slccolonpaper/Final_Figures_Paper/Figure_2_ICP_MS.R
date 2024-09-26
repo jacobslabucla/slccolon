@@ -6,7 +6,10 @@ library(dplyr)
 library(tidyr)
 library(knitr)
 library(kableExtra)
-#install.packages("gridGraphics")
+
+# add lockfile
+library(renv)
+renv::init()
 
 here::i_am("Rproj_slccolonpaper/Final_Figures_Paper/Figure_2_ICP_MS.R")
 
@@ -423,10 +426,6 @@ element_stats_nonpara[[5]]
 element_stats_para[[6]]
 element_stats_nonpara[[6]]
 
-# Selenium
-element_stats_para[[7]]
-element_stats_nonpara[[7]]
-
 # Males
 df_fp_col <- df %>% filter(SampleType=="FP-COL" & Sex=="Male")
 df_fp_si <- df %>% filter(SampleType=="FP-SI" & Sex=="Male")
@@ -483,9 +482,5 @@ element_stats_nonpara[[5]]
 # Manganese
 element_stats_para[[6]]
 element_stats_nonpara[[6]]
-
-# Selenium
-element_stats_para[[7]]
-element_stats_nonpara[[7]]
 
 

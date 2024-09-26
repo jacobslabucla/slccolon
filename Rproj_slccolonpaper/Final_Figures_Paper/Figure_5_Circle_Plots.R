@@ -1,13 +1,14 @@
 library(circlize)
-
+library(here)
+library(dplyr)
 here::i_am("Rproj_slccolonpaper/Final_Figures_Paper/Figure_5_Circle_Plots.R")
 
 ### Mucosal ---
 ## Trios
-data<-read.table("Trios/differential_Pathway/PICRUST2_PWY_Mucosal_Colon_Maaslin2_SequencingRun_Site_Sex_Genotype_1-MouseID/significant_results.tsv", header=TRUE)
+data<-read.table(here("Trios/differential_Pathway/PICRUST2_PWY_Mucosal_Colon_Maaslin2_SequencingRun_Site_Sex_Genotype_1-MouseID/significant_results.tsv"), header=TRUE)
 data <- data %>% 
   filter(value=="MUT") 
-annotation <- read.delim("Trios/differential_Pathway/annotated_pwy.tsv", row.names=1)
+annotation <- read.delim(here("Trios/differential_Pathway/annotated_pwy.tsv"), row.names=1)
 annotation$feature <- row.names(annotation)
 annotation <- annotation %>% select(c("feature","description"))
 annotation$feature <- gsub("-", ".", annotation$feature)
@@ -15,7 +16,7 @@ data <- merge(data,annotation, by="feature")
 
 #Classification strategy no 2 
 # split the paths column by "|"
-higher_classification <- read.delim("Huttenhower_MetaCyc_Hierarchy.txt",header=TRUE)
+higher_classification <- read.delim(here("Huttenhower_MetaCyc_Hierarchy.txt"),header=TRUE)
 df <- higher_classification
 df_split <- strsplit(df$annotation, "\\|")
 df_new <- data.frame(do.call(rbind, df_split))
@@ -31,6 +32,13 @@ plot <- data %>%
 
 
 mat <- plot 
+
+# For generating a dummy legend ---
+mat$feature <- sample(paste0("Pathway", seq(1, 31)),72,replace=TRUE)
+mat$X2 <- sample(paste0("Category", seq(1, 6)), 72, replace = TRUE)
+mat$coef_abs <- runif(72)
+mat <- mat[1:20,]
+# ---
 
 circos.clear()
 dev.new(width=10,height=10)

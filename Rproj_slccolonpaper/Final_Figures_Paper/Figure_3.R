@@ -13,11 +13,11 @@ here::i_am("Rproj_slccolonpaper/Final_Figures_Paper/Figure_3.R")
 ### Figure 3 left half ---
 
 ## Read in the color legend --
-global_genera_cols <- readr::read_rds(here("slccolon/Global_Genera_Cols.RDS"))
+global_genera_cols <- readRDS(here("Global_Genera_Cols.RDS"))
 names(global_genera_cols)
 
 ## Trios --
-trios_lc_barplot <- generate_L6_taxa_plots("slccolon/Trios/taxa_barplots/LumCol_level-6_trios.csv","Colon Lumen", ".*g__",global_genera_cols) +
+trios_lc_barplot <- generate_L6_taxa_plots("Trios/taxa_barplots/LumCol_level-6_trios.csv","Colon Lumen", ".*g__",global_genera_cols) +
   theme(legend.position = "none")
 
 trios_mc_barplot <- generate_L6_taxa_plots("slccolon/Trios/taxa_barplots/MucCol_level-6.csv","Colon Mucosa", ".*g__",global_genera_cols) +
@@ -44,13 +44,17 @@ left_half <- plot_grid(trios_lc_barplot, trios_mc_barplot,
 fake_df <- data.frame(taxa = names(global_genera_cols),
                       var1 = seq(1,28,by=1),
                       var2 = upper(n=28, k = 5, x = LETTERS, prob = NULL, name = "Upper"))
+fake_df$taxa<- gsub("\\..f.","_(f)",fake_df$taxa)
+fake_df$taxa<- gsub("\\..o.","_(o)",fake_df$taxa)
+#fake_df$taxa<- gsub("\\."," ",fake_df$taxa)
+fake_df$taxa<- gsub("UCG.","UCG-",fake_df$taxa)
 L6_legend <- ggplot(fake_df, aes(x=var2, y=var1, color=taxa,fill=taxa)) +
   geom_point(pch=15,size=4,position=position_jitter(width=0.25),alpha=1, aes(color=taxa, fill=taxa))+
   scale_color_manual(values=global_genera_cols) +
   scale_fill_manual(values=global_genera_cols) +
   theme_cowplot(16)+
   theme(legend.position = "right") +
-  guides(fill=guide_legend(nrow=28, byrow=TRUE))+
+  guides(fill=guide_legend(nrow=14, byrow=TRUE))+
   theme(legend.spacing.y = unit(0.1, 'cm')) +
   theme(legend.background = element_rect(fill="lightblue", size=1, linetype="solid"), legend.margin = margin(0, 11, 0, 1)) 
 legend <- cowplot::get_legend(L6_legend)

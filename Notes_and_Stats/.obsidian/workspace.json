@@ -220,9 +220,19 @@
                 "source": false
               }
             }
+          },
+          {
+            "id": "ff83095653c4c6f4",
+            "type": "leaf",
+            "state": {
+              "type": "release-notes",
+              "state": {
+                "currentVersion": "1.5.12"
+              }
+            }
           }
         ],
-        "currentTab": 17
+        "currentTab": 18
       }
     ],
     "direction": "vertical"
@@ -357,7 +367,7 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "8dd0c86590545f03",
+  "active": "ff83095653c4c6f4",
   "lastOpenFiles": [
     "Long Term DAT with Maaslin2 log TSS.md",
     "Long Term Beta Diversity - without Repeat Measures.md",

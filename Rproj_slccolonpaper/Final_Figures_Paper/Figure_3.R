@@ -20,18 +20,18 @@ names(global_genera_cols)
 trios_lc_barplot <- generate_L6_taxa_plots("Trios/taxa_barplots/LumCol_level-6_trios.csv","Colon Lumen", ".*g__",global_genera_cols) +
   theme(legend.position = "none")
 
-trios_mc_barplot <- generate_L6_taxa_plots("slccolon/Trios/taxa_barplots/MucCol_level-6.csv","Colon Mucosa", ".*g__",global_genera_cols) +
+trios_mc_barplot <- generate_L6_taxa_plots("Trios/taxa_barplots/MucCol_level-6.csv","Colon Mucosa", ".*g__",global_genera_cols) +
   theme(legend.position = "none")
 
 ## Long Term --
-lt_lc_barplot <- generate_L6_taxa_plots("slccolon/Long_Term/taxa_barplots/LumCol_level-6.csv","Colon Lumen", ".*g__",global_genera_cols) +
+lt_lc_barplot <- generate_L6_taxa_plots("Long_Term/taxa_barplots/LumCol_level-6.csv","Colon Lumen", ".*g__",global_genera_cols) +
   theme(legend.position = "none")
 
-lt_mc_barplot <- generate_L6_taxa_plots("slccolon/Long_Term/taxa_barplots/MucCol_level-6.csv","Colon Mucosa", ".*g__",global_genera_cols) +
+lt_mc_barplot <- generate_L6_taxa_plots("Long_Term/taxa_barplots/MucCol_level-6.csv","Colon Mucosa", ".*g__",global_genera_cols) +
   theme(legend.position = "none")
 
 ## Baseline --
-jax_lc_barplot <- generate_L6_taxa_plots("slccolon/Baseline/taxa_barplots/JAX_Baseline_level-6.csv","Fecal Pellet", ".*g__",global_genera_cols) +
+jax_lc_barplot <- generate_L6_taxa_plots("Baseline/taxa_barplots/JAX_Baseline_level-6.csv","Fecal Pellet", ".*g__",global_genera_cols) +
   theme(legend.position = "none")
 
 left_half <- plot_grid(trios_lc_barplot, trios_mc_barplot,
@@ -120,8 +120,8 @@ JAX_counts_prev <- prevalence_filter(JAX_counts,13)
 JAX.dist <- calculate_rsjensen(JAX_counts_prev)
 
 ### From archived script Long_Term_RS_Jensen_Shannon.R ---
-metadata <- read.table("Long_Term/starting_files/SLC_LT_metadata.tsv", header=TRUE)
-counts <- read.table("Long_Term/starting_files/SLT_ASV_table_Silva_v138_1.tsv", header = TRUE, row.names=1)
+metadata <- read.table(here("Long_Term/starting_files/SLC_LT_metadata.tsv"), header=TRUE)
+counts <- read.table(here("Long_Term/starting_files/SLT_ASV_table_Silva_v138_1.tsv"), header = TRUE, row.names=1)
 
 ## Apply minimum sequencing depth threshold --
 counts <- counts[colSums(counts) >= 10000]

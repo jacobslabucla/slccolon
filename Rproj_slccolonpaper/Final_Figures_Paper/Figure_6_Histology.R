@@ -14,7 +14,7 @@ histology <- readr::read_csv(here("Spontaneous/Histology_5month.csv"))
 histo_old <- readr::read_csv(here("Spontaneous/Histology_10month.csv"))
 histo_10mo<- histo_old %>%
   filter(Tg=="Negative")
-write.csv(histo_10mo, here("Spontaneous/Histology_10mo.csv"))
+#write.csv(histo_10mo, here("Spontaneous/Histology_10mo.csv"))
 
 ## Make summary tables --
 histo_summary <- histology %>%
@@ -103,13 +103,9 @@ wilcox.test(Score~Genotype, df_mut)
 ## Statistics for mucin-- 
 df_het <- mucin %>% filter(Genotype!="MUT")
 wilcox.test(Mucin_Thickness~Genotype, df_het)
-output <- lm(Mucin_Thickness~Sex+Genotype, df_het)
-summary(output)
 
 df_mut <- mucin %>% filter(Genotype!="HET")
 wilcox.test(Mucin_Thickness~Genotype,df_mut)
-output <- lm(Mucin_Thickness~Sex+Genotype, df_mut)
-summary(output)
 
 df_mut <- mucin %>% filter(Genotype!="WT")
 wilcox.test(Mucin_Thickness~Genotype,df_mut)

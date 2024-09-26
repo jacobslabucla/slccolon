@@ -24,7 +24,7 @@ df_new$feature <- higher_classification$feature
 df_new$feature <- gsub("-",".",df_new$feature)
 data <- merge(data,df_new, by="feature")
 data <- data %>% mutate(coef_abs = abs(coef))
-write.csv(data, "Trios/differential_Pathway/PICRUST2_PWY_Mucosal_Colon_Maaslin2_SequencingRun_Site_Sex_Genotype_1-MouseID/MUT_vs_WT_circleplot.csv")
+#write.csv(data, "Trios/differential_Pathway/PICRUST2_PWY_Mucosal_Colon_Maaslin2_SequencingRun_Site_Sex_Genotype_1-MouseID/MUT_vs_WT_circleplot.csv")
 plot <- data %>% 
   select(c("feature", "X2","coef_abs"))
 plot <- data %>% 
@@ -34,10 +34,10 @@ plot <- data %>%
 mat <- plot 
 
 # For generating a dummy legend ---
-mat$feature <- sample(paste0("Pathway", seq(1, 31)),72,replace=TRUE)
-mat$X2 <- sample(paste0("Category", seq(1, 6)), 72, replace = TRUE)
-mat$coef_abs <- runif(72)
-mat <- mat[1:20,]
+#mat$feature <- sample(paste0("Pathway", seq(1, 31)),72,replace=TRUE)
+#mat$X2 <- sample(paste0("Category", seq(1, 6)), 72, replace = TRUE)
+#mat$coef_abs <- runif(72)
+#mat <- mat[1:20,]
 # ---
 
 circos.clear()
@@ -53,17 +53,17 @@ circos.clear()
 ## Long Term 
 
 # Mucosal Colon MUT depleted 
-data<-read.table("Long_Term/differential_Pathway/PICRUST2_PWY_Mucosal_Colon_Maaslin2_Site_Sex_Genotype_1-MouseID/significant_results.tsv", header=TRUE)
+data<-read.table(here("Long_Term/differential_Pathway/PICRUST2_PWY_Mucosal_Colon_Maaslin2_Site_Sex_Genotype_1-MouseID/significant_results.tsv"), header=TRUE)
 data <- data %>% 
   filter(value=="MUT") 
-annotation <- read.delim("Long_Term/starting_files/picrust2_output_SLT_ASV_table_Silva_v138_1.qza/export_pathway_abundance/annotated_pathway.tsv", row.names=1)
+annotation <- read.delim(here("Long_Term/starting_files/picrust2_output_SLT_ASV_table_Silva_v138_1.qza/export_pathway_abundance/annotated_pathway.tsv"), row.names=1)
 annotation$feature <- row.names(annotation)
 annotation <- annotation %>% select(c("feature","description"))
 annotation$feature <- gsub("-", ".", annotation$feature)
 data <- merge(data,annotation, by="feature")
 
 # split the paths column by "|"
-higher_classification <- read.delim("Huttenhower_MetaCyc_Hierarchy.txt",header=TRUE)
+higher_classification <- read.delim(here("Huttenhower_MetaCyc_Hierarchy.txt"),header=TRUE)
 df <- higher_classification
 df_split <- strsplit(df$annotation, "\\|")
 df_new <- data.frame(do.call(rbind, df_split))
@@ -71,7 +71,7 @@ df_new$feature <- higher_classification$feature
 df_new$feature <- gsub("-",".",df_new$feature)
 data <- merge(data,df_new, by="feature")
 data <- data %>% mutate(coef_abs = abs(coef))
-write.csv(data, "Long_Term/differential_Pathway/PICRUST2_PWY_Mucosal_Colon_Maaslin2_Site_Sex_Genotype_1-MouseID/MUT_vs_WT_circleplot.csv")
+#write.csv(data, "Long_Term/differential_Pathway/PICRUST2_PWY_Mucosal_Colon_Maaslin2_Site_Sex_Genotype_1-MouseID/MUT_vs_WT_circleplot.csv")
 
 plot <- data %>% 
   select(c("feature", "X2","coef_abs"))
@@ -92,17 +92,17 @@ circos.clear()
 
 ### Luminal ---
 ## Trios
-data<-read.table("Trios/differential_Pathway/PICRUST2_PWY_Luminal_Colon_Maaslin2_SequencingRun_Site_Sex_Genotype_1-MouseID/significant_results.tsv", header=TRUE)
+data<-read.table(here("Trios/differential_Pathway/PICRUST2_PWY_Luminal_Colon_Maaslin2_SequencingRun_Site_Sex_Genotype_1-MouseID/significant_results.tsv"), header=TRUE)
 data <- data %>% 
   filter(value=="MUT") 
-annotation <- read.delim("Trios/differential_Pathway/annotated_pwy.tsv", row.names=1)
+annotation <- read.delim(here("Trios/differential_Pathway/annotated_pwy.tsv", row.names=1))
 annotation$feature <- row.names(annotation)
 annotation <- annotation %>% select(c("feature","description"))
 annotation$feature <- gsub("-", ".", annotation$feature)
 data <- merge(data,annotation, by="feature")
 
 # split the paths column by "|"
-higher_classification <- read.delim("Huttenhower_MetaCyc_Hierarchy.txt",header=TRUE)
+higher_classification <- read.delim(here("Huttenhower_MetaCyc_Hierarchy.txt"),header=TRUE)
 df <- higher_classification
 df_split <- strsplit(df$annotation, "\\|")
 df_new <- data.frame(do.call(rbind, df_split))
@@ -112,7 +112,7 @@ df_new$feature <- gsub("-",".",df_new$feature)
 # Merge higher_classification column
 data <- merge(data,df_new, by="feature")
 data <- data %>% mutate(coef_abs = abs(coef))
-write.csv(data, "Trios/differential_Pathway/PICRUST2_PWY_Luminal_Colon_Maaslin2_SequencingRun_Site_Sex_Genotype_1-MouseID/MUT_vs_WT_circleplot.csv")
+#write.csv(data, "Trios/differential_Pathway/PICRUST2_PWY_Luminal_Colon_Maaslin2_SequencingRun_Site_Sex_Genotype_1-MouseID/MUT_vs_WT_circleplot.csv")
 
 plot <- data %>% 
   select(c("feature", "X2","coef_abs"))
@@ -131,17 +131,17 @@ obj <- circos.track(track.index = 1, panel.fun = function(x, y) {
 circos.clear()
 
 ## Long Term
-data<-read.table("Long_Term/differential_Pathway/PICRUST2_PWY_Luminal_Colon_Maaslin2_Site_Sex_Genotype_1-MouseID/significant_results.tsv", header=TRUE)
+data<-read.table(here("Long_Term/differential_Pathway/PICRUST2_PWY_Luminal_Colon_Maaslin2_Site_Sex_Genotype_1-MouseID/significant_results.tsv"), header=TRUE)
 data <- data %>% 
   filter(value=="MUT") 
-annotation <- read.delim("Long_Term/starting_files/picrust2_output_SLT_ASV_table_Silva_v138_1.qza/export_pathway_abundance/annotated_pathway.tsv", row.names=1)
+annotation <- read.delim(here("Long_Term/starting_files/picrust2_output_SLT_ASV_table_Silva_v138_1.qza/export_pathway_abundance/annotated_pathway.tsv"), row.names=1)
 annotation$feature <- row.names(annotation)
 annotation <- annotation %>% select(c("feature","description"))
 annotation$feature <- gsub("-", ".", annotation$feature)
 data <- merge(data,annotation, by="feature")
 
 # split the paths column by "|"
-higher_classification <- read.delim("Huttenhower_MetaCyc_Hierarchy.txt",header=TRUE)
+higher_classification <- read.delim(here("Huttenhower_MetaCyc_Hierarchy.txt"),header=TRUE)
 df <- higher_classification
 df_split <- strsplit(df$annotation, "\\|")
 df_new <- data.frame(do.call(rbind, df_split))
@@ -151,7 +151,7 @@ df_new$feature <- gsub("-",".",df_new$feature)
 # Merge higher_classification column
 data <- merge(data,df_new, by="feature")
 data <- data %>% mutate(coef_abs = abs(coef))
-write.csv(data, "Long_Term/differential_Pathway/PICRUST2_PWY_Luminal_Colon_Maaslin2_Site_Sex_Genotype_1-MouseID/MUT_vs_WT_circleplot.csv")
+#write.csv(data, "Long_Term/differential_Pathway/PICRUST2_PWY_Luminal_Colon_Maaslin2_Site_Sex_Genotype_1-MouseID/MUT_vs_WT_circleplot.csv")
 
 plot <- data %>% 
   select(c("feature", "X2","coef_abs"))
@@ -170,17 +170,17 @@ obj <- circos.track(track.index = 1, panel.fun = function(x, y) {
 circos.clear()
 
 ## Baseline
-data<-read.table("Baseline/differential_Pathway/Baseline_JAX_PWY_Maaslin2_Sex_Genotype/significant_results.tsv", header=TRUE)
+data<-read.table(here("Baseline/differential_Pathway/Baseline_JAX_PWY_Maaslin2_Sex_Genotype/significant_results.tsv"), header=TRUE)
 data <- data %>% 
   filter(value=="MUT") 
-annotation <- read.delim("Baseline/starting_files/picrust2_output_Baseline_ASV_table_Silva_v138_1.qza/export_pathway_abundance/annotated_pwy.tsv", row.names=1)
+annotation <- read.delim(here("Baseline/starting_files/picrust2_output_Baseline_ASV_table_Silva_v138_1.qza/export_pathway_abundance/annotated_pwy.tsv"), row.names=1)
 annotation$feature <- row.names(annotation)
 annotation <- annotation %>% select(c("feature","description"))
 annotation$feature <- gsub("-", ".", annotation$feature)
 data <- merge(data,annotation, by="feature")
 
 # split the paths column by "|"
-higher_classification <- read.delim("Huttenhower_MetaCyc_Hierarchy.txt",header=TRUE)
+higher_classification <- read.delim(here("Huttenhower_MetaCyc_Hierarchy.txt"),header=TRUE)
 df <- higher_classification
 df_split <- strsplit(df$annotation, "\\|")
 df_new <- data.frame(do.call(rbind, df_split))
@@ -190,7 +190,7 @@ df_new$feature <- gsub("-",".",df_new$feature)
 # Merge higher_classification column
 data <- merge(data,df_new, by="feature")
 data <- data %>% mutate(coef_abs = abs(coef))
-write.csv(data, "Baseline/differential_Pathway/Baseline_JAX_PWY_Maaslin2_Sex_Genotype/MUT_vs_WT_circleplot.csv")
+#write.csv(data, "Baseline/differential_Pathway/Baseline_JAX_PWY_Maaslin2_Sex_Genotype/MUT_vs_WT_circleplot.csv")
 
 plot <- data %>% 
   select(c("feature", "X2","coef_abs"))

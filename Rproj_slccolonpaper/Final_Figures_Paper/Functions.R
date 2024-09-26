@@ -4,7 +4,7 @@ generate_L6_taxa_plots <- function(path_to_csv, titlestring,greppattern, fillvec
   #taxa <- gsub(".*g__","",taxa)
   #cols<-assign_cols
   titlestring<-c(titlestring)
-  L2_lum<-read.csv(path_to_csv,header=TRUE,row.names=1)
+  L2_lum<-read.csv(here(path_to_csv),header=TRUE,row.names=1)
   L2_lum<- as.matrix(L2_lum)
   L2_lum<-funrar::make_relative(L2_lum)
   L2_lum<-as.data.frame(t(L2_lum))
@@ -303,7 +303,7 @@ make_genus_level_taxa_dotplot <- function(ASV_significant_results_dataset,
   
   #append relative abundance data 
   #relA <- readRDS("Trios/differential_taxa/L6_Luminal_ColonRelative_Abundance-ASV.RDS")
-  relA <- readRDS(Relative_Abundance_filepath_rds)
+  relA <- readRDS(here(Relative_Abundance_filepath_rds))
   relA$feature <- row.names(relA)
   relA$feature <- gsub(";",".",relA$feature)
   relA$feature <- gsub(" ",".",relA$feature)

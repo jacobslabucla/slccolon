@@ -1,16 +1,20 @@
 # slccolon
-This repository contains the original count data and analysis files used to produce the figures in the paper.
+This repository contains the original count data and analysis files used to produce the figures in the paper:
+Yang, J.C., Zhao, M., Chernikova, D. et al. ZIP8 A391T Crohn’s Disease-Linked Risk Variant Induces Colonic Metal Ion Dyshomeostasis, Microbiome Compositional Shifts, and Inflammation. Dig Dis Sci (2024). https://doi.org/10.1007/s10620-024-08647-8
 
-## Steps to Reproduce the Figures 
+Raw data can be found on NCBI, with BioProject accession code PRJNA1004665: https://www.ncbi.nlm.nih.gov/bioproject/PRJNA1004665.
+
+## Steps to Reproduce the Figures
 1. First, clone the repo. 
 ```bash
 git clone https://github.com/jacobslabucla/slccolon
 ```
-2. Then, open the `Rproj_slccolonpaper` folder. Go to `Final_Figures_Paper`.
+2. Then, open the `Rproj_slccolonpaper` folder and open the .Rproj file in RStudio.
+3. Load any script in `Final_Figures_Paper`. By running renv::restore() , all package versions will be synced with the versions used to produce the figures in the paper.
 
-3. Run everything in `Functions.R` first. 
+5. Run everything in `Functions.R` first, to obtain the required custom functions.
 
-4. Now, by running each Figure script (matches the Figures in the paper) you should be able to reproduce the figures in the paper.
+6. Now, by running each Figure script (matches the Figures in the paper) you will be able to reproduce the figures in the paper.
 
 ## ICP MS Data 
 - ICP-MS / Colon samples from 5-month old mice (WT, MUT) - n = 25, 23
